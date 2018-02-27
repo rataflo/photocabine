@@ -30,6 +30,8 @@
 #define SPIDER_ROTATE_ENDSTOP_PIN 36
 #define SPIDER_ROTATE_STEPPER_SPEED 10
 
+#define SERVO_ARM 46
+
 #define MENU_BTN1_PIN 50
 #define MENU_BTN2_PIN 51
 #define MENU_SPEED 200 // check button menu each 200ms (digitalSerialRead is time consuming).

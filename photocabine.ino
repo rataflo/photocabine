@@ -6,6 +6,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
+#include <Servo.h>
 #include "constants.h"
 
 /*
@@ -43,6 +44,9 @@ unsigned long previousRotateMillis = 0;
 unsigned int spiderRotateStep = HIGH; // Actual state of stepper.
 byte spiderState = 0; // 0 = not moving, 1 = down, 2 = up, 3 = rotate
 
+// servo arm position
+Servo servoArm;
+
 bool bInitPhotomaton = false;
 
 
@@ -66,19 +70,19 @@ byte stepTakeShot = 0;
 void setup() {
   Serial.begin(9600);
   
-  // servo shutter
+  // stepper shutter
   pinMode(SHUTTER_ENDSTOP_PIN, INPUT);
   shutter.setMaxSpeed(1000);
   shutter.setAcceleration(400);
   shutter.moveTo(-200);
   
-  // servo scissor
+  // stepper scissor
   pinMode(SCISSOR_ENDSTOP_PIN, INPUT);
   scissor.setMaxSpeed(1000);
   scissor.setAcceleration(400);
   scissor.moveTo(-200);
   
-  // servo papier
+  // stepper papier
   pinMode(PAPER_PIN_STP, OUTPUT);
   pinMode(PAPER_PIN_DIR, OUTPUT); 
   
@@ -89,10 +93,14 @@ void setup() {
   digitalWrite(SPIDER_UPDOWN_PIN_DOWN, HIGH);
   pinMode(SPIDER_UPDOWN_ENDSTOP_PIN, INPUT); 
   
-  // servo spider rotation
+  // stepper spider rotation
   pinMode(SPIDER_ROTATE_PIN_STP, OUTPUT);
   pinMode(SPIDER_ROTATE_PIN_DIR, OUTPUT); 
 
+  // servo arm position
+  servoArm.attach(SERVO_ARM);
+  servoArm.write(180);  
+  
   // lcd
   pinMode(MENU_BTN1_PIN, INPUT);
   pinMode(MENU_BTN2_PIN, INPUT);
