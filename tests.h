@@ -36,3 +36,14 @@ void testSwitchUpDown(){
     lcd.print("open                ");
   }
 }
+
+void testStartButton(){
+  lcd.setCursor(0, currentLineInMenu % 4);
+  boolean bEndStop = !digitalRead(START_BTN_PIN);
+  // print out the state of the button
+  if(bEndStop) {
+    lcd.print("closed              ");
+  } else{
+    lcd.print("open                ");
+  }
+}

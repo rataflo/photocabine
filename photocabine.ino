@@ -47,9 +47,6 @@ byte spiderState = 0; // 0 = not moving, 1 = down, 2 = up, 3 = rotate
 // servo arm position
 Servo servoArm;
 
-bool bInitPhotomaton = false;
-
-
 // LCD
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 bool bMainScreen = true;
@@ -61,9 +58,12 @@ unsigned long previousMenuMillis = 0;
 volatile int cents = 0;
 bool bCoinEnabled = false;
 
+// Work variables
 bool bGoTakeShot = false; 
 byte stepTakeShot = 0;
-
+bool bInitPhotomaton = false;
+bool bFlashOn = false;
+bool bStartLedOn = false;
 #include "tests.h"
 
 
@@ -111,6 +111,16 @@ void setup() {
   disableCoinAcceptor();
   pinMode(COIN_PIN, INPUT); 
   attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, RISING);
+
+  // flash
+  pinMode(FLASH_PIN, OUTPUT); 
+  digitalWrite(FLASH_PIN,HIGH);// off
+
+  // Start button
+  pinMode(LED_START_BTN_PIN, OUTPUT); 
+  digitalWrite(LED_START_BTN_PIN,HIGH);// off
+  pinMode(START_BTN_PIN, INPUT); 
+  
   
   initPhotomaton();
   enableCoinAcceptor();
@@ -136,6 +146,7 @@ void loop() {
   if(!bGoTakeShot && !bCoinEnabled){
     enableCoinAcceptor();
   }
+
 
   // run steppers.
   
@@ -423,6 +434,27 @@ void initScissor() {
 }
 
 
+void flashOn() {
+   digitalWrite(FLASH_PIN, LOW);// on
+   bFlashOn = true;
+}
+
+void flashOff() {
+   digitalWrite(FLASH_PIN, HIGH);
+   bFlashOn = false;
+}
+
+void startLedOn() {
+   digitalWrite(LED_START_BTN_PIN, LOW);// on
+   bStartLedOn = true;
+}
+
+void startLedOff() {
+   digitalWrite(LED_START_BTN_PIN, HIGH);
+   bStartLedOn = false;
+}
+
+
 /*****************
 * MENU - GO PRO STYLE
 ******************/
@@ -581,6 +613,7 @@ void doMenu(){
       }
       break;
      case 18: // Return menu tests
+     case 23: // Return menu tests
       currentMenu = 5;
       currentLineInMenu = 0;
       showMenu();
@@ -618,7 +651,45 @@ void doMenu(){
       printMsgToLCD(menu.label, true);
       delay(200);
       break;
-     
+    
+    case 22: // Start button
+      delay(200);
+      while(!digitalRead(MENU_BTN2_PIN)){
+       testStartButton();
+       delay(200);
+      }
+      lcd.setCursor(0, currentLineInMenu % 4);
+      printMsgToLCD(menu.label, true);
+      delay(200);
+      break;
+      
+    case 24: // Test flash
+      if(!bFlashOn){
+        flashOn();
+        lcd.setCursor(0, currentLineInMenu % 4);
+        lcd.print(">Flash off          ");
+      }else{
+        flashOff();
+        lcd.setCursor(0, currentLineInMenu % 4);
+        printMsgToLCD(menu.label, true);
+      }
+      break;
+      
+    case 25: // Test led start button
+      if(!bStartLedOn){
+        startLedOn();
+        lcd.setCursor(0, currentLineInMenu % 4);
+        lcd.print(">Start LED off      ");
+      }else{
+        startLedOff();
+        lcd.setCursor(0, currentLineInMenu % 4);
+        printMsgToLCD(menu.label, true);
+      }
+      break;
+      
+    
+      
+    
   }
 }
 
@@ -674,12 +745,12 @@ void coinInterrupt(){
 
 void disableCoinAcceptor(){
   detachInterrupt(digitalPinToInterrupt(COIN_PIN));
-  digitalWrite(SPIDER_UPDOWN_PIN_DOWN, LOW);
+  digitalWrite(ENABLE_COIN_PIN, LOW);
   bCoinEnabled = false;
 }
 
 void enableCoinAcceptor(){
-  digitalWrite(SPIDER_UPDOWN_PIN_DOWN, HIGH);
+  digitalWrite(ENABLE_COIN_PIN, HIGH);
   attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, RISING);
   bCoinEnabled = true;
 }

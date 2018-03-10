@@ -32,6 +32,11 @@
 
 #define SERVO_ARM 46
 
+#define FLASH_PIN 47
+
+#define START_BTN_PIN 42
+#define LED_START_BTN_PIN 43
+
 #define MENU_BTN1_PIN 50
 #define MENU_BTN2_PIN 51
 #define MENU_SPEED 200 // check button menu each 200ms (digitalSerialRead is time consuming).
@@ -50,7 +55,7 @@ typedef struct
     byte parentMenu;
 }menuItem;
 
-#define TAILLE_MENU 21
+#define TAILLE_MENU 25
 const menuItem MENUS[TAILLE_MENU] = {
   {1, "...                ", 0},
   {2, "Pause              ", 0},
@@ -73,6 +78,10 @@ const menuItem MENUS[TAILLE_MENU] = {
   {19,"Switch shutter     ", 8},
   {20,"Switch scissor     ", 8},
   {21,"Switch up&down     ", 8},
+  {22,"Start              ", 8},
+  {23,"...                ", 9},
+  {24,"Flash on           ", 9},
+  {25,"Start LED on       ", 9},
 };
 
 String sel = ">";
