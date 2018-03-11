@@ -1,8 +1,8 @@
 /*
  * LCD lib : https://github.com/fdebrabander/Arduino-LiquidCrystal-I2C-library. Pin 20 SDA, 21 SCL. Adresse 0x27.
- * 
+ * Fast Read\Write : https://github.com/mmarchetti/DirectIO
  */
-
+#include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
@@ -40,6 +40,7 @@ bool bPhotoTaken = false; // True when photo is taken.
 unsigned long previousUpDownMillis = 0;
 
 // Spider rotate
+Input<SPIDER_UPDOWN_ENDSTOP_PIN> switchBottomUpDown;
 unsigned long previousRotateMillis = 0;
 unsigned int spiderRotateStep = HIGH; // Actual state of stepper.
 byte spiderState = 0; // 0 = not moving, 1 = down, 2 = up, 3 = rotate
@@ -91,7 +92,7 @@ void setup() {
   digitalWrite(SPIDER_UPDOWN_PIN_UP,HIGH); // HIGH is off...
   pinMode(SPIDER_UPDOWN_PIN_DOWN, OUTPUT);
   digitalWrite(SPIDER_UPDOWN_PIN_DOWN, HIGH);
-  pinMode(SPIDER_UPDOWN_ENDSTOP_PIN, INPUT); 
+  Input<SPIDER_UPDOWN_ENDSTOP_PIN> switchBottomUpDown;
   
   // stepper spider rotation
   pinMode(SPIDER_ROTATE_PIN_STP, OUTPUT);
@@ -390,17 +391,19 @@ void initPhotomaton(){
 
   // Init steppers (blocking)
   // Scissor
-  lcd.setCursor(0,1);
-  lcd.print("Init Scissor:");
+  lcd.setCursor(0,0);
+  lcd.print("Scissor:");
   initScissor();
   lcd.print("OK");
   // Shutter
-  lcd.setCursor(0,2);
-  lcd.print("Init Shutter:");
+  lcd.print(" Shut:");
   initShutter();
   lcd.print("OK");
   // Spider
-
+  lcd.setCursor(0,1);
+  lcd.print("Spider up&down:");
+  initSpiderUpDown();
+  lcd.print("OK");
   
   delay(1000);
   bInitPhotomaton = true;
@@ -421,6 +424,18 @@ void initShutter() {
   bCloseShutter = true;
 }
 
+void initSpiderUpDown() {
+  boolean bEndStop = switchBottomUpDown.read();
+  if(!bEndStop){
+    digitalWrite(SPIDER_UPDOWN_PIN_DOWN, LOW);
+  }
+  while (!bEndStop) { 
+    bEndStop = switchBottomUpDown.read();
+  }
+  digitalWrite(SPIDER_UPDOWN_PIN_DOWN, HIGH);
+}
+
+
 void initScissor() {
   boolean bEndStop = !digitalRead(SCISSOR_ENDSTOP_PIN);
   while (!bEndStop) { 
@@ -432,7 +447,6 @@ void initScissor() {
   bCloseScissor = true;
   bOpenScissor = false;
 }
-
 
 void flashOn() {
    digitalWrite(FLASH_PIN, LOW);// on
