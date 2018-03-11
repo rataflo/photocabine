@@ -17,47 +17,29 @@ byte arms[7] = {0, 0, 0, 0, 0, 0, 0}; // State of arms (0 = no photo, > 0 = numb
 
 unsigned long currentMillis = 0;
 
-// Shutter
-AccelStepper shutter(1, SHUTTER_PIN_STP, SHUTTER_PIN_DIR);
-unsigned long previousShotMillis = 0;
-bool bCloseShutter = false; // Shutter is closed?
-
-// Scissor.
-AccelStepper scissor(1, SCISSOR_PIN_STP, SCISSOR_PIN_DIR);
-unsigned long previousScissorMillis = 0;
-int currentScissorNbStep = 200; // Number of current step for fully open scissor.
-bool bCloseScissor = false; // True if scissor is closed.
-bool bOpenScissor = true; // true if scissor wide open
-
 // Paper
 unsigned long previousPaperMillis = 0;
-int currentPaperNbStep = 0;
-unsigned int paperStep = HIGH; // Actual state of stepper.
-bool bPaperShotOK = false; // True when paper is positionned to take a shot.
-bool bPhotoTaken = false; // True when photo is taken.
-
-// Spider up/down
-unsigned long previousUpDownMillis = 0;
-
-// Spider rotate
-Input<SPIDER_UPDOWN_ENDSTOP_PIN> switchBottomUpDown;
-unsigned long previousRotateMillis = 0;
-unsigned int spiderRotateStep = HIGH; // Actual state of stepper.
-byte spiderState = 0; // 0 = not moving, 1 = down, 2 = up, 3 = rotate
-
-// servo arm position
-Servo servoArm;
 
 // LCD
 LiquidCrystal_I2C lcd(0x27, 20, 4);
+Input<MENU_BTN1_PIN> btnMenu1;
+Input<MENU_BTN2_PIN> btnMenu2;
 bool bMainScreen = true;
 byte currentMenu = 0;
 byte currentLineInMenu = 0;
 unsigned long previousMenuMillis = 0;
 
 // Coin acceptor
+Output<ENABLE_COIN_PIN> enableCoin;
 volatile int cents = 0;
 bool bCoinEnabled = false;
+
+// Flash
+Output<FLASH_PIN> flash;
+
+// btn Start + LED
+Input<START_BTN_PIN> startBtn;
+Output<LED_START_BTN_PIN> startLED;
 
 // Work variables
 bool bGoTakeShot = false; 
@@ -65,20 +47,23 @@ byte stepTakeShot = 0;
 bool bInitPhotomaton = false;
 bool bFlashOn = false;
 bool bStartLedOn = false;
-#include "tests.h"
+bool bReadySpider = false; // true when spider is ok to receive a strip of paper
 
+#include "servoArm.h"
+#include "spider.h"
+#include "scissor.h"
+#include "shutter.h"
+#include "tests.h"
 
 void setup() {
   Serial.begin(9600);
   
   // stepper shutter
-  pinMode(SHUTTER_ENDSTOP_PIN, INPUT);
   shutter.setMaxSpeed(1000);
   shutter.setAcceleration(400);
   shutter.moveTo(-200);
   
   // stepper scissor
-  pinMode(SCISSOR_ENDSTOP_PIN, INPUT);
   scissor.setMaxSpeed(1000);
   scissor.setAcceleration(400);
   scissor.moveTo(-200);
@@ -88,40 +73,30 @@ void setup() {
   pinMode(PAPER_PIN_DIR, OUTPUT); 
   
   // DC motor spider up/down
-  pinMode(SPIDER_UPDOWN_PIN_UP, OUTPUT); 
-  digitalWrite(SPIDER_UPDOWN_PIN_UP,HIGH); // HIGH is off...
-  pinMode(SPIDER_UPDOWN_PIN_DOWN, OUTPUT);
-  digitalWrite(SPIDER_UPDOWN_PIN_DOWN, HIGH);
-  Input<SPIDER_UPDOWN_ENDSTOP_PIN> switchBottomUpDown;
+  spiderUpPin.write(HIGH); // HIGH is off...
+  spiderDownPin.write(HIGH);
   
   // stepper spider rotation
-  pinMode(SPIDER_ROTATE_PIN_STP, OUTPUT);
-  pinMode(SPIDER_ROTATE_PIN_DIR, OUTPUT); 
+  spiderRotate.setMaxSpeed(1000);
+  spiderRotate.setAcceleration(500);
 
   // servo arm position
   servoArm.attach(SERVO_ARM);
-  servoArm.write(180);  
+  servoArm.write(SERVO_ARM_IDLE_POS);  
   
   // lcd
-  pinMode(MENU_BTN1_PIN, INPUT);
-  pinMode(MENU_BTN2_PIN, INPUT);
   lcd.begin();
 
   // Coin acceptor
-  pinMode(ENABLE_COIN_PIN, OUTPUT); 
   disableCoinAcceptor();
   pinMode(COIN_PIN, INPUT); 
   attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, RISING);
 
   // flash
-  pinMode(FLASH_PIN, OUTPUT); 
-  digitalWrite(FLASH_PIN,HIGH);// off
+  flash.write(HIGH);
 
   // Start button
-  pinMode(LED_START_BTN_PIN, OUTPUT); 
-  digitalWrite(LED_START_BTN_PIN,HIGH);// off
-  pinMode(START_BTN_PIN, INPUT); 
-  
+  startLED.write(HIGH);// off
   
   initPhotomaton();
   enableCoinAcceptor();
@@ -148,89 +123,12 @@ void loop() {
     enableCoinAcceptor();
   }
 
-
-  // run steppers.
-  
-  /*digitalWrite(SPIDER_UPDOWN_PIN_UP,LOW); //on for 2 second.
-  delay(2000);
-  digitalWrite(SPIDER_UPDOWN_PIN_UP,HIGH); //off
-  delay(500);//delay beteen switching relay to avoid shortcut.
-  
-  digitalWrite(SPIDER_UPDOWN_PIN_DOWN, LOW);//on for 2 second
-  delay(2000);
-  digitalWrite(SPIDER_UPDOWN_PIN_DOWN,HIGH); //off
-  delay(500);//delay beteen switching relay to avoid shortcut.*/
-  
   checkMenu();
-  // Premier démarrage, init du bouzin.
-  /*if(!bInitPhotomaton){
-    initPhotomaton();
-  } else if(bMoneyOK){
-    takeShot();
-  }
-
+  
   shutter.run();
-  scissor.run();*/
-  /*
-  checkForMoney();
-
-  // Check which step need to be done.
-  bool bNeedTakePhoto = false;
-  bool bNeedMovePaperOneShot = false;
-  bool bNeedEndMovePaper = false;
-  bool bNeedScissor = false;
-  bool bNeedMoveSpider = false;
-  for(int i = 0; i < 7; i++){
-    if(states[i] > 0) {
-      if(states[i] < 5) {
-        if(bPaperShotOK) {
-          bNeedTakePhoto = true;
-        } else {
-          bNeedMovePaperOneShot = true;
-        }
-      } else if (states[i] == 5) { // Move paper down
-        bNeedEndMovePaper = true;
-      } else if(states[i] == 6) { // cut paper.
-        bNeedScissor = true;
-      } else { // Moving paper in chemical tray.
-        bNeedMoveSpider = true;
-      }
-    }
-  }
-
-  if(bNeedTakePhoto){
-    takePhoto();
-  }
-
-  if(bNeedMovePaperOneShot){
-    movePaperOneShot();
-  }
-
-  if(bNeedEndMovePaper){
-    
-  }
-
-  if(bNeedScissor){
-    if(!bCloseScissor) { 
-      closeScissor();
-    } else {
-      openScissor();
-    }
-  }
-
-  if(bNeedMoveSpider){
-    moveSpider();
-  }
-
-  // Update states
-  for(int i = 0; i < 7; i++){
-    if(states[i] > 0) {
-      if(states[i] < 5 && bPhotoTaken) {
-        states[i]++;
-        bPhotoTaken = false;
-      }
-    }
-  }*/
+  scissor.run();
+  spiderRotate.run();
+  
 }
 
 void manageStepsTakeShot(){
@@ -285,103 +183,7 @@ void manageStepsTakeShot(){
       
     case 15: // move paper back for first shot.
       break;
-
-    
   }
-}
-
-void openScissor() {
-  if(scissor.currentPosition() > SCISSOR_STEP_OPENED){
-    scissor.moveTo(SCISSOR_STEP_OPENED);
-    bCloseScissor = false;
-  }
-}
-
-void checkScissorOpened() {
-  bOpenScissor = scissor.currentPosition() == SCISSOR_STEP_OPENED;
-  bCloseScissor = !bOpenScissor;
-}
-
-void closeScissor() {
-  if(!bCloseScissor){
-    scissor.moveTo(0);
-    bOpenScissor = false;
-  }
-}
-
-void checkScissorClosed() {
-  bCloseScissor = false;
-  if(scissor.currentPosition() > -5) {
-    bCloseScissor = !digitalRead(SCISSOR_ENDSTOP_PIN);
-  }
-  bOpenScissor = !bCloseScissor;
-}
-
-
-void takeShot() {
-  // TODO calculate duration of the shot.
-  shutter.moveTo(-201);
-  bCloseShutter = false;
-}
-
-void checkShotFinished() {
-  boolean bEndStop = false;
-  bCloseShutter = false;
-  int currentShutterNbStep = shutter.currentPosition();
-  if(currentShutterNbStep < -195){ // Digital read is time consuming so we use it at the last steps.
-    bEndStop = !digitalRead(SHUTTER_ENDSTOP_PIN);
-  }
-
-  if(bEndStop){
-    shutter.stop();
-    shutter.run();
-    shutter.setCurrentPosition(0);
-    bCloseShutter = true;
-    stepTakeShot++;
-    previousShotMillis = currentMillis;
-  }
-}
-
-
-void movePaperOneShot() {
-  if(currentPaperNbStep < NB_STEP_ONE_SHOT){
-    if (currentMillis - previousPaperMillis >= PAPER_STEPPER_SPEED) {
-      digitalWrite(SCISSOR_PIN_DIR, LOW); // Voir si bonne direction
-      paperStep = paperStep == HIGH ? LOW : HIGH;
-      digitalWrite(PAPER_PIN_STP, paperStep);
-      previousPaperMillis += PAPER_STEPPER_SPEED;
-      currentPaperNbStep++;
-      bPaperShotOK = false;
-    }
-  } else {
-    bPaperShotOK = true;
-  }
-}
-
-/*
- * Move Spider.
- */
-void moveSpider() {
-  switch (spiderState) {
-    case 1:
-      downSpider();
-      break;
-    case 2:
-      upSpider();
-      break;
-    case 3: 
-      rotateSpider();
-      break;
-  }
-}
-
-void downSpider(){
-}
-
-void upSpider(){
-}
-
-void rotateSpider(){
 }
 
 /***************************
@@ -402,72 +204,37 @@ void initPhotomaton(){
   // Spider
   lcd.setCursor(0,1);
   lcd.print("Spider up&down:");
-  initSpiderUpDown();
+  initSpiderBottom();
+  initSpiderUp();
+  initRotate();
   lcd.print("OK");
+  // Init Servo
+  setServoArmWaitPos();
   
   delay(1000);
   bInitPhotomaton = true;
 }
 
-boolean initSpider() {
-  
-}
-
-void initShutter() {
-  boolean bEndStop = !digitalRead(SHUTTER_ENDSTOP_PIN);
-  while (!bEndStop) { 
-    shutter.moveTo(shutter.currentPosition() - 1); 
-    shutter.run();
-    bEndStop = !digitalRead(SHUTTER_ENDSTOP_PIN);
-  }
-  shutter.setCurrentPosition(0);
-  bCloseShutter = true;
-}
-
-void initSpiderUpDown() {
-  boolean bEndStop = switchBottomUpDown.read();
-  if(!bEndStop){
-    digitalWrite(SPIDER_UPDOWN_PIN_DOWN, LOW);
-  }
-  while (!bEndStop) { 
-    bEndStop = switchBottomUpDown.read();
-  }
-  digitalWrite(SPIDER_UPDOWN_PIN_DOWN, HIGH);
-}
-
-
-void initScissor() {
-  boolean bEndStop = !digitalRead(SCISSOR_ENDSTOP_PIN);
-  while (!bEndStop) { 
-    scissor.moveTo(scissor.currentPosition() + 1); 
-    scissor.run();
-    bEndStop = !digitalRead(SCISSOR_ENDSTOP_PIN);
-  }
-  scissor.setCurrentPosition(0);
-  bCloseScissor = true;
-  bOpenScissor = false;
-}
 
 void flashOn() {
-   digitalWrite(FLASH_PIN, LOW);// on
-   bFlashOn = true;
+  flash.write(LOW);
+  bFlashOn = true;
 }
 
 void flashOff() {
-   digitalWrite(FLASH_PIN, HIGH);
-   bFlashOn = false;
+  flash.write(HIGH);
+  bFlashOn = false;
 }
 
 void startLedOn() {
-   digitalWrite(LED_START_BTN_PIN, LOW);// on
-   bStartLedOn = true;
+  startLED.write(LOW);// on
+  bStartLedOn = true;
 }
 
 void startLedOff() {
-   digitalWrite(LED_START_BTN_PIN, HIGH);
-   bStartLedOn = false;
+  startLED.write(HIGH);
+  bStartLedOn = false;
 }
-
 
 /*****************
 * MENU - GO PRO STYLE
@@ -477,9 +244,9 @@ void startLedOff() {
 void checkMenu(){
   if (currentMillis - previousMenuMillis >= MENU_SPEED) {
     previousMenuMillis += MENU_SPEED;
-    if(digitalRead(MENU_BTN1_PIN)){
+    if(btnMenu1.read()){
       nextMenu();
-    } else if(!bMainScreen && digitalRead(MENU_BTN2_PIN)){
+    } else if(!bMainScreen && btnMenu2.read()){
       doMenu();
     }
   }
@@ -635,7 +402,7 @@ void doMenu(){
       
      case 19: // Test switch shutter.
       delay(200);
-      while(!digitalRead(MENU_BTN2_PIN)){
+      while(!btnMenu2.read()){
        testSwitchShutter();
        delay(200);
       }
@@ -646,7 +413,7 @@ void doMenu(){
       
      case 20: // Test switch scissor.
       delay(200);
-      while(!digitalRead(MENU_BTN2_PIN)){
+      while(!btnMenu2.read()){
        testSwitchScissor();
        delay(200);
       }
@@ -657,7 +424,7 @@ void doMenu(){
 
     case 21: // Test switch up & down.
       delay(200);
-      while(!digitalRead(MENU_BTN2_PIN)){
+      while(!btnMenu2.read()){
        testSwitchUpDown();
        delay(200);
       }
@@ -668,7 +435,7 @@ void doMenu(){
     
     case 22: // Start button
       delay(200);
-      while(!digitalRead(MENU_BTN2_PIN)){
+      while(!btnMenu2.read()){
        testStartButton();
        delay(200);
       }
@@ -759,12 +526,12 @@ void coinInterrupt(){
 
 void disableCoinAcceptor(){
   detachInterrupt(digitalPinToInterrupt(COIN_PIN));
-  digitalWrite(ENABLE_COIN_PIN, LOW);
+  enableCoin.write(LOW);
   bCoinEnabled = false;
 }
 
 void enableCoinAcceptor(){
-  digitalWrite(ENABLE_COIN_PIN, HIGH);
+  enableCoin.write(HIGH);
   attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, RISING);
   bCoinEnabled = true;
 }
