@@ -1,12 +1,16 @@
 /*
  * LCD lib : https://github.com/fdebrabander/Arduino-LiquidCrystal-I2C-library. Pin 20 SDA, 21 SCL. Adresse 0x27.
  * Fast Read\Write : https://github.com/mmarchetti/DirectIO
+ * 4* 7 segment, TM1637 : https://github.com/avishorp/TM1637
+ * LCD Matrix 8*8 : http://wayoda.github.io/LedControl/
  */
 #include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <Servo.h>
+#include <LedControl.h>
+#include "TM1637Display.h"
 #include "constants.h"
 
 /*
@@ -26,17 +30,8 @@ byte currentMenu = 0;
 byte currentLineInMenu = 0;
 unsigned long previousMenuMillis = 0;
 
-// Coin acceptor
-Output<ENABLE_COIN_PIN> enableCoin;
-volatile int cents = 0;
-bool bCoinEnabled = false;
-
 // Flash
 Output<FLASH_PIN> flash;
-
-// btn Start + LED
-Input<START_BTN_PIN> startBtn;
-Output<LED_START_BTN_PIN> startLED;
 
 // Work variables
 bool bGoTakeShot = false; 
@@ -48,39 +43,11 @@ bool bReadySpider = false; // true when spider is ok to receive a strip of paper
 
 #include "scissor.h"
 #include "shutter.h"
+#include "coinAcceptor.h"
 #include "tests.h"
 
 void setup() {
   Serial.begin(9600);
-  
-  // stepper shutter
-  shutter.setMaxSpeed(1000);
-  shutter.setAcceleration(400);
-  shutter.moveTo(-200);
-  
-  // stepper scissor
-  scissor.setMaxSpeed(1000);
-  scissor.setAcceleration(400);
-  scissor.moveTo(-200);
-  
-  // stepper papier
-  pinMode(PAPER_PIN_STP, OUTPUT);
-  pinMode(PAPER_PIN_DIR, OUTPUT); 
-   
-  // lcd
-  lcd.begin();
-
-  // Coin acceptor
-  disableCoinAcceptor();
-  pinMode(COIN_PIN, INPUT); 
-  attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, RISING);
-
-  // flash
-  flash.write(HIGH);
-
-  // Start button
-  startLED.write(HIGH);// off
-  
   initPhotomaton();
   enableCoinAcceptor();
   showMainScreen();
@@ -105,12 +72,9 @@ void loop() {
   if(!bGoTakeShot && !bCoinEnabled){
     enableCoinAcceptor();
   }
-
+  
+  refreshCoinSegment();
   checkMenu();
-  
-  shutter.run();
-  scissor.run();
-  
 }
 
 void manageStepsTakeShot(){
@@ -119,53 +83,38 @@ void manageStepsTakeShot(){
     case 4:
     case 7:
     case 10:
-      if (currentMillis - previousShotMillis >= WAIT_BETWEEN_SHOT) {
-        stepTakeShot++;
-      }
+      showCountdown();
       break;
       
     case 2: // Take photo.
     case 5:
     case 8:
     case 11:
-      if(bCloseShutter) { 
-        takeShot();
-      } else {
-        checkShotFinished();
-      }
+      takeShot();
       break;
       
     case 3: // move paper for next shot.
     case 6:
     case 9:
+      movePaperNextShot();
+      break;
     case 12:// last paper move, need to wait for spider to be at the correct position and scissor opened.  
       break;
       
     case 13: // Open scissor before last paper move
-      if(!bOpenScissor) { 
-        openScissor();
-      } else {
-        checkScissorOpened();
-        if(bOpenScissor) {
-          stepTakeShot++;
-        }
-      }
+      openScissor();
       break;
       
     case 14: // cut paper and zou!
-      if(!bCloseScissor) { 
-        closeScissor();
-      } else {
-        checkScissorClosed();
-        if(bCloseScissor) {
-          stepTakeShot++;
-        }
-      }
+      closeScissor();
       break;
       
     case 15: // move paper back for first shot.
+      movePaperFirstShot();
+      bGoTakeShot = false; // Finish
       break;
   }
+  stepTakeShot++;
 }
 
 /***************************
@@ -173,7 +122,40 @@ void manageStepsTakeShot(){
  **************************/
 void initPhotomaton(){
 
-  // Init steppers (blocking)
+  // stepper shutter
+  shutter.setMaxSpeed(1000);
+  shutter.setAcceleration(400);
+  shutter.moveTo(-200);
+  
+  // stepper scissor
+  scissor.setMaxSpeed(1000);
+  scissor.setAcceleration(400);
+  scissor.moveTo(-200);
+  
+  // stepper papier
+  pinMode(PAPER_PIN_STP, OUTPUT);
+  pinMode(PAPER_PIN_DIR, OUTPUT); 
+   
+  // lcd
+  lcd.begin();
+  
+  // Coin acceptor off
+  pinMode(COIN_PIN, INPUT); 
+  disableCoinAcceptor();
+  
+  // flash off
+  flashOff();
+  
+  // Start button off
+  startLedOff();
+  
+  // 4 * 7 segment display for coin
+  initCoinSegment();
+  
+  // Led Matrix
+  initLedMatrix();
+  
+  // Init steppers position.
   // Scissor
   lcd.setCursor(0,0);
   lcd.print("Scissor:");
@@ -199,16 +181,6 @@ void flashOn() {
 void flashOff() {
   flash.write(HIGH);
   bFlashOn = false;
-}
-
-void startLedOn() {
-  startLED.write(LOW);// on
-  bStartLedOn = true;
-}
-
-void startLedOff() {
-  startLED.write(HIGH);
-  bStartLedOn = false;
 }
 
 /*****************
@@ -239,15 +211,12 @@ void showMainScreen(){
 
 void printMsgToLCD(String message, bool isSelected){
   String tmp;
-  Serial.println(tmp);
   if(isSelected){
     tmp = sel;
   } else {
     tmp = espace;
   }
-  Serial.println(tmp);
   tmp+= message;
-  Serial.println(tmp);
   lcd.print(tmp);
 }
 
@@ -261,7 +230,6 @@ void showMenu(){
   for(int i = 0; i < TAILLE_MENU; i++){
     menuItem menu = MENUS[i];
     if(menu.parentMenu == currentMenu){
-      Serial.println(menu.label);
       if(lineInMenu >= currentLineInMenu) {
         lcd.setCursor(0, ligneLCD);
         printMsgToLCD(menu.label, lineInMenu == currentLineInMenu);
@@ -273,7 +241,7 @@ void showMenu(){
       lineInMenu++;
     }
   }
-Serial.println(ligneLCD);
+  
   for(int i = ligneLCD; i < 4; i++){
     lcd.setCursor(0, i);
     lcd.print("                    ");
@@ -490,24 +458,5 @@ void nextMenu(){
   }
 }
 
-/*
- *  COIN ACCEPTOR
- */
-// interrupt main loop each time a pulse from coin acceptor is coming.
-// 1 pulse = 10cts
-void coinInterrupt(){
-  cents += bCoinEnabled ? 10 : 0;
-}
 
-void disableCoinAcceptor(){
-  detachInterrupt(digitalPinToInterrupt(COIN_PIN));
-  enableCoin.write(LOW);
-  bCoinEnabled = false;
-}
-
-void enableCoinAcceptor(){
-  enableCoin.write(HIGH);
-  attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, RISING);
-  bCoinEnabled = true;
-}
 

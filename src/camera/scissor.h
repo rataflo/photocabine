@@ -19,28 +19,33 @@ void initScissor() {
 }
 
 void openScissor() {
-  if(scissor.currentPosition() > SCISSOR_STEP_OPENED){
+  if(!bOpenScissor){
     scissor.moveTo(SCISSOR_STEP_OPENED);
-    bCloseScissor = false;
-  }
-}
+    bOpenScissor = false
 
-void checkScissorOpened() {
-  bOpenScissor = scissor.currentPosition() == SCISSOR_STEP_OPENED;
-  bCloseScissor = !bOpenScissor;
+    while(!bOpenScissor){
+      scissor.run();
+      bOpenScissor = scissor.currentPosition() == SCISSOR_STEP_OPENED;
+    }
+    
+    bCloseScissor = false;
+    bOpenScissor = true;
+  }
 }
 
 void closeScissor() {
   if(!bCloseScissor){
     scissor.moveTo(0);
+    bCloseScissor = false;
+
+    while(!bCloseScissor){
+      scissor.run();
+      if(scissor.currentPosition() > -5) {
+        bCloseScissor = !endstopScissor.read();
+      }
+    }
+
+    bCloseScissor = true;
     bOpenScissor = false;
   }
-}
-
-void checkScissorClosed() {
-  bCloseScissor = false;
-  if(scissor.currentPosition() > -5) {
-    bCloseScissor = !endstopScissor.read();
-  }
-  bOpenScissor = !bCloseScissor;
 }
