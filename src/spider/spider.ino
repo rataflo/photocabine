@@ -23,6 +23,7 @@ unsigned long currentMillis = 0;
 // Work variables
 bool bInitPhotomaton = false;
 bool bSpiderUp = true; // true when spider is at the top.
+char lastOrder = '0';
 
 // time to go from bottom to upper switch.
 unsigned long timeToGoUp = 0;
@@ -35,28 +36,24 @@ unsigned long timeToGoDown = 0;
 
 void setup() {
   Serial.begin(9600);
-  Wire.begin(1);
-  Wire.onReceive(checkOrder); 
+  Wire.begin(11);
+  Wire.onReceive(receiveOrder); 
+  Wire.onRequest(respondToOrder); 
   
-  // DC motor spider up/down
-  spiderUpPin.write(HIGH); // HIGH is off...
-  spiderDownPin.write(HIGH);
-  
-  // stepper spider rotation
-  spiderRotate.setMaxSpeed(1000);
-  spiderRotate.setAcceleration(500);
-
   // servo arm position
   servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_IDLE_POS);  
-    
+
+  // pwm dc up and down (do not use DirectIO)
+  pinMode(SPIDER_UPDOWN_PIN_PWM, OUTPUT);
+  
   initSpider();
 }
 
 void loop() {
   currentMillis = millis();
 
-  checkOrder();
+  //checkOrder();
 
   // Master request to give a strip to process.
   if(bSpiderUp && bCheckAvailability){
@@ -68,28 +65,38 @@ void loop() {
   }
 
   spiderRotate.run();
-  
 }
 
 /*
  * Check if master arduino send an order. Mainly to process a strip.
  */
-void checkOrder(){
-  while(Wire.available()) {
-    char c = Wire.read();
-    if(c == 'G') { // G stand for 'Give me a place for processing my strip'.
-      bCheckAvailability = true;
-      
-    } else if(c == 'O'){ // O stand for 'Oooo yeah i finished to give you the strip, do your job!'
-      bCanProcess = true; 
-      freeSlot--;
-      
-    } else if(c == 'C'){ // C stand for 'Can you tell me how many slot is free?'
-      Wire.write('C'+freeSlot);
-    }
+void receiveOrder(){
+  if(Wire.available()) {
+    lastOrder = Wire.read();
   }
 }
 
+void respondToOrder(){
+  if(lastOrder != '0') {
+    if(lastOrder == 'G') { // G stand for 'Give me a place for processing my strip'.
+      bCheckAvailability = true;
+      
+    } else if(lastOrder == 'O'){ // O stand for 'Oooo yeah i finished to give you the strip, do your job!'
+      bCanProcess = true; 
+      freeSlot--;
+      
+    } else if(lastOrder == 'C'){ // C stand for 'Can you tell me how many slot is free?'
+      Wire.write('C'+freeSlot);
+      
+    } else if(lastOrder == 'W'){ // Camera waiting for spider end of init'
+      if(bInitPhotomaton) {
+        Serial.println("GOOD");
+        Wire.write('S');
+      }
+    }
+    lastOrder = '0';
+  }
+}
 void checkAvailability(){
   if(positions[0] == 1){
     Wire.write('G'); // Master can give is strip.
@@ -107,10 +114,10 @@ void process(){
 void initSpider(){
 
   // Spider
-  initSpiderBottom();
   initSpiderUp();
   initSpiderBottom();
-  
+  initSpiderUp();
+
   initRotate();
   // Init Servo
   setServoArmWaitPos();

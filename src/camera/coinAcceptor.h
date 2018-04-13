@@ -20,10 +20,9 @@ TM1637Display coinSegment(COIN_SEGMENT_CLK_PIN, COIN_SEGMENT_DIO_PIN);
 Output<ENABLE_COIN_PIN> enableCoin;
 volatile int cents = 0;
 bool bCoinEnabled = false;
-bool bRefreshSegment = false;
 
 // btn Start + LED
-Input<START_BTN_PIN> startBtn;
+Input<START_BTN_PIN> startBtn(true);
 Output<LED_START_BTN_PIN> startLED;
 
 /*********************************
@@ -61,9 +60,8 @@ void coinSegmentFull(){
  * Refresh if needed according to cents the segment.
  */
 void refreshCoinSegment(){
-  if(bRefreshSegment){
-    setCoinDigit(cents);
-    bRefreshSegment = false;
+  if(bCoinEnabled){
+    setCoinDigit(PRICE_CTS - cents);
   }
 }
 
@@ -85,29 +83,32 @@ void initCoinSegment(){
 // 1 pulse = 10cts
 void coinInterrupt(){
   cents += bCoinEnabled ? 10 : 0;
-  bRefreshSegment = true;
+  Serial.println(cents);
 }
 
 void disableCoinAcceptor(){
   detachInterrupt(digitalPinToInterrupt(COIN_PIN));
   enableCoin.write(LOW);
   bCoinEnabled = false;
+  cents = 0;
 }
 
 void enableCoinAcceptor(){
+  Serial.println("enableCoin");
   attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, RISING);
   setCoinDigit(PRICE_CTS);
   enableCoin.write(HIGH);
   bCoinEnabled = true;
+  cents = 0;
 }
 
 void startLedOn() {
-  startLED.write(LOW);// on
+  startLED.write(HIGH);
   bStartLedOn = true;
 }
 
 void startLedOff() {
-  startLED.write(HIGH);
+  startLED.write(LOW);
   bStartLedOn = false;
 }
 

@@ -5,6 +5,7 @@
  * LCD Matrix 8*8 : http://wayoda.github.io/LedControl/
  */
 #include <DirectIO.h>
+#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
@@ -41,6 +42,7 @@ bool bFlashOn = false;
 bool bStartLedOn = false;
 bool bReadySpider = false; // true when spider is ok to receive a strip of paper
 
+#include "paper.h"
 #include "scissor.h"
 #include "shutter.h"
 #include "coinAcceptor.h"
@@ -48,6 +50,8 @@ bool bReadySpider = false; // true when spider is ok to receive a strip of paper
 
 void setup() {
   Serial.begin(9600);
+  Wire.begin(); // master
+  
   initPhotomaton();
   enableCoinAcceptor();
   showMainScreen();
@@ -58,10 +62,20 @@ void loop() {
 
   // if price is OK, let's go.
   if(cents >= PRICE_CTS) {
+    // disable coin acceptor for the duration of the shots.
+    setCoinDigit(0);
+    disableCoinAcceptor();
+    
+    // wait for start button.
+    showArrowDown();
+    startLedOn();
+    bool bButton = !startBtn.read();
+    while(!bButton){
+      bButton = !startBtn.read();
+    }
+    //Go!
     bGoTakeShot = true;
     stepTakeShot = 1;
-    // disable coin acceptor for the duration of the shots.
-    disableCoinAcceptor();
   }
 
   if(bGoTakeShot) {
@@ -70,6 +84,7 @@ void loop() {
   
   // if shot finished and coin acceptor disabled.
   if(!bGoTakeShot && !bCoinEnabled){
+    startLedOff();
     enableCoinAcceptor();
   }
   
@@ -78,6 +93,7 @@ void loop() {
 }
 
 void manageStepsTakeShot(){
+  Serial.println(stepTakeShot);
   switch (stepTakeShot) {
     case 1: // 5 sec wait between shots.
     case 4:
@@ -121,21 +137,7 @@ void manageStepsTakeShot(){
  *    INITS
  **************************/
 void initPhotomaton(){
-
-  // stepper shutter
-  shutter.setMaxSpeed(1000);
-  shutter.setAcceleration(400);
-  shutter.moveTo(-200);
   
-  // stepper scissor
-  scissor.setMaxSpeed(1000);
-  scissor.setAcceleration(400);
-  scissor.moveTo(-200);
-  
-  // stepper papier
-  pinMode(PAPER_PIN_STP, OUTPUT);
-  pinMode(PAPER_PIN_DIR, OUTPUT); 
-   
   // lcd
   lcd.begin();
   
@@ -156,33 +158,37 @@ void initPhotomaton(){
   initLedMatrix();
   
   // Init steppers position.
-  // Scissor
-  lcd.setCursor(0,0);
-  lcd.print("Scissor:");
   initScissor();
-  lcd.print("OK");
   // Shutter
-  lcd.print(" Shut:");
   initShutter();
-  lcd.print("OK");
+  // Paper
+  initPaper();
 
   //@TODO: wait for spider.
-  
-  delay(1000);
+  waitForSpider();
+
   bInitPhotomaton = true;
 }
 
-
-void flashOn() {
-  flash.write(LOW);
-  bFlashOn = true;
+void waitForSpider(){
+  Wire.beginTransmission(11);
+  Wire.write("W");
+  Wire.endTransmission();
+  
+  Wire.requestFrom(11, 1);
+  while(!bReadySpider){
+    checkOrder();
+  }
 }
 
-void flashOff() {
-  flash.write(HIGH);
-  bFlashOn = false;
+void checkOrder(){
+  if(Wire.available()) {
+    char c = Wire.read();
+    if(c == 'S') { // S stand for 'Success in init'. Arduino controlling spider is ready.
+      bReadySpider = true;
+    }
+  }
 }
-
 /*****************
 * MENU - GO PRO STYLE
 ******************/
@@ -308,33 +314,14 @@ void doMenu(){
       break;
     case 12: // Test shutter
      takeShot();
-     while(!bCloseShutter){
-      shutter.run();
-      checkShotFinished();
-     }
       break;
     case 13: // Test 
-      
       // close scissor.
       closeScissor(); 
-      while(!bCloseScissor){
-        scissor.run();
-        checkScissorClosed();
-      }
-      
       // Open scissor
       openScissor();
-      while(!bOpenScissor){
-        scissor.run();
-        checkScissorOpened();
-      }
-     
       // close again
       closeScissor(); // close scissor.
-      while(!bCloseScissor){
-        scissor.run();
-        checkScissorClosed();
-      }
       break;
      case 18: // Return menu tests
      case 23: // Return menu tests
@@ -421,9 +408,7 @@ void doMenu(){
  * Action on button next
  */
 void nextMenu(){
-  Serial.println("nextMenu");
   if(bMainScreen) { // if currently on main screen, show first menu.
-    Serial.println("premier menu");
     bMainScreen = false;
     currentMenu = 0;
     currentLineInMenu = 0;

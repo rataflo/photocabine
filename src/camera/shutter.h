@@ -1,38 +1,61 @@
 // Shutter
 AccelStepper shutter(1, SHUTTER_PIN_STP, SHUTTER_PIN_DIR);
 bool bCloseShutter = false; // Shutter is closed?
-Input<SHUTTER_ENDSTOP_PIN> endstopShutter;
+Input<SHUTTER_ENDSTOP_PIN> endstopShutter(true);
 
 // LED Matrix
 LedControl ledMatrix = LedControl(LED_MATRIX_SDI_PIN, LED_MATRIX_SCL_PIN, LED_MATRIX_CS_PIN, 1); 
 
+void flashOn() {
+  flash.write(HIGH);
+  bFlashOn = true;
+}
+
+void flashOff() {
+  flash.write(LOW);
+  bFlashOn = false;
+}
+
 void initShutter() {
+  Serial.println("debut init shutter");
+  // stepper shutter
+  shutter.setMaxSpeed(1000);
+  shutter.setAcceleration(400);
+  shutter.setCurrentPosition(0);
+  int homing = 0;
   boolean bEndStop = !endstopShutter.read();
+  Serial.println(bEndStop);
   while (!bEndStop) { 
-    shutter.moveTo(shutter.currentPosition() - 1); 
+    shutter.moveTo(homing); 
     shutter.run();
+    homing++;
+    delay(5);
     bEndStop = !endstopShutter.read();
   }
   shutter.setCurrentPosition(0);
+  shutter.setMaxSpeed(1000);
+  shutter.setAcceleration(400);
   bCloseShutter = true;
+  Serial.println("fin init shutter");
 }
 
 void takeShot() {
+  Serial.println("takeShot");
   // TODO calculate duration of the shot.
-  shutter.moveTo(-201);
+  shutter.moveTo(201);
   bCloseShutter = false;
   
   while(!bCloseShutter){
     boolean bEndStop = false;
     int currentShutterNbStep = shutter.currentPosition();
-    if(currentShutterNbStep < -195){ // Digital read at the last time.
+    if(currentShutterNbStep > 195){ // Digital read at the last time.
       bEndStop = !endstopShutter.read();
     }
 
     // Flash during rotation.
-    if(currentShutterNbStep == -50){
+    if(currentShutterNbStep == 50){
       flashOn();
-    } else if(currentShutterNbStep == -150 ){
+    } else if(currentShutterNbStep == 150 ){
       flashOff();
     }
     
@@ -69,7 +92,15 @@ void showCountdown()
 {
   for (int i = 0; i < 6; i++)  
   {
-    displayNumber(i);
     delay(1000);
+    displayNumber(i);
+  }
+}
+
+void showArrowDown()
+{
+  for (int i = 0; i < 8; i++)  
+  {
+    ledMatrix.setRow(0,i,ARROWDOWN[i]);
   }
 }
