@@ -14,9 +14,13 @@
 #define SPIDER_ROTATE_NBSTEP 406 // Number of steps to mode to one tank
 #define SPIDER_ROTATE_ENDSTOP1_PIN 7 // Endstop in front of paper exit.
 #define SPIDER_ROTATE_ENDSTOP2_PIN 5 // Endstop 1/14 degrees right from endstop 1.
+#define SPIDER_ROTATE_SPEED 500
+#define SPIDER_ROTATE_ACCEL 100
 
 #define SERVO_ARM 6
-#define SERVO_ARM_IDLE_POS 70
-#define SERVO_ARM_OPEN_POS 00
-#define SERVO_ARM_CLOSE_POS 180
+#define SERVO_ARM_IDLE_POS 35
+#define SERVO_ARM_OPEN_POS 0
+#define SERVO_ARM_CLOSE_POS 145
+
+#define TANK_TIME 12000 // Default time in each tank (12 sec / 30°C).
 

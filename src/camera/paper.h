@@ -8,6 +8,9 @@ Input<PAPER_SWITCH4_PIN> opto4(true);
 
 void movePaperFirstShot() {
   paper.setCurrentPosition(0);
+  paper.setMaxSpeed(PAPER_SPEED);
+  paper.setAcceleration(PAPER_ACCEL);
+  
   boolean bOpto1 = opto1.read();
   int homing = 0;
   while (bOpto1) { 
@@ -17,17 +20,25 @@ void movePaperFirstShot() {
     delay(5);
     bOpto1 = opto1.read();
   }
+  paper.setCurrentPosition(0);
+  
+  // marche arriére
+  int delta = DELTA_FIRST_SHOT + 15;
+  paper.moveTo(delta); 
+  paper.setMaxSpeed(PAPER_SPEED);
+  paper.setAcceleration(PAPER_ACCEL);
+  while(paper.currentPosition() != delta){
+    paper.run();
+  }
 }
 
 void initPaper() {
-  Serial.println("init paper");
-  paper.setMaxSpeed(1000);
-  paper.setAcceleration(400);
   paper.setCurrentPosition(0);
-
+  paper.setMaxSpeed(PAPER_SPEED);
+  paper.setAcceleration(PAPER_ACCEL);
+  
   int homing = 0;
   boolean bOpto1 = opto1.read();
-  Serial.println(bOpto1);
   // case no paper
   if(!bOpto1){
     while (!bOpto1) { 
@@ -36,31 +47,51 @@ void initPaper() {
       homing++;
       delay(5);
       bOpto1 = opto1.read();
-      Serial.println(bOpto1);
     }
-  }
-  else { // paper inside, check in which position
-    boolean bOpto2 = opto2.read();
 
-    if(bOpto2){ // Paper not on the right spot to take shot.
-      movePaperFirstShot();
-    }
-  }
+    paper.setCurrentPosition(0);
   
-  paper.setCurrentPosition(0);
-  paper.setMaxSpeed(1000);
-  paper.setAcceleration(400);
-  Serial.println("fin init paper");
+    // marche arriére
+    int delta = DELTA_FIRST_SHOT;
+    paper.moveTo(delta); 
+    paper.setMaxSpeed(PAPER_SPEED);
+    paper.setAcceleration(PAPER_ACCEL);
+    while(paper.currentPosition() != delta){
+      paper.run();
+    }
+  } else{
+    movePaperFirstShot();
+  }
 }
 
-
-
-
 void movePaperNextShot() {
+  showCountdown();
   paper.setCurrentPosition(0);
-  paper.moveTo(200); 
+  paper.setMaxSpeed(PAPER_SPEED);
+  paper.setAcceleration(PAPER_ACCEL);
+
+  int delta = NB_STEP_PAPER_ONE_SHOT;
+  paper.moveTo(delta); 
+  while(paper.currentPosition() < delta){
+    paper.run();
+    refreshCountdown();
+  }
   
-  while(!paper.currentPosition()== NB_STEP_ONE_SHOT){
+  while(countDown > 0){
+    refreshCountdown();
+  }
+}
+
+void movePaperOut() {
+  paper.setCurrentPosition(0);
+  paper.setMaxSpeed(PAPER_SPEED);
+  paper.setAcceleration(PAPER_ACCEL);
+
+  int delta = NB_STEP_PAPER_OUT;
+  paper.moveTo(delta); 
+
+  while(paper.currentPosition()< delta){
     paper.run();
   }
+  
 }

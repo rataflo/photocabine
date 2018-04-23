@@ -1,7 +1,7 @@
 /*
  * TESTS
  */
-void testSwitchScissor(){
+/*void testSwitchScissor(){
   Serial.println("testSwitchScissor");
   Serial.println(currentLineInMenu % 4);
   lcd.setCursor(0, currentLineInMenu % 4);
@@ -24,10 +24,10 @@ void testSwitchShutter(){
     lcd.print("open                ");
   }
 }
-
+*/
 
 void testSwitchUpDown(){
-  lcd.setCursor(0, currentLineInMenu % 4);
+  //lcd.setCursor(0, currentLineInMenu % 4);
   /*boolean bEndStop = !digitalRead(SPIDER_UPDOWN_ENDSTOP_PIN);
   // print out the state of the button
   if(bEndStop) {
@@ -36,7 +36,7 @@ void testSwitchUpDown(){
     lcd.print("open                ");
   }*/
 }
-
+/*
 void testStartButton(){
   lcd.setCursor(0, currentLineInMenu % 4);
   boolean bEndStop = !digitalRead(START_BTN_PIN);
@@ -46,4 +46,4 @@ void testStartButton(){
   } else{
     lcd.print("open                ");
   }
-}
+}*/

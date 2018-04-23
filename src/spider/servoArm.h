@@ -3,21 +3,43 @@ Servo servoArm;
 
 
 void setServoArmWaitPos() {
-  servoArm.write(SERVO_ARM_IDLE_POS);  
+  servoArm.write(37);  
 }
 
 void setServoArmOpenPos() {
-  servoArm.write(SERVO_ARM_OPEN_POS);  
+  servoArm.write(0);  
 }
 
 void setServoArmClosePos() {
-  servoArm.write(SERVO_ARM_CLOSE_POS);  
+  servoArm.write(160);  
 }
 
 void openArm() {
-  servoArm.write(SERVO_ARM_OPEN_POS + 150); 
+  for(int i = 0; i < 150; i++){
+    servoArm.write(i);
+    delay(10);
+  }
+  delay(1000);
+  // retour arriére spider pour compenser le mouvement induit par le servo.
+  spiderRotate.setCurrentPosition(0);
+  spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
+  spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
+
+  boolean bEndStop = endstop1Rotate.read();
+  int homing = 0;
+  while (!bEndStop) { 
+    spiderRotate.moveTo(homing); 
+    spiderRotate.run();
+    homing--;
+    delay(5);
+    bEndStop = endstop1Rotate.read();
+  }
+  spiderRotate.setCurrentPosition(0);
 }
 
 void closeArm() {
-  servoArm.write(SERVO_ARM_CLOSE_POS - 150); 
+  for(int i = 160; i >= 10; i--){
+    servoArm.write(i);
+    delay(10);
+  }
 }

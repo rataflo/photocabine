@@ -6,7 +6,7 @@
  */
 #include <DirectIO.h>
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h>
+//#include <LiquidCrystal_I2C.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <Servo.h>
@@ -23,12 +23,13 @@ byte arms[7] = {0, 0, 0, 0, 0, 0, 0}; // State of arms (0 = no photo, > 0 = numb
 unsigned long currentMillis = 0;
 
 // LCD
-LiquidCrystal_I2C lcd(0x27, 20, 4);
+//LiquidCrystal_I2C lcd(0x27, 20, 4);
 Input<MENU_BTN1_PIN> btnMenu1;
 Input<MENU_BTN2_PIN> btnMenu2;
 bool bMainScreen = true;
 byte currentMenu = 0;
 byte currentLineInMenu = 0;
+int freeSlot = 7;
 unsigned long previousMenuMillis = 0;
 
 // Flash
@@ -40,11 +41,13 @@ byte stepTakeShot = 0;
 bool bInitPhotomaton = false;
 bool bFlashOn = false;
 bool bStartLedOn = false;
-bool bReadySpider = false; // true when spider is ok to receive a strip of paper
+bool bReadySpider = false; // true when spider init complete.
+bool bSlotReady = false;
+bool bReadyProcess = false;
 
-#include "paper.h"
 #include "scissor.h"
 #include "shutter.h"
+#include "paper.h"
 #include "coinAcceptor.h"
 #include "tests.h"
 
@@ -54,7 +57,7 @@ void setup() {
   
   initPhotomaton();
   enableCoinAcceptor();
-  showMainScreen();
+  //showMainScreen();
 }
 
 void loop() {
@@ -84,48 +87,54 @@ void loop() {
   
   // if shot finished and coin acceptor disabled.
   if(!bGoTakeShot && !bCoinEnabled){
-    startLedOff();
+    stepTakeShot = 0;
     enableCoinAcceptor();
   }
   
   refreshCoinSegment();
-  checkMenu();
+  //checkMenu();
 }
 
 void manageStepsTakeShot(){
-  Serial.println(stepTakeShot);
   switch (stepTakeShot) {
-    case 1: // 5 sec wait between shots.
-    case 4:
-    case 7:
-    case 10:
+    case 1: // First coutdown
       showCountdown();
+      while(countDown > 0){
+        refreshCountdown();
+      }
       break;
       
     case 2: // Take photo.
-    case 5:
-    case 8:
-    case 11:
+    case 4:
+    case 6:
       takeShot();
       break;
+    case 8:
+      takeShot();
+      startLedOff();
+      ledMatrix.clearDisplay(0);
+      break;
       
-    case 3: // move paper for next shot.
-    case 6:
-    case 9:
+    case 3: // move paper for next shot + countdown
+    case 5:
+    case 7:
       movePaperNextShot();
       break;
-    case 12:// last paper move, need to wait for spider to be at the correct position and scissor opened.  
-      break;
       
-    case 13: // Open scissor before last paper move
+    case 9:// last paper move, need to wait for spider to be at the correct position and scissor opened.  
       openScissor();
+      waitForSpiderSlot();
+      movePaperOut();
+      bSlotReady = false;
       break;
       
-    case 14: // cut paper and zou!
+    case 10: // cut paper and zou!
       closeScissor();
+      waitForSpiderProcess();
+      bReadyProcess = false;
       break;
       
-    case 15: // move paper back for first shot.
+    case 12: // move paper back for first shot.
       movePaperFirstShot();
       bGoTakeShot = false; // Finish
       break;
@@ -137,55 +146,108 @@ void manageStepsTakeShot(){
  *    INITS
  **************************/
 void initPhotomaton(){
-  
-  // lcd
-  lcd.begin();
-  
+  //lcd.begin();
   // Coin acceptor off
   pinMode(COIN_PIN, INPUT); 
   disableCoinAcceptor();
-  
+
   // flash off
   flashOff();
-  
+
   // Start button off
   startLedOff();
-  
+
   // 4 * 7 segment display for coin
   initCoinSegment();
-  
+
   // Led Matrix
   initLedMatrix();
-  
+
   // Init steppers position.
   initScissor();
+
   // Shutter
   initShutter();
+
   // Paper
   initPaper();
-
+  
   //@TODO: wait for spider.
-  waitForSpider();
+  waitForSpiderInit();
 
+  //lcd.begin();
+  
   bInitPhotomaton = true;
 }
 
-void waitForSpider(){
-  Wire.beginTransmission(11);
-  Wire.write("W");
-  Wire.endTransmission();
+void waitForSpiderInit(){
   
-  Wire.requestFrom(11, 1);
   while(!bReadySpider){
+    Wire.beginTransmission(7);
+    Wire.write('W');
+    Wire.endTransmission();
+    Wire.requestFrom(7, 1);
+    delay(1000);
     checkOrder();
   }
 }
 
+void waitForSpiderSlot(){
+  Wire.beginTransmission(7);
+  Wire.write('G');
+  Wire.endTransmission();
+  Wire.requestFrom(7, 1);
+  while(!bSlotReady){
+    checkOrder();
+  }
+}
+
+void waitForSpiderProcess(){
+  
+  while(!bReadyProcess){
+    Wire.beginTransmission(7);
+    Wire.write('O');
+    Wire.endTransmission();
+    Wire.requestFrom(7, 1);
+    delay(1000);
+    checkOrder();
+  }
+}
+
+
+
 void checkOrder(){
-  if(Wire.available()) {
+  
+  if(Wire.available() > 0) {
     char c = Wire.read();
+    Serial.print(c);
     if(c == 'S') { // S stand for 'Success in init'. Arduino controlling spider is ready.
       bReadySpider = true;
+      
+    } else if(c == 'G') { // spider prepare a slot
+
+      // Wait for the slot to be ready.
+      while(!bSlotReady){
+        delay(1000);
+        if(Wire.available() > 0) {
+          c = Wire.read();
+          if(c == 'K'){
+            bSlotReady = true;
+          }
+        } else {
+          Wire.beginTransmission(7);
+          Wire.write('K');
+          Wire.endTransmission();
+          Wire.requestFrom(7, 1);
+        }
+      }
+      
+      
+    } else if(c == 'C') { // number of free slots
+      c = Wire.read();
+      freeSlot = c - '0';
+    } else if(c == 'O') { 
+      bReadyProcess = true;
     }
   }
 }
@@ -194,7 +256,7 @@ void checkOrder(){
 ******************/
 /*
  * Check and do action on both menu button */
-void checkMenu(){
+/*void checkMenu(){
   if (currentMillis - previousMenuMillis >= MENU_SPEED) {
     previousMenuMillis += MENU_SPEED;
     if(btnMenu1.read()){
@@ -203,12 +265,12 @@ void checkMenu(){
       doMenu();
     }
   }
-}
+}*/
 
 /*
  * Show main screen
  */
-void showMainScreen(){
+/*void showMainScreen(){
   bMainScreen = true;
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -225,10 +287,11 @@ void printMsgToLCD(String message, bool isSelected){
   tmp+= message;
   lcd.print(tmp);
 }
-
+*/
 /*
  * Display a menu.
  */
+ /*
 void showMenu(){
   int ligneLCD = 0;
   int lineInMenu = 0;
@@ -253,10 +316,11 @@ void showMenu(){
     lcd.print("                    ");
   }
 }
-
+*/
 /*
  * What to do on action button
  */
+ /*
 void doMenu(){
   // Get the menu in action
   int line = 0;
@@ -403,10 +467,11 @@ void doMenu(){
     
   }
 }
-
+*/
 /*
  * Action on button next
  */
+ /*
 void nextMenu(){
   if(bMainScreen) { // if currently on main screen, show first menu.
     bMainScreen = false;
@@ -442,6 +507,5 @@ void nextMenu(){
     }
   }
 }
-
-
+*/
 

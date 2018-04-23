@@ -5,6 +5,8 @@ Input<SHUTTER_ENDSTOP_PIN> endstopShutter(true);
 
 // LED Matrix
 LedControl ledMatrix = LedControl(LED_MATRIX_SDI_PIN, LED_MATRIX_SCL_PIN, LED_MATRIX_CS_PIN, 1); 
+unsigned long prevousMillisCountdown = 0;
+byte countDown = 5;
 
 void flashOn() {
   flash.write(HIGH);
@@ -17,14 +19,12 @@ void flashOff() {
 }
 
 void initShutter() {
-  Serial.println("debut init shutter");
   // stepper shutter
   shutter.setMaxSpeed(1000);
   shutter.setAcceleration(400);
   shutter.setCurrentPosition(0);
   int homing = 0;
   boolean bEndStop = !endstopShutter.read();
-  Serial.println(bEndStop);
   while (!bEndStop) { 
     shutter.moveTo(homing); 
     shutter.run();
@@ -36,11 +36,9 @@ void initShutter() {
   shutter.setMaxSpeed(1000);
   shutter.setAcceleration(400);
   bCloseShutter = true;
-  Serial.println("fin init shutter");
 }
 
 void takeShot() {
-  Serial.println("takeShot");
   // TODO calculate duration of the shot.
   shutter.moveTo(201);
   bCloseShutter = false;
@@ -90,10 +88,19 @@ void displayNumber(byte numero)
 
 void showCountdown()
 {
-  for (int i = 0; i < 6; i++)  
-  {
-    delay(1000);
-    displayNumber(i);
+  countDown = 5;
+  displayNumber(countDown);
+  currentMillis = millis();
+  prevousMillisCountdown = currentMillis;
+}
+
+void refreshCountdown()
+{
+  currentMillis = millis();
+  if(currentMillis - prevousMillisCountdown >= 1000){
+    prevousMillisCountdown = currentMillis;
+    countDown--;
+    displayNumber(countDown);
   }
 }
 

@@ -14,11 +14,15 @@
 #define SCISSOR_PIN_STP 25
 #define SCISSOR_PIN_DIR 24
 #define SCISSOR_ENDSTOP_PIN 52
-#define SCISSOR_STEP_OPENED 100 // Number of step to fully open the scissor.
+#define SCISSOR_STEP_OPENED 1000 // Number of step to fully open the scissor.
 
 #define PAPER_PIN_STP 27
 #define PAPER_PIN_DIR 26
-#define NB_STEP_ONE_SHOT 200 // Number of step to move to another shot.
+#define NB_STEP_PAPER_ONE_SHOT 730 // Number of step to move to another shot.
+#define NB_STEP_PAPER_OUT 3230 // Number of step to move out paper.
+#define PAPER_SPEED 500
+#define PAPER_ACCEL 500
+#define DELTA_FIRST_SHOT -80 //Delta in step to do after paper reach opto 1.
 #define PAPER_SWITCH1_PIN 48
 #define PAPER_SWITCH2_PIN 49
 #define PAPER_SWITCH3_PIN 50
@@ -85,41 +89,15 @@ String espace = " ";
 const byte IMAGES[][8] = {
 {
   B00000000,
-  B01111110,
-  B01100000,
-  B01111100,
-  B00000110,
-  B00000110,
   B01100110,
-  B00111100
-},{
+  B01100110,
   B00000000,
-  B00001100,
-  B00011100,
-  B00101100,
-  B01001100,
-  B01111110,
-  B00001100,
-  B00001100
-},{
-  B00000000,
+  B10000001,
+  B01000010,
   B00111100,
-  B01100110,
-  B00000110,
-  B00011100,
-  B00000110,
-  B01100110,
-  B00111100
-},{
-  B00000000,
-  B00111100,
-  B01100110,
-  B00000110,
-  B00001100,
-  B00110000,
-  B01100000,
-  B01111110
-},{
+  B00000000
+},
+{
   B00000000,
   B00011000,
   B00011000,
@@ -131,13 +109,43 @@ const byte IMAGES[][8] = {
 },
 {
   B00000000,
-  B01100110,
-  B01100110,
-  B00000000,
-  B10000001,
-  B01000010,
   B00111100,
-  B00000000
+  B01100110,
+  B00000110,
+  B00001100,
+  B00110000,
+  B01100000,
+  B01111110
+},
+{
+  B00000000,
+  B00111100,
+  B01100110,
+  B00000110,
+  B00011100,
+  B00000110,
+  B01100110,
+  B00111100
+},
+{
+  B00000000,
+  B00001100,
+  B00011100,
+  B00101100,
+  B01001100,
+  B01111110,
+  B00001100,
+  B00001100
+},
+{
+  B00000000,
+  B01111110,
+  B01100000,
+  B01111100,
+  B00000110,
+  B00000110,
+  B01100110,
+  B00111100
 }};
 
 const byte ARROWDOWN[8] = {

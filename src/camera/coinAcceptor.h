@@ -82,8 +82,8 @@ void initCoinSegment(){
 // interrupt main loop each time a pulse from coin acceptor is coming.
 // 1 pulse = 10cts
 void coinInterrupt(){
-  cents += bCoinEnabled ? 10 : 0;
-  Serial.println(cents);
+  //cents += bCoinEnabled ? 10 : 0;
+  cents += bCoinEnabled ? 100 : 0;
 }
 
 void disableCoinAcceptor(){
@@ -94,8 +94,8 @@ void disableCoinAcceptor(){
 }
 
 void enableCoinAcceptor(){
-  Serial.println("enableCoin");
-  attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, RISING);
+  pinMode(COIN_PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, FALLING);
   setCoinDigit(PRICE_CTS);
   enableCoin.write(HIGH);
   bCoinEnabled = true;

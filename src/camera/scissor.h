@@ -11,12 +11,11 @@ void initScissor() {
   int homing = 0;
   
   // stepper scissor
+  scissor.setCurrentPosition(0);
   scissor.setMaxSpeed(1000);
   scissor.setAcceleration(400);
-  scissor.setCurrentPosition(0);
   
   boolean bEndStop = !endstopScissor.read();
-  Serial.println(bEndStop);
   while (!bEndStop) { 
     scissor.moveTo(homing); 
     scissor.run();
@@ -33,12 +32,14 @@ void initScissor() {
 
 void openScissor() {
   if(!bOpenScissor){
-    scissor.moveTo(SCISSOR_STEP_OPENED);
-    bOpenScissor = false;
+    
+    scissor.setMaxSpeed(500);
+    scissor.setAcceleration(500);
+    int delta = SCISSOR_STEP_OPENED;
+    scissor.moveTo(delta);
 
-    while(!bOpenScissor){
+    while(scissor.currentPosition() < delta){
       scissor.run();
-      bOpenScissor = scissor.currentPosition() == SCISSOR_STEP_OPENED;
     }
     
     bCloseScissor = false;
@@ -48,12 +49,12 @@ void openScissor() {
 
 void closeScissor() {
   if(!bCloseScissor){
+    scissor.setMaxSpeed(500);
+    scissor.setAcceleration(500);
     scissor.moveTo(0);
-    bCloseScissor = false;
-
     while(!bCloseScissor){
       scissor.run();
-      if(scissor.currentPosition() > -5) {
+      if(scissor.currentPosition() < 10) {
         bCloseScissor = !endstopScissor.read();
       }
     }
@@ -61,4 +62,5 @@ void closeScissor() {
     bCloseScissor = true;
     bOpenScissor = false;
   }
+  scissor.setCurrentPosition(0);
 }
