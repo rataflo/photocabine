@@ -13,7 +13,7 @@
 #include <LedControl.h>
 #include "TM1637Display.h"
 #include "constants.h"
-
+#include <Adafruit_NeoPixel.h>
 /*
  * GLOBAL VARIABLES
  */
@@ -44,6 +44,7 @@ bool bStartLedOn = false;
 bool bReadySpider = false; // true when spider init complete.
 bool bSlotReady = false;
 bool bReadyProcess = false;
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(18, 8, NEO_GRB + NEO_KHZ800);
 
 #include "scissor.h"
 #include "shutter.h"
@@ -54,6 +55,18 @@ bool bReadyProcess = false;
 void setup() {
   Serial.begin(9600);
   Wire.begin(); // master
+  
+  pixels.begin(); // This initializes the NeoPixel library.
+  for(int i=0;i<18;i++){
+
+    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+    pixels.setPixelColor(i, pixels.Color(100,0,0)); // Moderately bright green color.
+
+    pixels.show(); // This sends the updated pixel color to the hardware.
+
+    //delay(delayval); // Delay for a period of time (in milliseconds).
+
+  }
   
   initPhotomaton();
   enableCoinAcceptor();
@@ -116,21 +129,25 @@ void manageStepsTakeShot(){
       break;
       
     case 3: // move paper for next shot + countdown
+      movePaperNextShot(2);
+      break;
     case 5:
+      movePaperNextShot(3);
+      break;
     case 7:
-      movePaperNextShot();
+      movePaperNextShot(4);
       break;
       
     case 9:// last paper move, need to wait for spider to be at the correct position and scissor opened.  
-      openScissor();
       waitForSpiderSlot();
+      openScissor();
       movePaperOut();
       bSlotReady = false;
       break;
       
     case 10: // cut paper and zou!
       closeScissor();
-      waitForSpiderProcess();
+      //waitForSpiderProcess();
       bReadyProcess = false;
       break;
       
@@ -203,13 +220,11 @@ void waitForSpiderSlot(){
 }
 
 void waitForSpiderProcess(){
-  
+  Wire.beginTransmission(7);
+  Wire.write('O');
+  Wire.endTransmission();
+  Wire.requestFrom(7, 1);
   while(!bReadyProcess){
-    Wire.beginTransmission(7);
-    Wire.write('O');
-    Wire.endTransmission();
-    Wire.requestFrom(7, 1);
-    delay(1000);
     checkOrder();
   }
 }
@@ -225,21 +240,21 @@ void checkOrder(){
       bReadySpider = true;
       
     } else if(c == 'G') { // spider prepare a slot
-
+      
       // Wait for the slot to be ready.
       while(!bSlotReady){
-        delay(1000);
+        Wire.beginTransmission(7);
+        Wire.write('K');
+        Wire.endTransmission();
+        Wire.requestFrom(7, 1);
+        
         if(Wire.available() > 0) {
           c = Wire.read();
           if(c == 'K'){
             bSlotReady = true;
           }
-        } else {
-          Wire.beginTransmission(7);
-          Wire.write('K');
-          Wire.endTransmission();
-          Wire.requestFrom(7, 1);
         }
+        delay(200);
       }
       
       

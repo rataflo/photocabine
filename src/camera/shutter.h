@@ -25,6 +25,20 @@ void initShutter() {
   shutter.setCurrentPosition(0);
   int homing = 0;
   boolean bEndStop = !endstopShutter.read();
+
+  // do 3step backward to be sure shutter it's not close of switch.
+  /*while (!bEndStop && homing > -4) { 
+    shutter.moveTo(homing); 
+    shutter.run();
+    homing--;
+    delay(5);
+    bEndStop = !endstopShutter.read();
+  }
+  shutter.setCurrentPosition(0);
+  shutter.setMaxSpeed(1000);
+  shutter.setAcceleration(400);
+  homing = 0;*/
+  
   while (!bEndStop) { 
     shutter.moveTo(homing); 
     shutter.run();
@@ -33,14 +47,14 @@ void initShutter() {
     bEndStop = !endstopShutter.read();
   }
   shutter.setCurrentPosition(0);
-  shutter.setMaxSpeed(1000);
-  shutter.setAcceleration(400);
   bCloseShutter = true;
 }
 
 void takeShot() {
   // TODO calculate duration of the shot.
-  shutter.moveTo(201);
+  shutter.setMaxSpeed(1000);
+  shutter.setAcceleration(400);
+  shutter.moveTo(200);
   bCloseShutter = false;
   
   while(!bCloseShutter){
@@ -51,9 +65,9 @@ void takeShot() {
     }
 
     // Flash during rotation.
-    if(currentShutterNbStep == 50){
+    if(currentShutterNbStep == 5){
       flashOn();
-    } else if(currentShutterNbStep == 150 ){
+    } else if(currentShutterNbStep == 195 ){
       flashOff();
     }
     

@@ -1,9 +1,9 @@
 // servo arm position
 Servo servoArm;
-
+Servo servoExit;
 
 void setServoArmWaitPos() {
-  servoArm.write(37);  
+  servoArm.write(27);  
 }
 
 void setServoArmOpenPos() {
@@ -19,22 +19,22 @@ void openArm() {
     servoArm.write(i);
     delay(10);
   }
-  delay(1000);
+  
   // retour arriére spider pour compenser le mouvement induit par le servo.
-  spiderRotate.setCurrentPosition(0);
+  /*spiderRotate.setCurrentPosition(0);
   spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
   spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
 
-  boolean bEndStop = endstop1Rotate.read();
+  boolean bEndStop = digitalRead(SPIDER_ROTATE_ENDSTOP1_PIN);
   int homing = 0;
   while (!bEndStop) { 
     spiderRotate.moveTo(homing); 
     spiderRotate.run();
     homing--;
     delay(5);
-    bEndStop = endstop1Rotate.read();
+    bEndStop = digitalRead(SPIDER_ROTATE_ENDSTOP1_PIN);
   }
-  spiderRotate.setCurrentPosition(0);
+  spiderRotate.setCurrentPosition(0);*/
 }
 
 void closeArm() {

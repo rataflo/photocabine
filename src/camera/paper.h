@@ -1,3 +1,4 @@
+
 // Paper stepper
 AccelStepper paper(1, PAPER_PIN_STP, PAPER_PIN_DIR);
 // Opto endstops for paper.
@@ -32,6 +33,8 @@ void movePaperFirstShot() {
   }
 }
 
+
+
 void initPaper() {
   paper.setCurrentPosition(0);
   paper.setMaxSpeed(PAPER_SPEED);
@@ -64,7 +67,7 @@ void initPaper() {
   }
 }
 
-void movePaperNextShot() {
+void movePaperNextShot(byte numShot) {
   showCountdown();
   paper.setCurrentPosition(0);
   paper.setMaxSpeed(PAPER_SPEED);
@@ -76,7 +79,48 @@ void movePaperNextShot() {
     paper.run();
     refreshCountdown();
   }
+
+  boolean bOpto = true;
+  if(numShot == 2){
+    bOpto = opto2.read();
+  } else if(numShot == 3){
+    bOpto = opto3.read();
+  } else if(numShot == 4){
+    bOpto = opto4.read();
+  }
+
+  // paper not at next stop, force it.
+  if(!bOpto){
+    paper.setCurrentPosition(0);
+    paper.setMaxSpeed(PAPER_SPEED);
+    paper.setAcceleration(PAPER_ACCEL);
   
+    int homing = 0;
+    while (!bOpto) { 
+      paper.moveTo(homing); 
+      paper.run();
+      homing++;
+      delay(5);
+      if(numShot == 2){
+        bOpto = opto2.read();
+      } else if(numShot == 3){
+        bOpto = opto3.read();
+      } else if(numShot == 4){
+        bOpto = opto4.read();
+      }
+    }
+    // move forward
+    paper.setCurrentPosition(0);
+    
+    // marche arriére
+    int delta = DELTA_FIRST_SHOT + 15;
+    paper.moveTo(delta); 
+    paper.setMaxSpeed(PAPER_SPEED);
+    paper.setAcceleration(PAPER_ACCEL);
+    while(paper.currentPosition() != delta){
+      paper.run();
+    }
+  }
   while(countDown > 0){
     refreshCountdown();
   }
@@ -84,8 +128,8 @@ void movePaperNextShot() {
 
 void movePaperOut() {
   paper.setCurrentPosition(0);
-  paper.setMaxSpeed(PAPER_SPEED);
-  paper.setAcceleration(PAPER_ACCEL);
+  paper.setMaxSpeed(200);
+  paper.setAcceleration(50);
 
   int delta = NB_STEP_PAPER_OUT;
   paper.moveTo(delta); 

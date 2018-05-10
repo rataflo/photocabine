@@ -12,8 +12,8 @@ void initScissor() {
   
   // stepper scissor
   scissor.setCurrentPosition(0);
-  scissor.setMaxSpeed(1000);
-  scissor.setAcceleration(400);
+  scissor.setMaxSpeed(SCISSOR_SPEED);
+  scissor.setAcceleration(SCISSOR_ACCEL);
   
   boolean bEndStop = !endstopScissor.read();
   while (!bEndStop) { 
@@ -24,8 +24,8 @@ void initScissor() {
     bEndStop = !endstopScissor.read();
   }
   scissor.setCurrentPosition(0);
-  scissor.setMaxSpeed(1000);
-  scissor.setAcceleration(400);
+  scissor.setMaxSpeed(SCISSOR_SPEED);
+  scissor.setAcceleration(SCISSOR_ACCEL);
   bCloseScissor = true;
   bOpenScissor = false;
 }
@@ -33,8 +33,8 @@ void initScissor() {
 void openScissor() {
   if(!bOpenScissor){
     
-    scissor.setMaxSpeed(500);
-    scissor.setAcceleration(500);
+    scissor.setMaxSpeed(SCISSOR_SPEED);
+    scissor.setAcceleration(SCISSOR_ACCEL);
     int delta = SCISSOR_STEP_OPENED;
     scissor.moveTo(delta);
 
@@ -49,8 +49,8 @@ void openScissor() {
 
 void closeScissor() {
   if(!bCloseScissor){
-    scissor.setMaxSpeed(500);
-    scissor.setAcceleration(500);
+    scissor.setMaxSpeed(SCISSOR_SPEED);
+    scissor.setAcceleration(SCISSOR_ACCEL);
     scissor.moveTo(0);
     while(!bCloseScissor){
       scissor.run();
