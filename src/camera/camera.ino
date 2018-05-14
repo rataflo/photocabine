@@ -44,7 +44,7 @@ bool bStartLedOn = false;
 bool bReadySpider = false; // true when spider init complete.
 bool bSlotReady = false;
 bool bReadyProcess = false;
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(18, 8, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(78, 8, NEO_GRB + NEO_KHZ800);
 
 #include "scissor.h"
 #include "shutter.h"
@@ -57,7 +57,7 @@ void setup() {
   Wire.begin(); // master
   
   pixels.begin(); // This initializes the NeoPixel library.
-  for(int i=0;i<18;i++){
+  for(int i=0;i<78;i++){
 
     // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
     pixels.setPixelColor(i, pixels.Color(100,0,0)); // Moderately bright green color.

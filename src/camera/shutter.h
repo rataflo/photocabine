@@ -65,9 +65,9 @@ void takeShot() {
     }
 
     // Flash during rotation.
-    if(currentShutterNbStep == 5){
+    if(currentShutterNbStep == 50){
       flashOn();
-    } else if(currentShutterNbStep == 195 ){
+    } else if(currentShutterNbStep == 150 ){
       flashOff();
     }
     

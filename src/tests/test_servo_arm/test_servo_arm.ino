@@ -1,12 +1,12 @@
 #include <Servo.h>
-#define SERVO_ARM 46
+#define SERVO_ARM 6
 Servo servoArm;
 int pos = 0;
 void setup() {
   // put your setup code here, to run once:
 // servo arm position
   servoArm.attach(SERVO_ARM);
-  servoArm.write(70);  
+  servoArm.write(0);  
 }
 
 void loop() {

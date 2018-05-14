@@ -28,5 +28,5 @@
 #define SPIDER_EXIT_PIN_STP 10
 #define SPIDER_EXIT_PIN_DIR 13
 
-#define TANK_TIME 30000 // Default time in each tank (12 sec / 30°C).
+#define TANK_TIME 18000 // Default time in each tank (12 sec / 30°C).
 

@@ -3,7 +3,7 @@ Servo servoArm;
 Servo servoExit;
 
 void setServoArmWaitPos() {
-  servoArm.write(27);  
+  servoArm.write(65);  
 }
 
 void setServoArmOpenPos() {
@@ -11,7 +11,7 @@ void setServoArmOpenPos() {
 }
 
 void setServoArmClosePos() {
-  servoArm.write(160);  
+  servoArm.write(190);  
 }
 
 void openArm() {
@@ -38,7 +38,7 @@ void openArm() {
 }
 
 void closeArm() {
-  for(int i = 160; i >= 10; i--){
+  for(int i = 190; i >= 20; i--){
     servoArm.write(i);
     delay(10);
   }

@@ -21,7 +21,7 @@
 #define PAPER_PIN_STP 27
 #define PAPER_PIN_DIR 26
 #define NB_STEP_PAPER_ONE_SHOT 730 // Number of step to move to another shot.
-#define NB_STEP_PAPER_OUT 3230 // Number of step to move out paper.
+#define NB_STEP_PAPER_OUT 3330 // Number of step to move out paper. //3230
 #define PAPER_SPEED 500
 #define PAPER_ACCEL 500
 #define DELTA_FIRST_SHOT -80 //Delta in step to do after paper reach opto 1.

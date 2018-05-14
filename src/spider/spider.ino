@@ -3,7 +3,6 @@
  * Fast Read\Write : https://github.com/mmarchetti/DirectIO
  */
 #include <Wire.h>
-#include <DirectIO.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <Servo.h>
@@ -14,9 +13,7 @@
  */
  
 // Spider up/down
-Input<SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM> endstopSpiderBottom(true);
-Input<SPIDER_UPDOWN_PIN_ENDSTOP_UP> endstopSpiderUp(true);
-Output<SPIDER_UPDOWN_PIN_DIR> spiderDir;
+
 
 
 // Spider rotate
@@ -35,7 +32,9 @@ bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
 volatile char lastOrder = '0';
 volatile byte stepSpider = 255; // 255 mean no action (we do not use int because it take much time to load from RAM (volatile) than register).
 volatile bool needAPlace = false;
-volatile bool bSlotReady = false;
+static volatile byte bSlotReady = LOW;
+//static volatile bool bBottom = HIGH;
+bool bArmOpen = false;
 
 // timer
 unsigned long currentMillis = 0;
@@ -45,7 +44,6 @@ unsigned long startWaitStrip = 0;
 #include "tests.h"
 
 void setup() {
-  Serial.begin(9600);
   Wire.begin(7);
   Wire.onReceive(receiveOrder); 
   Wire.onRequest(respondToOrder); 
@@ -64,9 +62,12 @@ void setup() {
   pinMode(SPIDER_ROTATE_ENDSTOP1_PIN, INPUT_PULLUP);
   pinMode(SPIDER_ROTATE_ENDSTOP2_PIN, INPUT_PULLUP);
   pinMode(SWITCH_EXIT, INPUT_PULLUP);
+
+  pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM, INPUT_PULLUP);
+  pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_UP, INPUT_PULLUP);
+  pinMode(SPIDER_UPDOWN_PIN_DIR, OUTPUT);
   
   initSpider();
-  Serial.println("OK");
 }
 
 void loop() {
@@ -108,25 +109,23 @@ void receiveOrder(int lng){
   if(Wire.available() > 0) {
     lastOrder = Wire.read();
   }
-  Serial.print('A');
 }
 
 void respondToOrder(){
-  Serial.print(lastOrder);
   if(lastOrder != '0') {
     if(lastOrder == 'G') { // G stand for 'Give me a place for processing my strip'.
       needAPlace = true;
       Wire.write('G'); 
       lastOrder = '0';
            
-    }if(lastOrder == 'K' && bSlotReady) { // K stand for Kangourou. Or, the slot is ready?
+    }if(lastOrder == 'K' && bSlotReady == HIGH) { // K stand for Kangourou. Or, the slot is ready?
+      //Serial.print('L');
       Wire.write('K'); 
-      bSlotReady = false;
+      bSlotReady = LOW;
       startWaitStrip = millis();
       lastOrder = '0';
            
     } else if(lastOrder == 'O'){ // O stand for 'Oooo yeah i finished to give you the strip, do your job!'
-      Serial.print('C');
       Wire.write('O'); 
       stepSpider = 0; 
       lastOrder = '0';
@@ -144,20 +143,21 @@ void respondToOrder(){
 
 void process(){
   while (stepSpider != 255) {
-      // Pair = 14
+      // Pair = 14 (13 juste aprés rotation)
       if(!bImpair){
         // SI besoin sortie papier
         for(int i = 0; i < 7; i++){
-          if(arms[i] == 14){
+          if(arms[i] == 13){
             exitPaper();
             arms[i] = -1;
+            break;
           } 
         }
 
         // Check si fin du process.
         bool bEndProcess = true;
         for(int i = 0; i < 7; i++){
-          if(arms[i] > -1){
+          if(arms[i] != -1){
             bEndProcess = false;
           } 
         }
@@ -168,45 +168,49 @@ void process(){
         // Si besoin place
         if(needAPlace){
           // descend d'un poil
-          spiderDir.write(LOW);
+          digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
           analogWrite(SPIDER_UPDOWN_PIN_PWM, 255); //max speed.
-          delay(100);
+          delay(500);
           analogWrite(SPIDER_UPDOWN_PIN_PWM, 0); //max speed.
-          
+          delay(1000);
           setServoArmOpenPos();
 
           initSpiderUp();
-          
+          delay(1000);
           openArm();
+          bArmOpen = true;
         }
       } else { // Impair = 1
-        if(needAPlace){
+        if(needAPlace && bArmOpen){
+          bArmOpen = false;
           needAPlace = false;
           bSlotReady = true;
         }
       }
-     
-      downSpider();
-      
-      // Wait for process and agitate.
-      unsigned long startMillis = millis();
-      currentMillis = startMillis;
-      int temps = TANK_TIME;
-      while(currentMillis - startMillis < temps){
-        agitate();
-        currentMillis = millis();
-      }
-      
-      upSpider();
 
-      rotateSpider();
-
-      stepSpider++;
-      
-      // Move each arm 1 step.
-      for(int i = 0; i < 7; i++){
-        if(arms[i] != -1){
-          arms[i]++;
+      if(stepSpider != 255){
+        downSpider();
+        
+        // Wait for process and agitate.
+        unsigned long startMillis = millis();
+        currentMillis = startMillis;
+        int temps = TANK_TIME;
+        while(currentMillis - startMillis < temps){
+          agitate();
+          currentMillis = millis();
+        }
+        
+        upSpider();
+  
+        rotateSpider();
+  
+        stepSpider++;
+        
+        // Move each arm 1 step.
+        for(int i = 0; i < 7; i++){
+          if(arms[i] != -1){
+            arms[i]++;
+          }
         }
       }
   }
@@ -215,21 +219,61 @@ void process(){
 void openNewPlace(){
   
   if(needAPlace && stepSpider == 255 && bSpiderUp){
-    setServoArmOpenPos();
+    //noInterrupts();
     if(!bImpair) {
+      digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
+      analogWrite(SPIDER_UPDOWN_PIN_PWM, 255); //max speed.
+      delay(500);
+      analogWrite(SPIDER_UPDOWN_PIN_PWM, 0); //max speed.
+      delay(1000);
       setServoArmOpenPos();
+
+      spiderRotate.setCurrentPosition(0);
+      spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
+      spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
+      int delta = -20;
+      spiderRotate.moveTo(delta);
+
+      while (spiderRotate.currentPosition() != delta){ // Digital read at the last time.
+        spiderRotate.run();
+      }
+
+      delay(1000);
+      initSpiderUp();
+
+      spiderRotate.setCurrentPosition(0);
+      spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
+      spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
+      delta = 20;
+      spiderRotate.moveTo(delta);
+
+      while (spiderRotate.currentPosition() != delta){ // Digital read at the last time.
+        spiderRotate.run();
+      }
+  
+      
+      delay(1000);
       openArm();
+      //noInterrupts();
       rotateSpider();
+      //interrupts();
+
+      needAPlace = false;
+      bSlotReady = HIGH;
+      setServoArmWaitPos();
+      
     } else {
+      setServoArmOpenPos();
       rotateSpider();
       openArm();
       rotateSpider();
       needAPlace = false;
-      bSlotReady = true;
+      bSlotReady = HIGH;
+      setServoArmWaitPos();
     }
-    needAPlace = false;
-    bSlotReady = true;
+    //interrupts();
   }
+  
 }
 
 /******************************************************************************
@@ -238,9 +282,9 @@ void openNewPlace(){
 
 void downSpider(){
   unsigned long startMoove = millis();
-  boolean bEndStop = !endstopSpiderBottom.read();
+  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   if(!bEndStop){
-    spiderDir.write(LOW);
+    digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
     for(int i = 50; i < 255; i++){
       analogWrite(SPIDER_UPDOWN_PIN_PWM, i); //max speed.
       delay(5);
@@ -252,7 +296,7 @@ void downSpider(){
     if(currentMillis - startMoove > 4000){
       analogWrite(SPIDER_UPDOWN_PIN_PWM, 125);
     }
-    bEndStop = !endstopSpiderBottom.read();
+    bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   bSpiderUp = false;
@@ -261,9 +305,9 @@ void downSpider(){
 void upSpider(){
   unsigned long startMoove = millis();
   
-  boolean bEndStop = !endstopSpiderUp.read();
+  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   if(!bEndStop){
-    spiderDir.write(HIGH);
+    digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
     for(int i = 50; i < 255; i++){
       analogWrite(SPIDER_UPDOWN_PIN_PWM, i); //max speed.
       delay(5);
@@ -274,7 +318,7 @@ void upSpider(){
     if(currentMillis - startMoove > 4000){
       analogWrite(SPIDER_UPDOWN_PIN_PWM, 125);
     }
-    bEndStop = !endstopSpiderUp.read();
+    bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   bSpiderUp = true;
@@ -298,35 +342,53 @@ void rotateSpider(){
   spiderRotate.stop();
   spiderRotate.setCurrentPosition(0);
   spiderRotate.run();
-  
   bImpair = !bImpair;
+  
 }
 
 void agitate(){
-  spiderDir.write(HIGH);
-  analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
+  digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, 250); //mid speed.
   unsigned long startMoove = millis();
   currentMillis = startMoove;
-  while(currentMillis - startMoove < 400){
+  while(currentMillis - startMoove < 800){
     // do nothing
     currentMillis = millis();
   }
 
-  spiderDir.write(LOW);
+  digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
   //analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
-  boolean bEndStop = !endstopSpiderBottom.read();
+  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   while(!bEndStop){
-    bEndStop = !endstopSpiderBottom.read();
+    bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
 }
 
 void exitPaper(){
+  //On descend un chouilla.
+  downSpider();
+    
   servoExit.write(80);
   exitCatchPosition();
+  //on remonte
+  upSpider();
   servoExit.write(0);
+  delay(1000);
+  // on redescend.
+  downSpider();
+  
   initExit();
   servoExit.write(80);
+  
+  setServoArmClosePos();
+  //on remonte
+  initSpiderUp();
+  delay(1000);
+  closeArm();
+  delay(1000);
+  setServoArmWaitPos();
+  // fermeture du bras.
   freeSlot++;
 }
 
@@ -336,13 +398,11 @@ void exitPaper(){
 void initSpider(){
 
   // Init Servo
-  setServoArmOpenPos();
+  setServoArmWaitPos();
 
-  initExit();
+  //initExit();
   
-  // Spider
-  /*initSpiderUp();
-  initSpiderBottom();*/
+  //spiderBottom();*/
   initSpiderUp();
 
   initRotate();
@@ -355,13 +415,13 @@ void initSpider(){
 }
 
 void initSpiderBottom() {
-  boolean bEndStop = !endstopSpiderBottom.read();
+  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   if(!bEndStop){
-    spiderDir.write(LOW);
+    digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
     analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //max speed.
   }
   while (!bEndStop) { 
-    bEndStop = !endstopSpiderBottom.read();
+    bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   bSpiderUp = false;
@@ -369,13 +429,13 @@ void initSpiderBottom() {
 
 
 void initSpiderUp() {
-  boolean bEndStop = !endstopSpiderUp.read();
+  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   if(!bEndStop){
-    spiderDir.write(HIGH);
+    digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
     analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //max speed.
   }
   while (!bEndStop) { 
-    bEndStop = !endstopSpiderUp.read();
+    bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   bSpiderUp = true;
@@ -395,13 +455,13 @@ void initRotate() {
     delay(5);
     bEndStop = digitalRead(SPIDER_ROTATE_ENDSTOP1_PIN);
   }
-  bImpair = true;
+  bImpair = false;
   spiderRotate.setCurrentPosition(0);
 }
 
 void initExit() {
   stepperExit.setCurrentPosition(0);
-  stepperExit.setMaxSpeed(200);
+  stepperExit.setMaxSpeed(100);
   stepperExit.setAcceleration(100);
 
   boolean bEndStop = !digitalRead(SWITCH_EXIT);
@@ -418,14 +478,13 @@ void initExit() {
 
 void exitCatchPosition() {
   stepperExit.setCurrentPosition(0);
-  stepperExit.setMaxSpeed(200);
+  stepperExit.setMaxSpeed(100);
   stepperExit.setAcceleration(100);
 
-  int delta = 200;
+  int delta = 428;
   stepperExit.moveTo(delta); 
 
   while(stepperExit.currentPosition()< delta){
     stepperExit.run();
   }
-  
 }
