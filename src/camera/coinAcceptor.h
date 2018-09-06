@@ -18,7 +18,8 @@ TM1637Display coinSegment(COIN_SEGMENT_CLK_PIN, COIN_SEGMENT_DIO_PIN);
 
 // Coin acceptor
 Output<ENABLE_COIN_PIN> enableCoin;
-volatile int cents = 0;
+volatile byte cents = 0;
+unsigned long oldInterruptMillis;// no need to be volatile, exclusively used by coin interrupt.
 bool bCoinEnabled = false;
 
 // btn Start + LED
@@ -80,10 +81,15 @@ void initCoinSegment(){
  */
  
 // interrupt main loop each time a pulse from coin acceptor is coming.
-// 1 pulse = 10cts
+// 1 pulse = 10cts. First pulse not counted.
 void coinInterrupt(){
-  //cents += bCoinEnabled ? 10 : 0;
-  cents += bCoinEnabled ? 100 : 0;
+  currentMillis = millis();
+  // Check the duration from previous pulse. Avoi pulse from static electricity.
+  unsigned long difference = currentMillis - oldInterruptMillis;
+  oldInterruptMillis = currentMillis;
+  if(difference < 135 && difference >125){
+    cents += bCoinEnabled ? 10 : 0;
+  }
 }
 
 void disableCoinAcceptor(){
