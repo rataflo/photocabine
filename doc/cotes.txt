@@ -1,0 +1,12 @@
+epaisseur papier: 0,25mm
+
+objectif:
+bague diamétre: 38,80mm
+epaisseur bague: 6mm
+
+recul min 3cm
+max 6cm
+
+Hauteur des yeux: 130cm
+
+rouleau papier: diamétre intérieur tube papier 74mm, diamétre rouleu 25cm.

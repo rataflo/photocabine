@@ -5,85 +5,39 @@
  * LCD Matrix 8*8 : http://wayoda.github.io/LedControl/
  */
 #include <DirectIO.h>
-#include <Wire.h>
-//#include <LiquidCrystal_I2C.h>
-#include <AccelStepper.h>
-#include <MultiStepper.h>
-#include <Servo.h>
-#include <LedControl.h>
-#include "TM1637Display.h"
-#include "constants.h"
 #include <Adafruit_NeoPixel.h>
-/*
- * GLOBAL VARIABLES
- */
-byte states[7] = {0, 0, 0, 0, 0, 0, 0}; // Step of differents photo.
-byte arms[7] = {0, 0, 0, 0, 0, 0, 0}; // State of arms (0 = no photo, > 0 = number of the photo related to states[])
-
-unsigned long currentMillis = 0;
-
-// LCD
-//LiquidCrystal_I2C lcd(0x27, 20, 4);
-Input<MENU_BTN1_PIN> btnMenu1;
-Input<MENU_BTN2_PIN> btnMenu2;
-bool bMainScreen = true;
-byte currentMenu = 0;
-byte currentLineInMenu = 0;
-int freeSlot = 7;
-unsigned long previousMenuMillis = 0;
-
-// Flash
-Output<FLASH_PIN> flash;
-
-// Work variables
-bool bGoTakeShot = false; 
-byte stepTakeShot = 0;
-bool bInitPhotomaton = false;
-bool bFlashOn = false;
-bool bStartLedOn = false;
-bool bReadySpider = false; // true when spider init complete.
-bool bSlotReady = false;
-bool bReadyProcess = false;
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(78, 8, NEO_GRB + NEO_KHZ800);
-
+#include "constants.h"
+#include "coinAcceptor.h"
 #include "scissor.h"
 #include "shutter.h"
 #include "paper.h"
-#include "coinAcceptor.h"
+#include "remote.h"
 #include "tests.h"
+
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(78, 8, NEO_GRB + NEO_KHZ800);
+
+// Work variables
+byte stepTakeShot = 0;
+int freeSlot = 7;
+bool bGoTakeShot = false; 
 
 void setup() {
   Serial.begin(9600);
-  Wire.begin(); // master
+  Serial1.begin(9600);
   
-  pixels.begin(); // This initializes the NeoPixel library.
+  pixels.begin(); 
   for(int i=0;i<78;i++){
-    pixels.setPixelColor(i, pixels.Color(100,0,0)); // Moderately bright green color.
-    pixels.show(); // This sends the updated pixel color to the hardware.
+    pixels.setPixelColor(i, pixels.Color(100,0,0)); 
+    pixels.show();
   }
   
   initPhotomaton();
-  enableCoinAcceptor();
-  //showMainScreen();
 }
 
 void loop() {
-  currentMillis = millis();
 
-  // if price is OK, let's go.
-  if(cents >= PRICE_CTS) {
-    // disable coin acceptor for the duration of the shots.
-    setCoinDigit(0);
-    disableCoinAcceptor();
-    
-    // wait for start button.
-    showArrowDown();
-    startLedOn();
-    bool bButton = !startBtn.read();
-    while(!bButton){
-      bButton = !startBtn.read();
-    }
-    //Go!
+  // If coin acceptor OK and clic start button.
+  if(manageCoinsAndStart()) {
     bGoTakeShot = true;
     stepTakeShot = 1;
   }
@@ -93,20 +47,19 @@ void loop() {
   }
   
   // if shot finished and coin acceptor disabled.
-  if(!bGoTakeShot && !bCoinEnabled){
+  if(!bGoTakeShot && !isCoinEnabled()){
     stepTakeShot = 0;
     enableCoinAcceptor();
   }
   
-  refreshCoinSegment();
-  //checkMenu();
+  checkMenu();
 }
 
 void manageStepsTakeShot(){
   switch (stepTakeShot) {
-    case 1: // First coutdown
+    case 1: // First countdown
       showCountdown();
-      while(countDown > 0){
+      while(getCountDown() > 0){
         refreshCountdown();
       }
       break;
@@ -119,7 +72,6 @@ void manageStepsTakeShot(){
     case 8:
       takeShot();
       startLedOff();
-      ledMatrix.clearDisplay(0);
       break;
       
     case 3: // move paper for next shot + countdown
@@ -133,16 +85,14 @@ void manageStepsTakeShot(){
       break;
       
     case 9:// last paper move, need to wait for spider to be at the correct position and scissor opened.  
-      waitForSpiderSlot();
+      sendOrderAndWait(ORDER_NEW_SLOT);
       openScissor();
       movePaperOut();
-      bSlotReady = false;
       break;
       
     case 10: // cut paper and zou!
       closeScissor();
-      //waitForSpiderProcess();
-      bReadyProcess = false;
+      sendOrderAndWait(ORDER_PAPER_READY);
       break;
       
     case 12: // move paper back for first shot.
@@ -157,10 +107,11 @@ void manageStepsTakeShot(){
  *    INITS
  **************************/
 void initPhotomaton(){
-  //lcd.begin();
-  // Coin acceptor off
-  pinMode(COIN_PIN, INPUT); 
+  
+  // Coin acceptor off 
   disableCoinAcceptor();
+
+  initRemote();
 
   // flash off
   flashOff();
@@ -183,338 +134,50 @@ void initPhotomaton(){
   // Paper
   initPaper();
   
-  //@TODO: wait for spider.
-  waitForSpiderInit();
+  //Cait for spider.
+  sendOrderAndWait(ORDER_SPIDER_READY);
 
-  //lcd.begin();
+  enableCoinAcceptor();
+  showMainScreen();
+}
+
+boolean sendOrderAndWait(char order){
+
+  char response;
+  boolean bOK = false;
   
-  bInitPhotomaton = true;
-}
-
-void waitForSpiderInit(){
+  unsigned long lastMillis = 0;
+  unsigned long currentMillis = 0;
   
-  while(!bReadySpider){
-    Wire.beginTransmission(7);
-    Wire.write('W');
-    Wire.endTransmission();
-    Wire.requestFrom(7, 1);
-    delay(1000);
-    checkOrder();
-  }
-}
-
-void waitForSpiderSlot(){
-  Wire.beginTransmission(7);
-  Wire.write('G');
-  Wire.endTransmission();
-  Wire.requestFrom(7, 1);
-  while(!bSlotReady){
-    checkOrder();
-  }
-}
-
-void waitForSpiderProcess(){
-  Wire.beginTransmission(7);
-  Wire.write('O');
-  Wire.endTransmission();
-  Wire.requestFrom(7, 1);
-  while(!bReadyProcess){
-    checkOrder();
-  }
-}
-
-
-
-void checkOrder(){
-  
-  if(Wire.available() > 0) {
-    char c = Wire.read();
-    Serial.print(c);
-    if(c == 'S') { // S stand for 'Success in init'. Arduino controlling spider is ready.
-      bReadySpider = true;
-      
-    } else if(c == 'G') { // spider prepare a slot
-      
-      // Wait for the slot to be ready.
-      while(!bSlotReady){
-        Wire.beginTransmission(7);
-        Wire.write('K');
-        Wire.endTransmission();
-        Wire.requestFrom(7, 1);
-        
-        if(Wire.available() > 0) {
-          c = Wire.read();
-          if(c == 'K'){
-            bSlotReady = true;
-          }
-        }
-        delay(200);
-      }
-      
-      
-    } else if(c == 'C') { // number of free slots
-      c = Wire.read();
-      freeSlot = c - '0';
-    } else if(c == 'O') { 
-      bReadyProcess = true;
+  while(!bOK){
+    currentMillis = millis();
+    // if no response for 1 second we send the order again.
+    if(currentMillis - lastMillis > 1000){
+      Serial1.print(order);
+      Serial1.flush();
+      lastMillis = currentMillis;
     }
-  }
-}
-/*****************
-* MENU - GO PRO STYLE
-******************/
-/*
- * Check and do action on both menu button */
-/*void checkMenu(){
-  if (currentMillis - previousMenuMillis >= MENU_SPEED) {
-    previousMenuMillis += MENU_SPEED;
-    if(btnMenu1.read()){
-      nextMenu();
-    } else if(!bMainScreen && btnMenu2.read()){
-      doMenu();
-    }
-  }
-}*/
-
-/*
- * Show main screen
- */
-/*void showMainScreen(){
-  bMainScreen = true;
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("-- MAIN SCREEN --");
-}
-
-void printMsgToLCD(String message, bool isSelected){
-  String tmp;
-  if(isSelected){
-    tmp = sel;
-  } else {
-    tmp = espace;
-  }
-  tmp+= message;
-  lcd.print(tmp);
-}
-*/
-/*
- * Display a menu.
- */
- /*
-void showMenu(){
-  int ligneLCD = 0;
-  int lineInMenu = 0;
   
-  for(int i = 0; i < TAILLE_MENU; i++){
-    menuItem menu = MENUS[i];
-    if(menu.parentMenu == currentMenu){
-      if(lineInMenu >= currentLineInMenu) {
-        lcd.setCursor(0, ligneLCD);
-        printMsgToLCD(menu.label, lineInMenu == currentLineInMenu);
-        ligneLCD++;
-        if(ligneLCD == 4){
+    if (Serial1.available() > 0) {// if new response coming.
+      response = Serial1.read();
+    
+      switch(order){
+        case ORDER_NEW_SLOT:
+          // Ready to send paper.
+          bOK = response == RESPONSE_OK;
           break;
-        }
-      }
-      lineInMenu++;
-    }
-  }
-  
-  for(int i = ligneLCD; i < 4; i++){
-    lcd.setCursor(0, i);
-    lcd.print("                    ");
-  }
-}
-*/
-/*
- * What to do on action button
- */
- /*
-void doMenu(){
-  // Get the menu in action
-  int line = 0;
-  menuItem menu;
-  for(int i = 0; i < TAILLE_MENU; i++){
-    menu = MENUS[i];
-    if(menu.parentMenu == currentMenu){
-      if(line == currentLineInMenu){
+    
+        case ORDER_NB_FREE_SLOT: // Get number of free slot.
+          freeSlot = response - '0';
+          bOK = true;
+          break;
+
+        case ORDER_SPIDER_READY: // Spider is ready.
+          bOK = response == RESPONSE_OK;
           break;
       }
-      line++;
     }
   }
-
-  // Do action for menu.
-  switch (menu.id) {
-    case 1: // Return
-      showMainScreen();
-      break;
-    case 2: // Pause
-      break;
-    case 3: // Take shot
-    case 4: // Setup
-    case 5: // Tests
-      currentMenu = menu.id;
-      currentLineInMenu = 0;
-      showMenu();
-      break;
-    case 6: // Return 0
-      currentMenu = 0;
-      currentLineInMenu = 0;
-      showMenu();
-      break;
-    case 7: // Menu test steppers
-      currentMenu = menu.id;
-      currentLineInMenu = 0;
-      showMenu();
-      break;
-    case 8: // Menu test microswitchs
-      currentMenu = menu.id;
-      currentLineInMenu = 0;
-      showMenu();
-      break;
-    case 9: // Menu test LED
-      currentMenu = menu.id;
-      currentLineInMenu = 0;
-      showMenu();
-      break;
-    case 10: // Test relay
-      break;
-    case 11: // Return menu tests
-      currentMenu = 5;
-      currentLineInMenu = 0;
-      showMenu();
-      break;
-    case 12: // Test shutter
-     takeShot();
-      break;
-    case 13: // Test 
-      // close scissor.
-      closeScissor(); 
-      // Open scissor
-      openScissor();
-      // close again
-      closeScissor(); // close scissor.
-      break;
-     case 18: // Return menu tests
-     case 23: // Return menu tests
-      currentMenu = 5;
-      currentLineInMenu = 0;
-      showMenu();
-      break;
-      
-     case 19: // Test switch shutter.
-      delay(200);
-      while(!btnMenu2.read()){
-       testSwitchShutter();
-       delay(200);
-      }
-      lcd.setCursor(0, currentLineInMenu % 4);
-      printMsgToLCD(menu.label, true);
-      delay(200);
-      break;
-      
-     case 20: // Test switch scissor.
-      delay(200);
-      while(!btnMenu2.read()){
-       testSwitchScissor();
-       delay(200);
-      }
-      lcd.setCursor(0, currentLineInMenu % 4);
-      printMsgToLCD(menu.label, true);
-      delay(200);
-      break;
-
-    case 21: // Test switch up & down.
-      delay(200);
-      while(!btnMenu2.read()){
-       testSwitchUpDown();
-       delay(200);
-      }
-      lcd.setCursor(0, currentLineInMenu % 4);
-      printMsgToLCD(menu.label, true);
-      delay(200);
-      break;
-    
-    case 22: // Start button
-      delay(200);
-      while(!btnMenu2.read()){
-       testStartButton();
-       delay(200);
-      }
-      lcd.setCursor(0, currentLineInMenu % 4);
-      printMsgToLCD(menu.label, true);
-      delay(200);
-      break;
-      
-    case 24: // Test flash
-      if(!bFlashOn){
-        flashOn();
-        lcd.setCursor(0, currentLineInMenu % 4);
-        lcd.print(">Flash off          ");
-      }else{
-        flashOff();
-        lcd.setCursor(0, currentLineInMenu % 4);
-        printMsgToLCD(menu.label, true);
-      }
-      break;
-      
-    case 25: // Test led start button
-      if(!bStartLedOn){
-        startLedOn();
-        lcd.setCursor(0, currentLineInMenu % 4);
-        lcd.print(">Start LED off      ");
-      }else{
-        startLedOff();
-        lcd.setCursor(0, currentLineInMenu % 4);
-        printMsgToLCD(menu.label, true);
-      }
-      break;
-      
-    
-      
-    
-  }
+  return bOK;
 }
-*/
-/*
- * Action on button next
- */
- /*
-void nextMenu(){
-  if(bMainScreen) { // if currently on main screen, show first menu.
-    bMainScreen = false;
-    currentMenu = 0;
-    currentLineInMenu = 0;
-    showMenu();
-    
-  } else {
-    // Get number of items in menu.
-    int nbItemMenu = 0;
-    for(int i = 0; i < TAILLE_MENU; i++){
-      menuItem menu = MENUS[i];
-      if(menu.parentMenu == currentMenu){
-        nbItemMenu++;
-      }
-    }
-
-    // Case end of menu, return to first line.
-    if(currentLineInMenu + 1  >= nbItemMenu){
-      currentLineInMenu =  0;
-      showMenu();
-      
-    } else if(currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11){ // Case show next page in menu
-      currentLineInMenu++;
-      showMenu();
-      
-    } else { // Move one step in menu
-      lcd.setCursor(0, currentLineInMenu % 4);
-      lcd.print(espace);
-      currentLineInMenu++;
-      lcd.setCursor(0, currentLineInMenu % 4);
-      lcd.print(sel);
-    }
-  }
-}
-*/
 

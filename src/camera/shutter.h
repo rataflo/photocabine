@@ -1,127 +1,96 @@
-// Shutter
-AccelStepper shutter(1, SHUTTER_PIN_STP, SHUTTER_PIN_DIR);
-bool bCloseShutter = false; // Shutter is closed?
-Input<SHUTTER_ENDSTOP_PIN> endstopShutter(true);
 
-// LED Matrix
-LedControl ledMatrix = LedControl(LED_MATRIX_SDI_PIN, LED_MATRIX_SCL_PIN, LED_MATRIX_CS_PIN, 1); 
-unsigned long prevousMillisCountdown = 0;
-byte countDown = 5;
+#ifndef shutter_h
+#define shutter_h
 
-void flashOn() {
-  flash.write(HIGH);
-  bFlashOn = true;
-}
+#include <DirectIO.h>
+#include <AccelStepper.h>
+#include <MultiStepper.h>
+#include <LedControl.h>
+#include "constants.h"
 
-void flashOff() {
-  flash.write(LOW);
-  bFlashOn = false;
-}
-
-void initShutter() {
-  // stepper shutter
-  shutter.setMaxSpeed(1000);
-  shutter.setAcceleration(400);
-  shutter.setCurrentPosition(0);
-  int homing = 0;
-  boolean bEndStop = !endstopShutter.read();
-
-  // do 3step backward to be sure shutter it's not close of switch.
-  /*while (!bEndStop && homing > -4) { 
-    shutter.moveTo(homing); 
-    shutter.run();
-    homing--;
-    delay(5);
-    bEndStop = !endstopShutter.read();
-  }
-  shutter.setCurrentPosition(0);
-  shutter.setMaxSpeed(1000);
-  shutter.setAcceleration(400);
-  homing = 0;*/
-  
-  while (!bEndStop) { 
-    shutter.moveTo(homing); 
-    shutter.run();
-    homing++;
-    delay(5);
-    bEndStop = !endstopShutter.read();
-  }
-  shutter.setCurrentPosition(0);
-  bCloseShutter = true;
-}
-
-void takeShot() {
-  // TODO calculate duration of the shot.
-  shutter.setMaxSpeed(1000);
-  shutter.setAcceleration(400);
-  shutter.moveTo(200);
-  bCloseShutter = false;
-  
-  while(!bCloseShutter){
-    boolean bEndStop = false;
-    int currentShutterNbStep = shutter.currentPosition();
-    if(currentShutterNbStep > 195){ // Digital read at the last time.
-      bEndStop = !endstopShutter.read();
-    }
-
-    // Flash during rotation.
-    if(currentShutterNbStep == 50){
-      flashOn();
-    } else if(currentShutterNbStep == 150 ){
-      flashOff();
-    }
-    
-    if(bEndStop){
-      shutter.stop();
-      shutter.run();
-      shutter.setCurrentPosition(0);
-      bCloseShutter = true;
-      
-    } else {
-      shutter.run();
-    }
-  }
-}
-
-/********************************
- *  LED MATRIX FOR COUNTDOWN
- ********************************/
-void initLedMatrix(){
-  ledMatrix.shutdown(0,false);  // Wake up displays
-  ledMatrix.setIntensity(0,1);  // Set intensity levels at the minimum
-  ledMatrix.clearDisplay(0);  // Clear Displays
-}
-
-void displayNumber(byte numero)
+// For LED Matrix (5, 4 ,3, 2, 1, smiley)
+const byte IMAGES[][8] = {
 {
-  for (int i = 0; i < 8; i++)  
-  {
-    ledMatrix.setRow(0,i,IMAGES[numero][i]);
-  }
-}
+  B00000000,
+  B01100100,
+  B01100010,
+  B00000010,
+  B00000010,
+  B01100010,
+  B01100100,
+  B00000000
+},{
+  B00000000,
+  B00000001,
+  B00000001,
+  B01111111,
+  B01111111,
+  B00010001,
+  B00000001,
+  B00000000
+},{
+  B00000000,
+  B00110001,
+  B01111001,
+  B01001001,
+  B01000101,
+  B01100111,
+  B00100011,
+  B00000000
+},{
+  B00000000,
+  B00110110,
+  B01111111,
+  B01001001,
+  B01001001,
+  B01100011,
+  B00100010,
+  B00000000
+},{
+  B00000000,
+  B00000100,
+  B01111111,
+  B01111111,
+  B00100100,
+  B00010100,
+  B00001100,
+  B00000000
+},{
+  B00000000,
+  B01001110,
+  B01011111,
+  B01010001,
+  B01010001,
+  B01110011,
+  B01110010,
+  B00000000
+}};
 
-void showCountdown()
-{
-  countDown = 5;
-  displayNumber(countDown);
-  currentMillis = millis();
-  prevousMillisCountdown = currentMillis;
-}
+const byte ARROWDOWN[8] = {
+  B00001000,
+  B00001100,
+  B11111110,
+  B11111111,
+  B11111110,
+  B00001100,
+  B00001000,
+  B00000000
+};
 
-void refreshCountdown()
-{
-  currentMillis = millis();
-  if(currentMillis - prevousMillisCountdown >= 1000){
-    prevousMillisCountdown = currentMillis;
-    countDown--;
-    displayNumber(countDown);
-  }
-}
+const int IMAGES_LEN = sizeof(IMAGES)/8;
 
-void showArrowDown()
-{
-  for (int i = 0; i < 8; i++)  
-  {
-    ledMatrix.setRow(0,i,ARROWDOWN[i]);
-  }
-}
+
+void flashOn();
+void flashOff();
+void initShutter();
+void takeShot();
+void initLedMatrix();
+void displayNumber(byte numero);
+void showCountdown();
+void refreshCountdown();
+void showArrowDown();
+void clearLedMatrix();
+byte getCountDown();
+boolean isFlashOn();
+
+#endif

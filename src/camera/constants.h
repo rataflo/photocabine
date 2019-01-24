@@ -1,11 +1,18 @@
+#ifndef constants_h
+#define constants_h
+
+#include "Arduino.h"
+
 // X: 22 / 23 
 // Y: 24 / 25
 // Z: 30 / 31
 // Ext: 26 / 27
 
+
 #define SHUTTER_PIN_STP 23
 #define SHUTTER_PIN_DIR 22
 #define SHUTTER_ENDSTOP_PIN 53
+#define SHUTTER_PIN_ENABLE 31
 
 #define LED_MATRIX_SDI_PIN 12 // SDI = DIN
 #define LED_MATRIX_CS_PIN 11 // CS
@@ -17,6 +24,7 @@
 #define SCISSOR_SPEED 200
 #define SCISSOR_ACCEL 200
 #define SCISSOR_STEP_OPENED 350 // Number of step to fully open the scissor.
+#define SCISSOR_PIN_ENABLE 33
 
 #define PAPER_PIN_STP 27
 #define PAPER_PIN_DIR 26
@@ -29,6 +37,7 @@
 #define PAPER_SWITCH2_PIN 49
 #define PAPER_SWITCH3_PIN 50
 #define PAPER_SWITCH4_PIN 51
+#define PAPER_PIN_ENABLE 35
 
 #define FLASH_PIN 46
 
@@ -47,114 +56,12 @@
 
 #define WAIT_BETWEEN_SHOT 5000 // Wait between shot in ms.
 
-// Define menu structure.
-typedef struct
-{
-    byte id; 
-    String label; 
-    byte parentMenu;
-}menuItem;
+// ORDERS LIST
+#define NO_ORDER '0'
+#define RESPONSE_OK 'O'
+#define ORDER_NEW_SLOT 'A'  // When camera need to process paper.
+#define ORDER_PAPER_READY 'B' // When paper is in a slot ready to be processed.
+#define ORDER_NB_FREE_SLOT 'C' // Get number of free slot.
+#define ORDER_SPIDER_READY 'D' // Ask if spider complete her init and everything is ok.
 
-#define TAILLE_MENU 25
-const menuItem MENUS[TAILLE_MENU] = {
-  {1, "...                ", 0},
-  {2, "Pause              ", 0},
-  {3, "Take shot          ", 0},
-  {4, "Setup              ", 0},
-  {5, "Tests              ", 0},
-  {6, "...                ", 5},
-  {7, "Steppers           ", 5},
-  {8, "Microswitchs       ", 5},
-  {9, "LED                ", 5},
-  {10,"Relay              ", 5},
-  {11,"...                ", 7},
-  {12,"Shutter            ", 7},
-  {13,"Scissor            ", 7},
-  {14,"Paper feeder       ", 7},
-  {15,"Spider up/down     ", 7},
-  {16,"Spider rotate      ", 7},
-  {17,"Paper exit         ", 7},
-  {18,"...                ", 8},
-  {19,"Switch shutter     ", 8},
-  {20,"Switch scissor     ", 8},
-  {21,"Switch up&down     ", 8},
-  {22,"Start              ", 8},
-  {23,"...                ", 9},
-  {24,"Flash on           ", 9},
-  {25,"Start LED on       ", 9},
-};
-
-String sel = ">";
-String espace = " ";
-
-// For LED Matrix (5, 4 ,3, 2, 1, smiley)
-const byte IMAGES[][8] = {
-{
-  B00000000,
-  B01100100,
-  B01100010,
-  B00000010,
-  B00000010,
-  B01100010,
-  B01100100,
-  B00000000
-},{
-  B00000000,
-  B00000001,
-  B00000001,
-  B01111111,
-  B01111111,
-  B00010001,
-  B00000001,
-  B00000000
-},{
-  B00000000,
-  B00110001,
-  B01111001,
-  B01001001,
-  B01000101,
-  B01100111,
-  B00100011,
-  B00000000
-},{
-  B00000000,
-  B00110110,
-  B01111111,
-  B01001001,
-  B01001001,
-  B01100011,
-  B00100010,
-  B00000000
-},{
-  B00000000,
-  B00000100,
-  B01111111,
-  B01111111,
-  B00100100,
-  B00010100,
-  B00001100,
-  B00000000
-},{
-  B00000000,
-  B01001110,
-  B01011111,
-  B01010001,
-  B01010001,
-  B01110011,
-  B01110010,
-  B00000000
-}};
-
-const byte ARROWDOWN[8] = {
-  B00001000,
-  B00001100,
-  B11111110,
-  B11111111,
-  B11111110,
-  B00001100,
-  B00001000,
-  B00000000
-};
-
-const int IMAGES_LEN = sizeof(IMAGES)/8;
-
+#endif
