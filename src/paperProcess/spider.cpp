@@ -152,6 +152,7 @@ void setServoArmWaitPos() {
 }
 
 void openArm() {
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch on rotation stepper to avoir backslash
   downABitSpider();
   servoArm.write(SERVO_ARM_OPEN_POS_BEGIN); 
   delay(500);
@@ -160,6 +161,7 @@ void openArm() {
     delay(10);
   }
   upSpider()
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 }
 
 void closeArm() {

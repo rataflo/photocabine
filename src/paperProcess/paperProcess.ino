@@ -49,6 +49,7 @@ void checkOrder(){
           if(slots[13] == SLOT_CLOSED){ // arm not opened.
             openArm();
             slots[13] = SLOT_OPEN;
+            bWait = false;
           }
         } 
         break;
@@ -123,6 +124,15 @@ void process(){
       if(order != ORDER_NEW_SLOT){
         closeArm();
         slots[13] == SLOT_CLOSED;
+      }
+    }
+
+    // If nothing to do we stop.
+    bWait = true;
+    for(byte i = 0; i < 13; i++){
+      if(slots[i] == SLOT_PAPER){
+        bWait = false;
+        break;
       }
     }
   }
