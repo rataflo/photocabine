@@ -1,15 +1,12 @@
 #ifndef tests_h
 #define tests_h
 
-#include <DirectIO.h>
-#include <LiquidCrystal_I2C.h>
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
 #include "constants.h"
 #include "orders.h"
 
-void testMode();
-void testSwitchScissor(LiquidCrystal_I2C lcd, byte currentLineInMenu);
-void testSwitchShutter(LiquidCrystal_I2C lcd, byte currentLineInMenu);
-void testSwitchUpDown(LiquidCrystal_I2C lcd, byte currentLineInMenu);
-void testStartButton(LiquidCrystal_I2C lcd, byte currentLineInMenu);
+void testMode(RF24 radio, bool bForceTest);
 
 #endif

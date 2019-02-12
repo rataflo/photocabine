@@ -28,30 +28,26 @@ bool bCoinEnabled = false;
 bool bStartLedOn = false;
 unsigned long oldInterruptMillis;// no need to be volatile, exclusively used by coin interrupt.
 
-boolean manageCoinsAndStart(byte stepTakeShot){
+boolean manageCoinsAndStart(storage parametres){
   boolean bStart = false;
-
-  if(stepTakeShot == 0){
-    
-    refreshCoinSegment();
-    
-    // if price is OK, let's go.
-    if((parametres.mode == MODE_PAYING && cents >= PRICE_CTS) || (parametres.mode == MODE_FREE_PRICE && cents >= FREE_PRICE_CTS) || parametres.mode == MODE_FREE) {
-      if(parametres.mode != MODE_FREE_PRICE){
-        disableCoinAcceptor();
-      }
-      
-      // wait indefinitely for start button.
-      showArrowDown();
-      startLedOn();
-      while(!startBtn.read()){
-        refreshCoinSegment(); // <= refresh needed in cas of free price. People can add all the money they want.
-      }
+  refreshCoinSegment(parametres);
+  
+  // if price is OK, let's go.
+  if((parametres.mode == MODE_PAYING && cents >= PRICE_CTS) || (parametres.mode == MODE_FREE_PRICE && cents >= FREE_PRICE_CTS) || parametres.mode == MODE_FREE) {
+    if(parametres.mode != MODE_FREE_PRICE){
       disableCoinAcceptor();
-      bStart = true;
     }
-
+    
+    // wait indefinitely for start button.
+    showArrowDown();
+    startLedOn();
+    while(!startBtn.read()){
+      refreshCoinSegment(parametres); // <= refresh needed in cas of free price. People can add all the money they want.
+    }
+    disableCoinAcceptor();
+    bStart = true;
   }
+  
   return bStart;
 }
 
@@ -85,8 +81,8 @@ void coinSegmentFull(){
 /*
  * Refresh if needed according to cents the segment.
  */
-void refreshCoinSegment(){
-  if((parametres.mode == MODE_PAYING){
+void refreshCoinSegment(storage parametres){
+  if(parametres.mode == MODE_PAYING){
     setCoinDigit(PRICE_CTS - cents);
   } else if (parametres.mode == MODE_FREE_PRICE){
     setCoinDigit(cents);
@@ -129,10 +125,10 @@ void disableCoinAcceptor(){
   cents = 0;
 }
 
-void enableCoinAcceptor(){
+void enableCoinAcceptor(storage parametres){
   pinMode(COIN_PIN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, FALLING);
-  refreshCoinSegment();
+  refreshCoinSegment(parametres);
   enableCoin.write(HIGH);
   bCoinEnabled = true;
   cents = 0;

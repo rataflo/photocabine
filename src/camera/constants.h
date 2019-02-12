@@ -22,7 +22,7 @@
 
 #define SCISSOR_PIN_STP 25
 #define SCISSOR_PIN_DIR 24
-#define SCISSOR_ENDSTOP_PIN 52
+#define SCISSOR_ENDSTOP_PIN 56 // TODO: Changer de 52 à 56
 #define SCISSOR_SPEED 200
 #define SCISSOR_ACCEL 200
 #define SCISSOR_STEP_OPENED 350 // Number of step to fully open the scissor.
@@ -37,8 +37,8 @@
 #define DELTA_FIRST_SHOT -80 //Delta in step to do after paper reach opto 1.
 #define PAPER_SWITCH1_PIN 48
 #define PAPER_SWITCH2_PIN 49
-#define PAPER_SWITCH3_PIN 50
-#define PAPER_SWITCH4_PIN 51
+#define PAPER_SWITCH3_PIN 54 // TODO: Changer de 50 à 54
+#define PAPER_SWITCH4_PIN 55 // TODO: Changer de 51 à 55
 #define PAPER_PIN_ENABLE 35
 
 #define FLASH_PIN 46
@@ -49,7 +49,16 @@
 #define COIN_PIN 3 // Add 10k/100k pull up resistor on pin to 5V.
 #define ENABLE_COIN_PIN 44 // If High coin acceptor is enable. LOW coin acceptor reject coins.
 #define COIN_SEGMENT_CLK_PIN 6
-#define COIN_SEGMENT_DIO_PIN 7
+#define COIN_SEGMENT_DIO_PIN 5 // TODO : Changer de 7 à 5
+
+const byte RADIO_ADRESS_EMITTER[6] = "00002";
+const byte RADIO_ADRESS_RECEIVER[6] = "00001";
+
+#define RADIO_CSN 8
+#define RADIO_CE 7
+#define RADIO_SCK 52
+#define RADIO_MOSI 51
+#define RADIO_MISO 50
 
 #define WAIT_BETWEEN_SHOT 5000 // Wait between shot in ms.
 
@@ -65,8 +74,7 @@
 struct storage {
   int totStrip = 0;
   byte mode = MODE_PAYING;// O = paying, 1 = Free price, 2 = Free
-  // To keep state of camera after a power shutdown.
-  byte stepTakeShot = 0;
-}parametres;
+  bool isRunning = false; // Camera was working before shutdown ?
+};
 
 #endif

@@ -2,7 +2,9 @@
  * SDA A4
  * SCL A5
  */
-
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
 #include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
 #include "orders.h"
@@ -10,6 +12,17 @@
 #define MENU_BTN1_PIN 5
 #define MENU_BTN2_PIN 6
 #define MENU_SPEED 200 // check button menu each 200ms.
+
+const byte RADIO_ADRESS_EMITTER[6] = "00001";
+const byte RADIO_ADRESS_RECEIVER[6] = "00002";
+
+#define RADIO_CSN 8
+#define RADIO_CE 7
+#define RADIO_SCK 13
+#define RADIO_MOSI 11
+#define RADIO_MISO 12
+
+RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 
 // LCD
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -71,13 +84,23 @@ String espace = " ";
 
 void setup() {
   Serial.begin(9600);
+  
+  radio.begin();
+  radio.openWritingPipe(RADIO_ADRESS_EMITTER); // 00001
+  radio.openReadingPipe(1, RADIO_ADRESS_RECEIVER); // 00002
+  radio.setPALevel(RF24_PA_MIN);;
+  
   initRemote();
   showMainScreen();
 }
 
 void loop() {
+  radio.stopListening();
+  const char order = 'A';
+  Serial.println(radio.write(&order, sizeof(order)));
+  delay(1000);
   
-  checkMenu();
+  //checkMenu();
 }
 
 /*****************

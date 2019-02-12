@@ -4,6 +4,9 @@
  * 4* 7 segment, TM1637 : https://github.com/avishorp/TM1637
  * LCD Matrix 8*8 : http://wayoda.github.io/LedControl/
  */
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
 #include <DirectIO.h>
 #include <EEPROMex.h>
 #include <EEPROMVar.h>
@@ -13,29 +16,43 @@
 #include "scissor.h"
 #include "shutter.h"
 #include "paper.h"
-#include "remote.h"
 #include "tests.h"
 
 // Work variables
 byte stepTakeShot = 0;
 int freeSlot = 7;
+storage parametres;
+RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 
 void setup() {
   Serial.begin(9600);
-  //Serial.setTimeout(10);
   Serial2.begin(9600);
-  initPhotomaton();
+  
+  radio.begin();
+  radio.openWritingPipe(RADIO_ADRESS_EMITTER); // 00002
+  radio.openReadingPipe(1, RADIO_ADRESS_RECEIVER); // 00001
+  radio.setPALevel(RF24_PA_MIN);
+  //radio.startListening();
+  
+  EEPROM.readBlock(EEPROM_ADRESS, parametres);
+  // If the photomation was previously running we start in test mode to force pause and avoid any problem.
+  testMode(radio, parametres.isRunning);
+  //initPhotomaton();
 }
 
 void loop() {
-  testMode();
+  Serial.println("loop");
+  testMode(radio, false);
 
   // If coin acceptor OK and clic start button.
-  if(manageCoinsAndStart(parametres.stepTakeShot)) {
-    parametres.stepTakeShot = 1;
+  if(stepTakeShot == 0 && manageCoinsAndStart(parametres)) { // BLOCKING :(
+    parametres.totStrip += 1;
+    parametres.isRunning = true;
+    EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+    stepTakeShot = 1;
   }
 
-  if(parametres.stepTakeShot > 0) {
+  if(stepTakeShot > 0) {
     manageStepsTakeShot(); 
   }
 }
@@ -84,6 +101,8 @@ void manageStepsTakeShot(){
       movePaperFirstShot();
       break;
     case 13: // check for free slot.
+      parametres.isRunning = false;
+      EEPROM.updateBlock(EEPROM_ADRESS, parametres);
       sendOrderAndWait(ORDER_NB_FREE_SLOT);
       if(freeSlot == 0){
         coinSegmentFull();
@@ -91,57 +110,10 @@ void manageStepsTakeShot(){
           sendOrderAndWait(ORDER_NB_FREE_SLOT);
         }
       }
-      enableCoinAcceptor();
+      enableCoinAcceptor(parametres);
       break;
   }
-  parametres.stepTakeShot++;
-  parametres.stepTakeShot = parametres.stepTakeShot >= 13 ? 0 : parametres.stepTakeShot + 1;
-  EEPROM.updateBlock(EEPROM_ADRESS, parametres);
-}
-
-/***************************
- *    INITS
- **************************/
-void initPhotomaton(){
-  // load params from eeprom
-  EEPROM.readBlock(EEPROM_ADRESS, parametres);
-  if(parametres.stepTakeShot == 0){ // if before stop the booth was NOT running we initialize it.
-    // Coin acceptor off 
-    disableCoinAcceptor();
-  
-    // flash off
-    flashOff();
-  
-    // Start button off
-    startLedOff();
-  
-    // 4 * 7 segment display for coin
-    initCoinSegment();
-  
-    // Led Matrix
-    initLedMatrix();
-  
-    // Init steppers position.
-    initScissor();
-  
-    // Shutter
-    initShutter();
-  
-    // Paper
-    initPaper();
-    
-    //Wait for paper process.
-    sendOrderAndWait(ORDER_PAPER_PROCESS_READY);
-    
-    enableCoinAcceptor();
-  } else {
-    // if booth was already running we ask for number of free slot.
-    sendOrderAndWait(ORDER_PAPER_PROCESS_READY);
-    sendOrderAndWait(ORDER_NB_FREE_SLOT);
-    if(parametres.stepTakeShot == 0 && freeSlot > 0){
-      enableCoinAcceptor();
-    }
-  }
+  stepTakeShot = stepTakeShot >= 13 ? 0 : stepTakeShot + 1;
 }
 
 boolean sendOrderAndWait(char order){
@@ -175,12 +147,46 @@ boolean sendOrderAndWait(char order){
           bOK = true;
           break;
 
-        case ORDER_PAPER_PROCESS_READY: // Spider is ready ?
+        case ORDER_SPIDER_READY: // Spider is ready ?
           bOK = response == RESPONSE_OK;
           break;
       }
     }
   }
   return bOK;
+}
+
+/***************************
+ *  INIT
+ **************************/
+void initPhotomaton(){
+    // Coin acceptor off 
+    disableCoinAcceptor();
+  
+    // flash off
+    flashOff();
+  
+    // Start button off
+    startLedOff();
+  
+    // 4 * 7 segment display for coin
+    initCoinSegment();
+  
+    // Led Matrix
+    initLedMatrix();
+  
+    // Init steppers position.
+    initScissor();
+  
+    // Shutter
+    initShutter();
+  
+    // Paper
+    initPaper();
+    
+    //Wait for paper process.
+    sendOrderAndWait(ORDER_SPIDER_READY);
+    
+    enableCoinAcceptor(parametres);
 }
 
