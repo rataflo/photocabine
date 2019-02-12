@@ -3,6 +3,16 @@
 /*
  * TESTS
  */
+
+/*
+ * Activate tests.
+ * Respond to command.
+ */
+void testMode(){
+  if (Serial.available() > 0){
+    
+  }
+}
 void testSwitchScissor(LiquidCrystal_I2C lcd, byte currentLineInMenu){
   lcd.setCursor(0, currentLineInMenu % 4);
   boolean bEndStop = !digitalRead(SCISSOR_ENDSTOP_PIN);

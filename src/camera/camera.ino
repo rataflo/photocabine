@@ -5,59 +5,46 @@
  * LCD Matrix 8*8 : http://wayoda.github.io/LedControl/
  */
 #include <DirectIO.h>
-#include <Adafruit_NeoPixel.h>
+#include <EEPROMex.h>
+#include <EEPROMVar.h>
 #include "constants.h"
 #include "coinAcceptor.h"
 #include "scissor.h"
 #include "shutter.h"
 #include "paper.h"
-#include "remote.h"
 #include "tests.h"
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(78, 8, NEO_GRB + NEO_KHZ800);
-
 // Work variables
-byte stepTakeShot = 0;
 int freeSlot = 7;
-bool bGoTakeShot = false; 
 
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
   
-  pixels.begin(); 
-  for(int i=0;i<78;i++){
-    pixels.setPixelColor(i, pixels.Color(100,0,0)); 
-    pixels.show();
-  }
+  // Test mode
+  #ifdef TEST_MODE
+    testMode();
+  #endif
   
   initPhotomaton();
 }
 
 void loop() {
-
+  
   // If coin acceptor OK and clic start button.
-  if(manageCoinsAndStart()) {
-    bGoTakeShot = true;
-    stepTakeShot = 1;
+  if(manageCoinsAndStart(parametres.stepTakeShot)) {
+    parametres.stepTakeShot = 1;
   }
 
-  if(bGoTakeShot) {
+  if(parametres.stepTakeShot > 0) {
     manageStepsTakeShot(); 
   }
-  
-  // if shot finished and coin acceptor disabled.
-  if(!bGoTakeShot && !isCoinEnabled()){
-    stepTakeShot = 0;
-    enableCoinAcceptor();
-  }
-  
-  checkMenu();
 }
 
 void manageStepsTakeShot(){
-  switch (stepTakeShot) {
+  switch (parametres.stepTakeShot) {
     case 1: // First countdown
+      parametres.totStrip += 1;
       showCountdown();
       while(getCountDown() > 0){
         refreshCountdown();
@@ -97,48 +84,66 @@ void manageStepsTakeShot(){
       
     case 12: // move paper back for first shot.
       movePaperFirstShot();
-      bGoTakeShot = false; // Finish
+      break;
+    case 13: // check for free slot.
+      sendOrderAndWait(ORDER_NB_FREE_SLOT);
+      if(freeSlot == 0){
+        coinSegmentFull();
+        while(freeSlot == 0){ // wait indefinitely for a free slot.
+          sendOrderAndWait(ORDER_NB_FREE_SLOT);
+        }
+      }
+      enableCoinAcceptor();
       break;
   }
-  stepTakeShot++;
+  parametres.stepTakeShot++;
+  parametres.stepTakeShot = parametres.stepTakeShot >= 13 ? 0 : parametres.stepTakeShot + 1;
+  EEPROM.updateBlock(EEPROM_ADRESS, parametres);
 }
 
 /***************************
  *    INITS
  **************************/
 void initPhotomaton(){
+  // load params from eeprom
+  EEPROM.readBlock(EEPROM_ADRESS, parametres);
+  if(parametres.stepTakeShot == 0){ // if before stop the booth was NOT running we initialize it.
+    // Coin acceptor off 
+    disableCoinAcceptor();
   
-  // Coin acceptor off 
-  disableCoinAcceptor();
-
-  initRemote();
-
-  // flash off
-  flashOff();
-
-  // Start button off
-  startLedOff();
-
-  // 4 * 7 segment display for coin
-  initCoinSegment();
-
-  // Led Matrix
-  initLedMatrix();
-
-  // Init steppers position.
-  initScissor();
-
-  // Shutter
-  initShutter();
-
-  // Paper
-  initPaper();
+    // flash off
+    flashOff();
   
-  //Cait for spider.
-  sendOrderAndWait(ORDER_SPIDER_READY);
-
-  enableCoinAcceptor();
-  showMainScreen();
+    // Start button off
+    startLedOff();
+  
+    // 4 * 7 segment display for coin
+    initCoinSegment();
+  
+    // Led Matrix
+    initLedMatrix();
+  
+    // Init steppers position.
+    initScissor();
+  
+    // Shutter
+    initShutter();
+  
+    // Paper
+    initPaper();
+    
+    //Wait for paper process.
+    sendOrderAndWait(ORDER_PAPER_PROCESS_READY);
+    
+    enableCoinAcceptor();
+  } else {
+    // if booth was already running we ask for number of free slot.
+    sendOrderAndWait(ORDER_PAPER_PROCESS_READY);
+    sendOrderAndWait(ORDER_NB_FREE_SLOT);
+    if(parametres.stepTakeShot == 0 && freeSlot > 0){
+      enableCoinAcceptor();
+    }
+  }
 }
 
 boolean sendOrderAndWait(char order){
@@ -158,6 +163,7 @@ boolean sendOrderAndWait(char order){
       lastMillis = currentMillis;
     }
   
+
     if (Serial1.available() > 0) {// if new response coming.
       response = Serial1.read();
     
@@ -172,7 +178,7 @@ boolean sendOrderAndWait(char order){
           bOK = true;
           break;
 
-        case ORDER_SPIDER_READY: // Spider is ready.
+        case ORDER_PAPER_PROCESS_READY: // Spider is ready.
           bOK = response == RESPONSE_OK;
           break;
       }

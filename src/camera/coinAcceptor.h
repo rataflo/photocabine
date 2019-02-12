@@ -7,7 +7,7 @@
 #include "constants.h"
 #include "shutter.h"
 
-boolean manageCoinsAndStart();
+boolean manageCoinsAndStart(byte stepTakeShot);
 void setCoinDigit(int number);
 void coinSegmentFull();
 void refreshCoinSegment();

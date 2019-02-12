@@ -9,6 +9,13 @@ const uint8_t SEG_FULL[] = {
   SEG_F | SEG_E | SEG_D,                           // L
   };
 
+const uint8_t SEG_FREE[] = {
+  SEG_A | SEG_F | SEG_G | SEG_E,                   // F
+  SEG_G | SEG_E,                                   // R
+  SEG_A | SEG_F | SEG_G | SEG_E | SEG_D,           // E
+  SEG_A | SEG_F | SEG_G | SEG_E | SEG_D,           // E
+  };
+
 TM1637Display coinSegment(COIN_SEGMENT_CLK_PIN, COIN_SEGMENT_DIO_PIN);
 
 // Coin acceptor
@@ -21,23 +28,29 @@ bool bCoinEnabled = false;
 bool bStartLedOn = false;
 unsigned long oldInterruptMillis;// no need to be volatile, exclusively used by coin interrupt.
 
-boolean manageCoinsAndStart(){
+boolean manageCoinsAndStart(byte stepTakeShot){
   boolean bStart = false;
-  
-  refreshCoinSegment();
-  
-  // if price is OK, let's go.
-  if(bCoinEnabled && cents >= PRICE_CTS) {
-    // disable coin acceptor for the duration of the shots.
-    disableCoinAcceptor();
-    // wait indefinitely for start button.
-    showArrowDown();
-    startLedOn();
-    while(!startBtn.read()){
-      // do nada
+
+  if(stepTakeShot == 0){
+    
+    refreshCoinSegment();
+    
+    // if price is OK, let's go.
+    if((parametres.mode == MODE_PAYING && cents >= PRICE_CTS) || (parametres.mode == MODE_FREE_PRICE && cents >= FREE_PRICE_CTS) || parametres.mode == MODE_FREE) {
+      if(parametres.mode != MODE_FREE_PRICE){
+        disableCoinAcceptor();
+      }
+      
+      // wait indefinitely for start button.
+      showArrowDown();
+      startLedOn();
+      while(!startBtn.read()){
+        refreshCoinSegment(); // <= refresh needed in cas of free price. People can add all the money they want.
+      }
+      disableCoinAcceptor();
+      bStart = true;
     }
 
-    bStart = true;
   }
   return bStart;
 }
@@ -73,8 +86,12 @@ void coinSegmentFull(){
  * Refresh if needed according to cents the segment.
  */
 void refreshCoinSegment(){
-  if(bCoinEnabled){
+  if((parametres.mode == MODE_PAYING){
     setCoinDigit(PRICE_CTS - cents);
+  } else if (parametres.mode == MODE_FREE_PRICE){
+    setCoinDigit(cents);
+  } else {
+    coinSegment.setSegments(SEG_FREE);
   }
 }
 
@@ -92,11 +109,11 @@ void initCoinSegment(){
  *  COIN ACCEPTOR
  */
  
-// interrupt main loop each time a pulse from coin acceptor is coming.
-// 1 pulse = 10cts. First pulse not counted.
+// Interrupt main loop each time a pulse from coin acceptor is coming.
+// 1 pulse = 5cts. First pulse not counted.
 void coinInterrupt(){
   unsigned long currentMillis = millis();
-  // Check the duration from previous pulse. Avoi pulse from static electricity.
+  // Check the duration from previous pulse. Avoid pulse from static electricity.
   unsigned long difference = currentMillis - oldInterruptMillis;
   oldInterruptMillis = currentMillis;
   if(difference < 135 && difference >125){
@@ -105,9 +122,9 @@ void coinInterrupt(){
 }
 
 void disableCoinAcceptor(){
-  setCoinDigit(0);
   detachInterrupt(digitalPinToInterrupt(COIN_PIN));
   enableCoin.write(LOW);
+  setCoinDigit(0);
   bCoinEnabled = false;
   cents = 0;
 }
@@ -115,7 +132,7 @@ void disableCoinAcceptor(){
 void enableCoinAcceptor(){
   pinMode(COIN_PIN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, FALLING);
-  setCoinDigit(PRICE_CTS);
+  refreshCoinSegment();
   enableCoin.write(HIGH);
   bCoinEnabled = true;
   cents = 0;

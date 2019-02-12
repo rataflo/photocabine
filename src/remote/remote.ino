@@ -3,17 +3,14 @@
  * SCL A5
  */
 
-#include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
 
 #define MENU_BTN1_PIN 5
 #define MENU_BTN2_PIN 6
-#define MENU_SPEED 200 // check button menu each 200ms.
+#define MENU_SPEED 150 // check button menu each 200ms.
 
 // LCD
 LiquidCrystal_I2C lcd(0x27, 20, 4);
-Input<MENU_BTN1_PIN> btnMenu1;
-Input<MENU_BTN2_PIN> btnMenu2;
 bool bMainScreen = true;
 byte currentMenu = 0;
 byte currentLineInMenu = 0;
@@ -60,6 +57,9 @@ String sel = ">";
 String espace = " ";
 
 void setup() {
+  Serial.begin(9600);
+  pinMode(MENU_BTN1_PIN, INPUT_PULLUP);
+  pinMode(MENU_BTN2_PIN, INPUT_PULLUP);
   initRemote();
   showMainScreen();
 }
@@ -81,10 +81,10 @@ void initRemote(){
 void checkMenu(){
   unsigned long currentMillis = millis();
   if (currentMillis - previousMenuMillis >= MENU_SPEED) {
-    previousMenuMillis += MENU_SPEED;
-    if(btnMenu1.read()){
+    previousMenuMillis = currentMillis;
+    if(digitalRead(MENU_BTN1_PIN)){
       nextMenu();
-    } else if(!bMainScreen && btnMenu2.read()){
+    } else if(!bMainScreen && digitalRead(MENU_BTN2_PIN)){
       doMenu();
     }
   }
@@ -94,6 +94,7 @@ void checkMenu(){
  * Show main screen
  */
 void showMainScreen(){
+  Serial.println("main");
   bMainScreen = true;
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -140,9 +141,50 @@ void showMenu(){
 }
 
 /*
+ * Action on button next
+ */
+void nextMenu(){
+  Serial.println("nextMenu");
+  if(bMainScreen) { // if currently on main screen, show first menu.
+    bMainScreen = false;
+    currentMenu = 0;
+    currentLineInMenu = 0;
+    showMenu();
+    
+  } else {
+    // Get number of items in menu.
+    int nbItemMenu = 0;
+    for(int i = 0; i < TAILLE_MENU; i++){
+      menuItem menu = MENUS[i];
+      if(menu.parentMenu == currentMenu){
+        nbItemMenu++;
+      }
+    }
+
+    // Case end of menu, return to first line.
+    if(currentLineInMenu + 1  >= nbItemMenu){
+      currentLineInMenu =  0;
+      showMenu();
+      
+    } else if(currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11){ // Case show next page in menu
+      currentLineInMenu++;
+      showMenu();
+      
+    } else { // Move one step in menu
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print(espace);
+      currentLineInMenu++;
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print(sel);
+    }
+  }
+}
+
+/*
  * What to do on action button
  */
 void doMenu(){
+  Serial.println("doMenu");
   // Get the menu in action
   int line = 0;
   menuItem menu;
@@ -217,7 +259,7 @@ void doMenu(){
       
      case 19: // Test switch shutter.
       delay(200);
-      while(!btnMenu2.read()){
+      while(!digitalRead(MENU_BTN2_PIN)){
        //testSwitchShutter(lcd, currentLineInMenu);
        delay(200);
       }
@@ -228,7 +270,7 @@ void doMenu(){
       
      case 20: // Test switch scissor.
       delay(200);
-      while(!btnMenu2.read()){
+      while(!digitalRead(MENU_BTN2_PIN)){
        //testSwitchScissor(lcd, currentLineInMenu);
        delay(200);
       }
@@ -239,7 +281,7 @@ void doMenu(){
 
     case 21: // Test switch up & down.
       delay(200);
-      while(!btnMenu2.read()){
+      while(!digitalRead(MENU_BTN2_PIN)){
        //testSwitchUpDown(lcd, currentLineInMenu);
        delay(200);
       }
@@ -250,7 +292,7 @@ void doMenu(){
     
     case 22: // Start button
       delay(200);
-      while(!btnMenu2.read()){
+      while(!digitalRead(MENU_BTN2_PIN)){
        //testStartButton(lcd, currentLineInMenu);
        delay(200);
       }
@@ -282,44 +324,5 @@ void doMenu(){
         printMsgToLCD(menu.label, true);
       }*/
       break;
-  }
-}
-
-/*
- * Action on button next
- */
-void nextMenu(){
-  if(bMainScreen) { // if currently on main screen, show first menu.
-    bMainScreen = false;
-    currentMenu = 0;
-    currentLineInMenu = 0;
-    showMenu();
-    
-  } else {
-    // Get number of items in menu.
-    int nbItemMenu = 0;
-    for(int i = 0; i < TAILLE_MENU; i++){
-      menuItem menu = MENUS[i];
-      if(menu.parentMenu == currentMenu){
-        nbItemMenu++;
-      }
-    }
-
-    // Case end of menu, return to first line.
-    if(currentLineInMenu + 1  >= nbItemMenu){
-      currentLineInMenu =  0;
-      showMenu();
-      
-    } else if(currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11){ // Case show next page in menu
-      currentLineInMenu++;
-      showMenu();
-      
-    } else { // Move one step in menu
-      lcd.setCursor(0, currentLineInMenu % 4);
-      lcd.print(espace);
-      currentLineInMenu++;
-      lcd.setCursor(0, currentLineInMenu % 4);
-      lcd.print(sel);
-    }
   }
 }

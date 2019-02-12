@@ -4,10 +4,11 @@
 AccelStepper spiderRotate(1, SPIDER_ROTATE_PIN_STP, SPIDER_ROTATE_PIN_DIR);
 Servo servoArm;
 
-bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
-bool bSpiderUp = true; // true when spider is at the top.
+Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(84, LEDSTRIP_PIN, NEO_RGB + NEO_KHZ800);
 
-void initSpider(byte *slots){
+bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
+
+void initSpider(byte *slots, boolean bFullInit){
 
   pinMode(SPIDER_UPDOWN_PIN_PWM, OUTPUT);
   pinMode(SPIDER_UPDOWN_PIN_DIR, OUTPUT);
@@ -20,10 +21,19 @@ void initSpider(byte *slots){
   pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM, INPUT_PULLUP);
   pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_UP, INPUT_PULLUP);
 
-  initSpiderBottom();
-  initServoArm();
+  ledstrip.begin(); 
+  for(int i=0;i<LEDSTRIP_NB;i++){
+    ledstrip.setPixelColor(i, 0, 0, 0); 
+  }
+  ledstrip.show();
+  
+  if(bFullInit){
+    initSpiderBottom();
+    initServoArm();
+  }
+  
   initSpiderUp();
-  initRotate(slots);
+  initRotate(slots, bFullInit);
 }
 
 void downSpider(){
@@ -47,7 +57,6 @@ void downSpider(){
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
-  bSpiderUp = false;
 }
 
 void downABitSpider(){
@@ -60,7 +69,6 @@ void downABitSpider(){
     currentMillis = millis();
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
-  bSpiderUp = false;
 }
 
 void upSpider(){
@@ -84,7 +92,6 @@ void upSpider(){
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
-  bSpiderUp = true;
 }
 
 void asyncSpiderUp() {
@@ -94,7 +101,6 @@ void asyncSpiderUp() {
     analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
-  bSpiderUp = true;
 }
 
 void rotateSpider(byte *slots){
@@ -125,6 +131,8 @@ void rotateSpider(byte *slots){
     slots[i] == slots[i - 1];
   }
   slots[0] = slot13;
+
+  lightStrip(slots);
   
 }
 
@@ -160,7 +168,7 @@ void openArm() {
     servoArm.write(i);
     delay(10);
   }
-  upSpider()
+  upSpider();
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 }
 
@@ -172,7 +180,7 @@ void closeArm() {
     servoArm.write(i);
     delay(10);
   }
-  upSpider()
+  upSpider();
 }
 
 
@@ -196,7 +204,6 @@ void initSpiderBottom() {
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
-  bSpiderUp = false;
 }
 
 
@@ -210,10 +217,9 @@ void initSpiderUp() {
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
-  bSpiderUp = true;
 }
 
-void initRotate(byte *slots) {
+void initRotate(byte *slots, boolean bFullInit) {
   // Position an arm before the exit of the camera ready to be opened.
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   spiderRotate.setCurrentPosition(0);
@@ -234,23 +240,37 @@ void initRotate(byte *slots) {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 
   // Init the slots
-  slots[0] = SLOT_NO_ARM; 
-  slots[1] = SLOT_CLOSED; 
-  slots[2] = SLOT_NO_ARM; 
-  slots[3] = SLOT_CLOSED; 
-  slots[4] = SLOT_NO_ARM; 
-  slots[5] = SLOT_CLOSED; 
-  slots[6] = SLOT_NO_ARM; 
-  slots[7] = SLOT_CLOSED; 
-  slots[8] = SLOT_NO_ARM; 
-  slots[9] = SLOT_CLOSED; 
-  slots[10] = SLOT_NO_ARM; 
-  slots[11] = SLOT_CLOSED; 
-  slots[12] = SLOT_NO_ARM;
-  slots[13] = SLOT_CLOSED;
+  if(bFullInit){
+    slots[0] = SLOT_NO_ARM; 
+    slots[1] = SLOT_CLOSED; 
+    slots[2] = SLOT_NO_ARM; 
+    slots[3] = SLOT_CLOSED; 
+    slots[4] = SLOT_NO_ARM; 
+    slots[5] = SLOT_CLOSED; 
+    slots[6] = SLOT_NO_ARM; 
+    slots[7] = SLOT_CLOSED; 
+    slots[8] = SLOT_NO_ARM; 
+    slots[9] = SLOT_CLOSED; 
+    slots[10] = SLOT_NO_ARM; 
+    slots[11] = SLOT_CLOSED; 
+    slots[12] = SLOT_NO_ARM;
+    slots[13] = SLOT_CLOSED;
+  }
+
+  lightStrip(slots);
 }
 
 boolean isSpiderUp(){
-  return bSpiderUp;
+  return digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
+}
+
+void lightStrip(byte *slots){
+  // light open slots
+  for(byte i = 0; i < 14; i++){
+    for(byte j = i * 5; j < (i * 5) + 5; j++){
+      ledstrip.setPixelColor(j, slots[i] == SLOT_OPEN || slots[i] == SLOT_PAPER ? 255 : 0, 0, 0); 
+    }
+  }
+  ledstrip.show();
 }
 
