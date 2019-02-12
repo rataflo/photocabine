@@ -3,24 +3,25 @@
 // Spider rotate
 AccelStepper spiderRotate(1, SPIDER_ROTATE_PIN_STP, SPIDER_ROTATE_PIN_DIR);
 Servo servoArm;
-
 Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(84, LEDSTRIP_PIN, NEO_RGB + NEO_KHZ800);
 
 bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
 
-void initSpider(byte *slots, boolean bFullInit){
 
+void setupSpider(){
   pinMode(SPIDER_UPDOWN_PIN_PWM, OUTPUT);
   pinMode(SPIDER_UPDOWN_PIN_DIR, OUTPUT);
   
   pinMode(SPIDER_ROTATE_PIN_ENABLE, OUTPUT);
-  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   pinMode(SPIDER_ROTATE_ENDSTOP1_PIN, INPUT_PULLUP);
   pinMode(SPIDER_ROTATE_ENDSTOP2_PIN, INPUT_PULLUP);
 
   pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM, INPUT_PULLUP);
   pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_UP, INPUT_PULLUP);
+}
 
+void initSpider(byte *slots){
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   ledstrip.begin(); 
   for(int i=0;i<LEDSTRIP_NB;i++){
     ledstrip.setPixelColor(i, 0, 0, 0); 
@@ -131,9 +132,8 @@ void rotateSpider(byte *slots){
     slots[i] == slots[i - 1];
   }
   slots[0] = slot13;
-
-  lightStrip(slots);
   
+  lightStrip(slots);
 }
 
 void agitate(){
@@ -160,7 +160,7 @@ void setServoArmWaitPos() {
 }
 
 void openArm() {
-  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch on rotation stepper to avoir backslash
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch on rotation stepper to avoid rotation
   downABitSpider();
   servoArm.write(SERVO_ARM_OPEN_POS_BEGIN); 
   delay(500);
@@ -273,4 +273,3 @@ void lightStrip(byte *slots){
   }
   ledstrip.show();
 }
-

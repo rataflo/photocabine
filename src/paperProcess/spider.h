@@ -1,14 +1,13 @@
 #ifndef spider_h
 #define spider_h
 
-
+#include <Arduino.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <Servo.h>
-#include <Adafruit_NeoPixel.h>
 #include "constants.h"
 
-
+void setupSpider();
 void initSpider(byte *slots, boolean bFullInit);
 void downSpider();
 void downABitSpider();

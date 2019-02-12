@@ -1,5 +1,11 @@
-#ifndef constants_h
-#define constants_h
+// X: 22 / 23 
+// Y: 24 / 25
+// Z: 30 / 31
+// Ext: 26 / 27
+
+// Uncomment to activate test mode on startup, avoid initialisation operation
+#define TEST_MODE
+
 
 #define SPIDER_UPDOWN_PIN_DIR 11
 #define SPIDER_UPDOWN_PIN_PWM 3 // Use pin 3 because on other pin the pwm is disabled by DirectIO.
@@ -31,7 +37,6 @@
 
 #define LEDSTRIP_PIN 2
 #define LEDSTRIP_NB 84
-
 #define TANK_TIME 18000 // Default time in each tank (12 sec / 30°C).
 #define DELIVERY_TIME 5000 // Time to exit paper
 
@@ -41,18 +46,9 @@
 #define SLOT_OPEN 2 // 2 = arm open, 
 #define SLOT_PAPER 3 // 3 = arm open with paper.
 
-// ORDERS LIST
-#define NO_ORDER '0'
-#define RESPONSE_OK 'O'
-#define ORDER_NEW_SLOT 'A'  // When camera need to process paper.
-#define ORDER_PAPER_READY 'B' // When paper is in a slot ready to be processed.
-#define ORDER_NB_FREE_SLOT 'C' // When paper is in a slot ready to be processed.
-#define ORDER_PAPER_PROCESS_READY 'D' // Ask if spider complete her init and everything is ok.
-
 // EEPROM data & work variables
 #define EEPROM_ADRESS 0
 struct storage {
   byte slots[14];
 };
 
-#endif

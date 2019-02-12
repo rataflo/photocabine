@@ -8,29 +8,28 @@
 #include <EEPROMex.h>
 #include <EEPROMVar.h>
 #include "constants.h"
+#include "orders.h"
 #include "coinAcceptor.h"
 #include "scissor.h"
 #include "shutter.h"
 #include "paper.h"
+#include "remote.h"
 #include "tests.h"
 
 // Work variables
+byte stepTakeShot = 0;
 int freeSlot = 7;
 
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(9600);
-  
-  // Test mode
-  #ifdef TEST_MODE
-    testMode();
-  #endif
-  
+  //Serial.setTimeout(10);
+  Serial2.begin(9600);
   initPhotomaton();
 }
 
 void loop() {
-  
+  testMode();
+
   // If coin acceptor OK and clic start button.
   if(manageCoinsAndStart(parametres.stepTakeShot)) {
     parametres.stepTakeShot = 1;
@@ -42,9 +41,8 @@ void loop() {
 }
 
 void manageStepsTakeShot(){
-  switch (parametres.stepTakeShot) {
+  switch (stepTakeShot) {
     case 1: // First countdown
-      parametres.totStrip += 1;
       showCountdown();
       while(getCountDown() > 0){
         refreshCountdown();
@@ -163,7 +161,6 @@ boolean sendOrderAndWait(char order){
       lastMillis = currentMillis;
     }
   
-
     if (Serial1.available() > 0) {// if new response coming.
       response = Serial1.read();
     
@@ -178,7 +175,7 @@ boolean sendOrderAndWait(char order){
           bOK = true;
           break;
 
-        case ORDER_PAPER_PROCESS_READY: // Spider is ready.
+        case ORDER_PAPER_PROCESS_READY: // Spider is ready ?
           bOK = response == RESPONSE_OK;
           break;
       }

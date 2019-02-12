@@ -3,14 +3,18 @@
  * SCL A5
  */
 
+#include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
+#include "orders.h"
 
 #define MENU_BTN1_PIN 5
 #define MENU_BTN2_PIN 6
-#define MENU_SPEED 150 // check button menu each 200ms.
+#define MENU_SPEED 200 // check button menu each 200ms.
 
 // LCD
 LiquidCrystal_I2C lcd(0x27, 20, 4);
+Input<MENU_BTN1_PIN> btnMenu1;
+Input<MENU_BTN2_PIN> btnMenu2;
 bool bMainScreen = true;
 byte currentMenu = 0;
 byte currentLineInMenu = 0;
@@ -24,33 +28,42 @@ typedef struct
     byte parentMenu;
 }menuItem;
 
-#define TAILLE_MENU 25
+#define TAILLE_MENU 32
+const String MENU_RETOUR = "...";
+
 const menuItem MENUS[TAILLE_MENU] = {
-  {1, "...                ", 0},
-  {2, "Pause              ", 0},
-  {3, "Take shot          ", 0},
-  {4, "Setup              ", 0},
-  {5, "Tests              ", 0},
-  {6, "...                ", 5},
-  {7, "Motors             ", 5},
-  {8, "Microswitchs       ", 5},
-  {9, "LED                ", 5},
-  {10,"Relay              ", 5},
-  {11,"...                ", 7},
-  {12,"Shutter            ", 7},
-  {13,"Scissor            ", 7},
-  {14,"Paper feeder       ", 7},
-  {15,"Spider up/down     ", 7},
-  {16,"Spider rotate      ", 7},
-  {17,"Paper exit         ", 7},
-  {18,"...                ", 8},
-  {19,"Switch shutter     ", 8},
-  {20,"Switch scissor     ", 8},
-  {21,"Switch up&down     ", 8},
-  {22,"Start              ", 8},
-  {23,"...                ", 9},
-  {24,"Flash on           ", 9},
-  {25,"Start LED on       ", 9},
+  {1, MENU_RETOUR, 0},
+  {2, "Pause", 0},
+  {3, "Take shot", 0},
+  {4, "Setup", 0},
+  {5, "Tests", 0},
+  {6, MENU_RETOUR, 5},
+  {7, "Motors", 5},
+  {8, "Microswitchs", 5},
+  {9, "Flash", 5},
+  {10,"Relay", 5},
+  {11, MENU_RETOUR, 7},
+  {12,"Shutter", 7},
+  {13,"Scissor", 7},
+  {14,"Paper feeder", 7},
+  {15,"Spider up/down", 7},
+  {16,"Spider rotate", 7},
+  {17,"Paper exit", 7},
+  {18, MENU_RETOUR, 8},
+  {19,"Shutter", 8},
+  {20,"Scissor", 8},
+  {21,"Paper 1", 8},
+  {22,"Paper 2", 8},
+  {23,"Paper 3", 8},
+  {24,"Paper 4", 8},
+  {25,"Start btn", 8},
+  {26,"Spider up", 8},
+  {27,"Spider down", 8},
+  {28,"Rotate 1", 8},
+  {29,"Rotate 2", 8},
+  {30, MENU_RETOUR, 9},
+  {31,"Flash on", 9},
+  {32,"Start LED on", 9},
 };
 
 String sel = ">";
@@ -58,8 +71,6 @@ String espace = " ";
 
 void setup() {
   Serial.begin(9600);
-  pinMode(MENU_BTN1_PIN, INPUT_PULLUP);
-  pinMode(MENU_BTN2_PIN, INPUT_PULLUP);
   initRemote();
   showMainScreen();
 }
@@ -81,10 +92,10 @@ void initRemote(){
 void checkMenu(){
   unsigned long currentMillis = millis();
   if (currentMillis - previousMenuMillis >= MENU_SPEED) {
-    previousMenuMillis = currentMillis;
-    if(digitalRead(MENU_BTN1_PIN)){
+    previousMenuMillis += MENU_SPEED;
+    if(btnMenu1.read()){
       nextMenu();
-    } else if(!bMainScreen && digitalRead(MENU_BTN2_PIN)){
+    } else if(!bMainScreen && btnMenu2.read()){
       doMenu();
     }
   }
@@ -94,7 +105,6 @@ void checkMenu(){
  * Show main screen
  */
 void showMainScreen(){
-  Serial.println("main");
   bMainScreen = true;
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -109,6 +119,10 @@ void printMsgToLCD(String message, bool isSelected){
     tmp = espace;
   }
   tmp+= message;
+  // add space for 16 caracters
+  for(int i = tmp.length(); i < 16; i++){
+    tmp += " ";
+  }
   lcd.print(tmp);
 }
 
@@ -141,50 +155,9 @@ void showMenu(){
 }
 
 /*
- * Action on button next
- */
-void nextMenu(){
-  Serial.println("nextMenu");
-  if(bMainScreen) { // if currently on main screen, show first menu.
-    bMainScreen = false;
-    currentMenu = 0;
-    currentLineInMenu = 0;
-    showMenu();
-    
-  } else {
-    // Get number of items in menu.
-    int nbItemMenu = 0;
-    for(int i = 0; i < TAILLE_MENU; i++){
-      menuItem menu = MENUS[i];
-      if(menu.parentMenu == currentMenu){
-        nbItemMenu++;
-      }
-    }
-
-    // Case end of menu, return to first line.
-    if(currentLineInMenu + 1  >= nbItemMenu){
-      currentLineInMenu =  0;
-      showMenu();
-      
-    } else if(currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11){ // Case show next page in menu
-      currentLineInMenu++;
-      showMenu();
-      
-    } else { // Move one step in menu
-      lcd.setCursor(0, currentLineInMenu % 4);
-      lcd.print(espace);
-      currentLineInMenu++;
-      lcd.setCursor(0, currentLineInMenu % 4);
-      lcd.print(sel);
-    }
-  }
-}
-
-/*
  * What to do on action button
  */
 void doMenu(){
-  Serial.println("doMenu");
   // Get the menu in action
   int line = 0;
   menuItem menu;
@@ -208,11 +181,15 @@ void doMenu(){
     case 3: // Take shot
     case 4: // Setup
     case 5: // Tests
+      Serial.print(ENTER_TEST);
+      Serial.flush();
       currentMenu = menu.id;
       currentLineInMenu = 0;
       showMenu();
       break;
     case 6: // Return 0
+      Serial.print(EXIT_TEST);
+      Serial.flush();
       currentMenu = 0;
       currentLineInMenu = 0;
       showMenu();
@@ -258,19 +235,13 @@ void doMenu(){
       break;
       
      case 19: // Test switch shutter.
-      delay(200);
-      while(!digitalRead(MENU_BTN2_PIN)){
-       //testSwitchShutter(lcd, currentLineInMenu);
-       delay(200);
-      }
-      lcd.setCursor(0, currentLineInMenu % 4);
-      printMsgToLCD(menu.label, true);
-      delay(200);
+      testSwitch(ORDER_SWUP, menu.id);
+      
       break;
       
      case 20: // Test switch scissor.
       delay(200);
-      while(!digitalRead(MENU_BTN2_PIN)){
+      while(!btnMenu2.read()){
        //testSwitchScissor(lcd, currentLineInMenu);
        delay(200);
       }
@@ -279,9 +250,9 @@ void doMenu(){
       delay(200);
       break;
 
-    case 21: // Test switch up & down.
+    case 21: // Test switch up
       delay(200);
-      while(!digitalRead(MENU_BTN2_PIN)){
+      while(!btnMenu2.read()){
        //testSwitchUpDown(lcd, currentLineInMenu);
        delay(200);
       }
@@ -292,7 +263,7 @@ void doMenu(){
     
     case 22: // Start button
       delay(200);
-      while(!digitalRead(MENU_BTN2_PIN)){
+      while(!btnMenu2.read()){
        //testStartButton(lcd, currentLineInMenu);
        delay(200);
       }
@@ -326,3 +297,58 @@ void doMenu(){
       break;
   }
 }
+
+/*
+ * Action on button next
+ */
+void nextMenu(){
+  if(bMainScreen) { // if currently on main screen, show first menu.
+    bMainScreen = false;
+    currentMenu = 0;
+    currentLineInMenu = 0;
+    showMenu();
+    
+  } else {
+    // Get number of items in menu.
+    int nbItemMenu = 0;
+    for(int i = 0; i < TAILLE_MENU; i++){
+      menuItem menu = MENUS[i];
+      if(menu.parentMenu == currentMenu){
+        nbItemMenu++;
+      }
+    }
+
+    // Case end of menu, return to first line.
+    if(currentLineInMenu + 1  >= nbItemMenu){
+      currentLineInMenu =  0;
+      showMenu();
+      
+    } else if(currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11){ // Case show next page in menu
+      currentLineInMenu++;
+      showMenu();
+      
+    } else { // Move one step in menu
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print(espace);
+      currentLineInMenu++;
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print(sel);
+    }
+  }
+}
+
+void testSwitch(char order, byte idTest){
+  Serial.print(order);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(MENUS[idTest - 1].label);
+  while(!btnMenu2.read()){
+    if(Serial.available() > 0){
+     lcd.setCursor(0, 1);
+     lcd.print(Serial.read());
+    }
+    delay(MENU_SPEED);
+  }
+  showMenu();
+}
+

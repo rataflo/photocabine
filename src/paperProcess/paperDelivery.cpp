@@ -2,8 +2,12 @@
 
 AccelStepper stepperExit(1, SPIDER_EXIT_PIN_STP, SPIDER_EXIT_PIN_DIR);
 
-void initDelivery(){
+void setupDelivery(){
   pinMode(SPIDER_EXIT_PIN_ENABLE, OUTPUT);
+}
+
+void initDelivery(){
+  
   digitalWrite(SPIDER_EXIT_PIN_ENABLE, HIGH);
   stepperExit.setMaxSpeed(SPIDER_ROTATE_SPEED);
   stepperExit.setAcceleration(SPIDER_ROTATE_ACCEL);

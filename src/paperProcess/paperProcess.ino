@@ -2,28 +2,40 @@
  * LCD lib : https://github.com/fdebrabander/Arduino-LiquidCrystal-I2C-library. Pin 20 SDA, 21 SCL. Adresse 0x27.
  * Fast Read\Write : https://github.com/mmarchetti/DirectIO
  */
-#include <Wire.h>
+#include <Arduino.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <EEPROMex.h>
 #include <EEPROMVar.h>
 #include "constants.h"
+#include "orders.h"
 #include "spider.h"
 #include "paperDelivery.h"
 #include "tests.h"
 
+/*
+ * GLOBAL VARIABLES
+ */
 storage params;
 char order = NO_ORDER; // 0 = no order.
 bool bWait = true; // true if we freeze movement to allow operation like waiting for paper from camera or we have nothing to do.
 
 void setup() {
   Serial.begin(9600);
+  //Serial.setTimeout(1);
   
   // load params from eeprom
   EEPROM.readBlock(EEPROM_ADRESS, params);
 
-  initSpider(params.slots, params.bWait);
-  initDelivery();
+  setupSpider();
+  setupDelivery();
+  #ifndef TEST_MODE
+    initSpider(params.slots, params.bWait);
+    initDelivery();
+  #else 
+   testMode();
+  #endif
+  //Serial.println("test");
 }
 
 void loop() {
@@ -32,10 +44,17 @@ void loop() {
 }
 
 void checkOrder(){
+  //Serial.println("check");
   if (Serial.available() > 0) {// if new order coming.
     params.order = Serial.read();
   }
-
+  
+  // If test order
+  if(order == ENTER_TEST){
+    testMode();
+    order = NO_ORDER;
+  }
+  
   // we process order only when spider at the top
   if(isSpiderUp()){
     switch(params.order){

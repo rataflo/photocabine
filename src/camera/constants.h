@@ -53,14 +53,6 @@
 
 #define WAIT_BETWEEN_SHOT 5000 // Wait between shot in ms.
 
-// ORDERS LIST
-#define NO_ORDER '0'
-#define RESPONSE_OK 'O'
-#define ORDER_NEW_SLOT 'A'  // When camera need to process paper.
-#define ORDER_PAPER_READY 'B' // When paper is in a slot ready to be processed.
-#define ORDER_NB_FREE_SLOT 'C' // Get number of free slot.
-#define ORDER_PAPER_PROCESS_READY 'D' // Ask if spider complete her init and everything is ok.
-
 // Modes and prices
 #define MODE_PAYING 0
 #define MODE_FREE_PRICE 1

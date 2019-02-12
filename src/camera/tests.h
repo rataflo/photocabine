@@ -4,6 +4,7 @@
 #include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
 #include "constants.h"
+#include "orders.h"
 
 void testMode();
 void testSwitchScissor(LiquidCrystal_I2C lcd, byte currentLineInMenu);
