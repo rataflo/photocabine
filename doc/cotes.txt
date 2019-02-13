@@ -10,3 +10,9 @@ max 6cm
 Hauteur des yeux: 130cm
 
 rouleau papier: diamétre intérieur tube papier 74mm, diamétre rouleu 25cm.
+
+rayon led ring 240.
+nombre de led : 84. 5 led par côté * 14.
+
+longueur approximative GT2 belt 336mm
+largeur belt : 7.4mm
