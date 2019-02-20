@@ -7,6 +7,6 @@
 #include "constants.h"
 #include "orders.h"
 
-void testMode(RF24 radio, bool bForceTest);
+void testMode(RF24 radio);
 
 #endif

@@ -9,6 +9,7 @@
 #define ORDER_NB_FREE_SLOT 'D' // Get number of free slot.
 #define ORDER_SPIDER_READY 'E' // Ask if spider complete her init and everything is ok.
 
+
 // Test orders
 #define ENTER_TEST 'F' // Enter test mode or pause the process.
 #define EXIT_TEST 'G'
@@ -23,5 +24,8 @@
 #define ORDER_CLOSEARM 'P' // Close arm
 #define ORDER_IDLEARM 'Q' // Put the arm on idle pos.
 #define ORDER_DELIVERYRUN 'R' // Run the delivery indefinitely.
+
+#define ORDER_PAUSE 'S'
+#define ORDER_RESUME 'T'
 
 #endif

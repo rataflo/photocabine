@@ -23,6 +23,7 @@ byte stepTakeShot = 0;
 int freeSlot = 7;
 storage parametres;
 RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
+volatile char order = NO_ORDER;
 
 void setup() {
   Serial.begin(9600);
@@ -31,18 +32,29 @@ void setup() {
   radio.begin();
   radio.openWritingPipe(RADIO_ADRESS_EMITTER); // 00002
   radio.openReadingPipe(1, RADIO_ADRESS_RECEIVER); // 00001
-  radio.setPALevel(RF24_PA_MIN);
-  //radio.startListening();
+  radio.setAutoAck(1);                    // Ensure autoACK is enabled so rec sends ack packet to let you know it got the transmit packet payload
+  radio.enableAckPayload();
+  radio.setPALevel(RF24_PA_LOW);
+  radio.maskIRQ(1,1,0);
+  radio.startListening();
+
+  // Interrupt for pause.
+  attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
+  
   
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
   // If the photomation was previously running we start in test mode to force pause and avoid any problem.
-  testMode(radio, parametres.isRunning);
+  if(parametres.isRunning){
+    testMode(radio);
+  }
   //initPhotomaton();
 }
 
 void loop() {
   Serial.println("loop");
-  testMode(radio, false);
+  if(order == ENTER_TEST){
+    testMode(radio);
+  }
 
   // If coin acceptor OK and clic start button.
   if(stepTakeShot == 0 && manageCoinsAndStart(parametres)) { // BLOCKING :(
@@ -160,6 +172,7 @@ boolean sendOrderAndWait(char order){
  *  INIT
  **************************/
 void initPhotomaton(){
+  
     // Coin acceptor off 
     disableCoinAcceptor();
   
@@ -188,5 +201,24 @@ void initPhotomaton(){
     sendOrderAndWait(ORDER_SPIDER_READY);
     
     enableCoinAcceptor(parametres);
+}
+
+void check_radio(void){
+  Serial.println("check_radio");
+  if (radio.available()) {
+      char order = NO_ORDER;
+      radio.read(&order, sizeof(order));
+      Serial.println(order);
+      // Emergency stop, endless loop.
+      while(order == ORDER_PAUSE){
+        if (radio.available()) {
+          radio.read(&order, sizeof(order));
+          if(order != ORDER_RESUME){
+            order = ORDER_PAUSE;
+          }
+          Serial.println("resume");
+        }
+      }
+    }
 }
 

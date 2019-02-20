@@ -1,10 +1,8 @@
 #include "tests.h"
 
 
-void testMode(RF24 radio, bool bForceTest){
-  radio.startListening();
-  delay(5);
-  char order = bForceTest ? ENTER_TEST : radio.available() ? NO_ORDER : EXIT_TEST;
+void testMode(RF24 radio){
+  char order = NO_ORDER;
   byte answer;
   while (order != EXIT_TEST){
     // check for an incoming order.

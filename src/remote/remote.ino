@@ -82,25 +82,25 @@ const menuItem MENUS[TAILLE_MENU] = {
 String sel = ">";
 String espace = " ";
 
+bool bPause = true;
+
 void setup() {
   Serial.begin(9600);
   
   radio.begin();
   radio.openWritingPipe(RADIO_ADRESS_EMITTER); // 00001
   radio.openReadingPipe(1, RADIO_ADRESS_RECEIVER); // 00002
+  radio.setAutoAck(1);                    // Ensure autoACK is enabled so rec sends ack packet to let you know it got the transmit packet payload
+  radio.enableAckPayload();
   radio.setPALevel(RF24_PA_MIN);;
+  radio.startListening();
   
   initRemote();
   showMainScreen();
 }
 
 void loop() {
-  radio.stopListening();
-  const char order = 'A';
-  Serial.println(radio.write(&order, sizeof(order)));
-  delay(1000);
-  
-  //checkMenu();
+  checkMenu();
 }
 
 /*****************
@@ -115,7 +115,7 @@ void initRemote(){
 void checkMenu(){
   unsigned long currentMillis = millis();
   if (currentMillis - previousMenuMillis >= MENU_SPEED) {
-    previousMenuMillis += MENU_SPEED;
+    previousMenuMillis = currentMillis;
     if(btnMenu1.read()){
       nextMenu();
     } else if(!bMainScreen && btnMenu2.read()){
@@ -142,8 +142,8 @@ void printMsgToLCD(String message, bool isSelected){
     tmp = espace;
   }
   tmp+= message;
-  // add space for 16 caracters
-  for(int i = tmp.length(); i < 16; i++){
+  // add space for 20 caracters
+  for(int i = tmp.length(); i < 20; i++){
     tmp += " ";
   }
   lcd.print(tmp);
@@ -199,7 +199,12 @@ void doMenu(){
     case 1: // Return
       showMainScreen();
       break;
-    case 2: // Pause
+    case 2: // Pause & resume
+      sendOrder(bPause ? ORDER_PAUSE : ORDER_RESUME);
+      lcd.setCursor(0, currentLineInMenu % 4);
+      printMsgToLCD(bPause ? "Resume" : "Pause", true);
+      bPause = !bPause;
+      
       break;
     case 3: // Take shot
     case 4: // Setup
@@ -361,17 +366,28 @@ void nextMenu(){
 }
 
 void testSwitch(char order, byte idTest){
-  Serial.print(order);
+  
+  sendOrder(order);
+  
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(MENUS[idTest - 1].label);
+  
   while(!btnMenu2.read()){
-    if(Serial.available() > 0){
+    if (radio.available()) {
+     char state = ' ';
+     radio.read(&order, sizeof(order));
      lcd.setCursor(0, 1);
-     lcd.print(Serial.read());
+     lcd.print(state);
     }
     delay(MENU_SPEED);
   }
   showMenu();
+}
+
+void sendOrder(char order){
+  radio.stopListening();
+  radio.write(&order, sizeof(order));
+  radio.startListening();
 }
 

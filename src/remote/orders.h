@@ -24,4 +24,7 @@
 #define ORDER_IDLEARM 'Q' // Put the arm on idle pos.
 #define ORDER_DELIVERYRUN 'R' // Run the delivery indefinitely.
 
+#define ORDER_PAUSE 'S'
+#define ORDER_RESUME 'T'
+
 #endif
