@@ -24,10 +24,20 @@ int freeSlot = 7;
 storage parametres;
 RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 volatile char order = NO_ORDER;
+int bathTemp = 10;
+
+Output<ORDER_INTERRUPT_PIN> orderPause;
 
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600);
+
+  // Pin to create pause on paper process
+  orderPause.write(HIGH);
+  
+  //tests
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
   
   radio.begin();
   radio.openWritingPipe(RADIO_ADRESS_EMITTER); // 00002
@@ -38,24 +48,40 @@ void setup() {
   radio.maskIRQ(1,1,0);
   radio.startListening();
 
-  // Interrupt for pause.
+  // Interrupt for radio message.
   attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
   
-  
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
+  
+  // Check verif code, if not correct init eeprom.
+  if(parametres.checkCode != 123){
+    Serial.println("init eeprom");
+    parametres.checkCode = 123;
+    EEPROM.writeBlock(EEPROM_ADRESS, parametres);
+  }
+  
   // If the photomation was previously running we start in test mode to force pause and avoid any problem.
   if(parametres.isRunning){
+    detachInterrupt(digitalPinToInterrupt(2));
     testMode(radio);
+    attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
   }
   //initPhotomaton();
 }
 
 void loop() {
   Serial.println("loop");
+
   if(order == ENTER_TEST){
+    detachInterrupt(digitalPinToInterrupt(2));
     testMode(radio);
+    order = NO_ORDER;
+    attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
   }
 
+  // Every minute we ask for bath temp.
+  sendOrderAndWait(ORDER_TEMP);
+  
   // If coin acceptor OK and clic start button.
   if(stepTakeShot == 0 && manageCoinsAndStart(parametres)) { // BLOCKING :(
     parametres.totStrip += 1;
@@ -162,6 +188,10 @@ boolean sendOrderAndWait(char order){
         case ORDER_SPIDER_READY: // Spider is ready ?
           bOK = response == RESPONSE_OK;
           break;
+
+        case ORDER_TEMP: // Bath temp?
+          bathTemp = response - '0';
+          break;
       }
     }
   }
@@ -203,22 +233,80 @@ void initPhotomaton(){
     enableCoinAcceptor(parametres);
 }
 
-void check_radio(void){
+/*
+ * Interrupt on incoming message from remote.
+ */
+void check_radio(){
   Serial.println("check_radio");
   if (radio.available()) {
-      char order = NO_ORDER;
       radio.read(&order, sizeof(order));
       Serial.println(order);
-      // Emergency stop, endless loop.
-      while(order == ORDER_PAUSE){
-        if (radio.available()) {
-          radio.read(&order, sizeof(order));
-          if(order != ORDER_RESUME){
-            order = ORDER_PAUSE;
+
+      switch(order){
+        case ORDER_PAUSE:
+          digitalWrite(LED_BUILTIN, HIGH);
+          orderPause.write(LOW);
+          // Emergency stop, endless loop.
+          while(order == ORDER_PAUSE){
+            if (radio.available()) {
+              radio.read(&order, sizeof(order));
+              if(order == ORDER_GET_STATUS){
+                byte state = RESPONSE_STATUS_PAUSE;
+                radio.stopListening();
+                radio.write(&state, sizeof(state));
+                radio.startListening();
+                order = ORDER_PAUSE;
+                
+              }else if(order != ORDER_RESUME){
+                order = ORDER_PAUSE;
+              }
+              Serial.println("resume");
+            }
           }
-          Serial.println("resume");
-        }
+          digitalWrite(LED_BUILTIN, LOW);
+          orderPause.write(HIGH);
+          order = NO_ORDER;
+          break;
+          
+        case ORDER_TOTCENT:
+          radio.stopListening();
+          radio.write(&parametres.totMoney, sizeof(parametres.totMoney));
+          radio.startListening();
+          order = NO_ORDER;
+          break;
+          
+        case ORDER_NBSTRIP:
+          radio.stopListening();
+          radio.write(&parametres.totStrip, sizeof(parametres.totStrip));
+          radio.startListening();
+          order = NO_ORDER;
+          break;
+
+        case ORDER_TEMP:
+          Serial.println("temp");
+          Serial.println(bathTemp);
+          radio.stopListening();
+          radio.write(&bathTemp, sizeof(bathTemp));
+          radio.startListening();
+          order = NO_ORDER;
+          break;
+
+        case ORDER_MODE:
+          radio.stopListening();
+          radio.write(&parametres.mode, sizeof(parametres.mode));
+          radio.startListening();
+          order = NO_ORDER;
+          break;
+
+       case ORDER_GET_STATUS:
+          byte answer = RESPONSE_STATUS_RUNNING;
+          radio.stopListening();
+          radio.write(&answer, sizeof(answer));
+          radio.startListening();
+          order = NO_ORDER;
+          break;
       }
+      
     }
 }
 

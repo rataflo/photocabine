@@ -28,13 +28,10 @@ void initSpider(byte *slots){
   }
   ledstrip.show();
   
-  if(bFullInit){
-    initSpiderBottom();
-    initServoArm();
-  }
-  
+  initSpiderBottom();
+  initServoArm();
   initSpiderUp();
-  initRotate(slots, bFullInit);
+  initRotate(slots);
 }
 
 void downSpider(){
@@ -219,7 +216,7 @@ void initSpiderUp() {
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
 }
 
-void initRotate(byte *slots, boolean bFullInit) {
+void initRotate(byte *slots) {
   // Position an arm before the exit of the camera ready to be opened.
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   spiderRotate.setCurrentPosition(0);
@@ -240,22 +237,20 @@ void initRotate(byte *slots, boolean bFullInit) {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 
   // Init the slots
-  if(bFullInit){
-    slots[0] = SLOT_NO_ARM; 
-    slots[1] = SLOT_CLOSED; 
-    slots[2] = SLOT_NO_ARM; 
-    slots[3] = SLOT_CLOSED; 
-    slots[4] = SLOT_NO_ARM; 
-    slots[5] = SLOT_CLOSED; 
-    slots[6] = SLOT_NO_ARM; 
-    slots[7] = SLOT_CLOSED; 
-    slots[8] = SLOT_NO_ARM; 
-    slots[9] = SLOT_CLOSED; 
-    slots[10] = SLOT_NO_ARM; 
-    slots[11] = SLOT_CLOSED; 
-    slots[12] = SLOT_NO_ARM;
-    slots[13] = SLOT_CLOSED;
-  }
+  slots[0] = SLOT_NO_ARM; 
+  slots[1] = SLOT_CLOSED; 
+  slots[2] = SLOT_NO_ARM; 
+  slots[3] = SLOT_CLOSED; 
+  slots[4] = SLOT_NO_ARM; 
+  slots[5] = SLOT_CLOSED; 
+  slots[6] = SLOT_NO_ARM; 
+  slots[7] = SLOT_CLOSED; 
+  slots[8] = SLOT_NO_ARM; 
+  slots[9] = SLOT_CLOSED; 
+  slots[10] = SLOT_NO_ARM; 
+  slots[11] = SLOT_CLOSED; 
+  slots[12] = SLOT_NO_ARM;
+  slots[13] = SLOT_CLOSED;
 
   lightStrip(slots);
 }

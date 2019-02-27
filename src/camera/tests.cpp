@@ -2,6 +2,7 @@
 
 
 void testMode(RF24 radio){
+  Serial.println("testMode");
   char order = NO_ORDER;
   byte answer;
   while (order != EXIT_TEST){
@@ -22,7 +23,6 @@ void testMode(RF24 radio){
       case EXIT_TEST:
         Serial2.print(EXIT_TEST);
         Serial2.flush();
-        
         Serial.print(RESPONSE_OK);
         Serial.flush();
         break;
@@ -39,8 +39,11 @@ void testMode(RF24 radio){
         answer = ORDER_SWDOWN;
         radio.write(&answer, sizeof(answer));
         break;
+      case ORDER_GET_STATUS:
+        answer = RESPONSE_STATUS_TEST;
+        radio.write(&answer, sizeof(answer));
+        break;
     }
-    order = NO_ORDER;
     
     // check from answer from paper process.
     if(Serial2.available() > 0){
@@ -48,4 +51,5 @@ void testMode(RF24 radio){
       radio.write(&answer, sizeof(answer));
     }
   }
+  radio.startListening();
 }

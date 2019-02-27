@@ -1,12 +1,13 @@
+
 /*
  * LCD lib : https://github.com/fdebrabander/Arduino-LiquidCrystal-I2C-library. Pin 20 SDA, 21 SCL. Adresse 0x27.
  * Fast Read\Write : https://github.com/mmarchetti/DirectIO
  */
 #include <Arduino.h>
-#include <AccelStepper.h>
-#include <MultiStepper.h>
 #include <EEPROMex.h>
 #include <EEPROMVar.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 #include "constants.h"
 #include "orders.h"
 #include "spider.h"
@@ -16,100 +17,125 @@
 /*
  * GLOBAL VARIABLES
  */
-storage params;
+byte slots[14]; 
+storage parametres;
 char order = NO_ORDER; // 0 = no order.
 bool bWait = true; // true if we freeze movement to allow operation like waiting for paper from camera or we have nothing to do.
+float tempC = 0;
+
+// Temperature probe
+OneWire oneWire(TEMP_PIN); 
+DallasTemperature tempProbe(&oneWire);
 
 void setup() {
   Serial.begin(9600);
-  //Serial.setTimeout(1);
+  //UNCOMMENT:Serial1.begin(9600);
+
+  //tests
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+  
+  // Interrupt for incoming order
+  attachInterrupt(digitalPinToInterrupt(PAUSE_PIN), emergencyStop, FALLING);
   
   // load params from eeprom
-  EEPROM.readBlock(EEPROM_ADRESS, params);
+  EEPROM.readBlock(EEPROM_ADRESS, parametres);
 
-  setupSpider();
-  setupDelivery();
-  #ifndef TEST_MODE
-    initSpider(params.slots, params.bWait);
-    initDelivery();
-  #else 
-   testMode();
-  #endif
-  //Serial.println("test");
+  // Check verif code, if not correct init eeprom.
+  if(parametres.checkCode != 222){
+    parametres.checkCode = 222;
+    EEPROM.writeBlock(EEPROM_ADRESS, parametres);
+  }
+  
+  //setupSpider();
+  //setupDelivery();
+  tempProbe.begin();
+  
+  if(parametres.isRunning){
+    testMode();
+  }
+
+  getTemperature();
+  //initSpider(slots);
+  //initDelivery();
 }
 
 void loop() {
+  getTemperature();
   checkOrder();
   process();
 }
 
 void checkOrder(){
-  //Serial.println("check");
-  if (Serial.available() > 0) {// if new order coming.
-    params.order = Serial.read();
+  /* UNCOMMENT if (Serial1.available()) {
+    order = Serial1.read();
+  }*/
+
+  if (Serial.available()) {
+    order = Serial.read();
   }
   
-  // If test order
-  if(order == ENTER_TEST){
-    testMode();
-    order = NO_ORDER;
+  switch(order){
+    case ENTER_TEST:
+      testMode();
+      order = NO_ORDER;
+      break;
+
+    case ORDER_TEMP:
+      respondToOrder(tempC);
+      break;
+
+    case ORDER_NB_FREE_SLOT: // Get number of freee slot.
+      byte nbFreeSlot = 0;
+      for(byte i = 0; i < 14; i++){
+        if(slots[i] == SLOT_CLOSED || slots[i] == SLOT_OPEN){
+          nbFreeSlot++;
+        }
+      }
+      respondToOrder(nbFreeSlot);
+      break;
   }
   
-  // we process order only when spider at the top
+  // Order we process only when spider at the top
   if(isSpiderUp()){
-    switch(params.order){
+    switch(order){
       case ORDER_NEW_SLOT: // Need a place for paper.
         // Arm ready on slot 0.
-        if(params.slots[0] == SLOT_OPEN){
-          Serial.print(RESPONSE_OK);
-          Serial.flush();
-          params.order = NO_ORDER;
-          params.bWait = true;
+        if(slots[0] == SLOT_OPEN){
+          respondToOrder(RESPONSE_OK);
+          bWait = true;
           
-        }else if(params.slots[13] == SLOT_CLOSED){ // Arm on exit slot ready to accept paper.
-          if(params.slots[13] == SLOT_CLOSED){ // arm not opened.
-            openArm();
-            params.slots[13] = SLOT_OPEN;
-            params.bWait = false;
-          }
+        } else if(slots[13] == SLOT_CLOSED){ // Arm on exit slot but closed.
+          openArm();
+          slots[13] = SLOT_OPEN;
+          bWait = false;
+          
+        } else if(slots[13] == SLOT_OPEN){ // Arm on exit slot and opened.
+          bWait = false;
         } 
         break;
   
       case ORDER_PAPER_READY: // Paper delivered.
-        Serial.print(RESPONSE_OK);
-        Serial.flush();
-        params.slots[0] = SLOT_PAPER;
-        params.order = NO_ORDER;
-        params.bWait = false;
+        respondToOrder(RESPONSE_OK);
+        slots[0] = SLOT_PAPER;
+        bWait = false;
+        parametres.isRunning = true;
+        // Calculate process time from temperature.
         break;
 
-      case ORDER_NB_FREE_SLOT:{ // Get number of freee slot.
-        byte nbFreeSlot = 0;
-        for(byte i = 0; i < 14; i++){
-          if(params.slots[i] == SLOT_CLOSED || params.slots[i] == SLOT_OPEN){
-            nbFreeSlot++;
-          }
-        }
-        Serial.print(nbFreeSlot);
-        Serial.flush();
-        params.order = NO_ORDER;
-        break;
-      }
-      case ORDER_PAPER_PROCESS_READY: // If we are here the init is ready
-        Serial.print(RESPONSE_OK);
-        Serial.flush();
-        params.order = NO_ORDER;
+      case ORDER_SPIDER_READY: // If we are here the init is ready
+        respondToOrder(RESPONSE_OK);
         break;
     }
   }
 }
 
 void process(){
-  if(!params.bWait){
+  if(!bWait){
     // Check if a slot contain paper to dip in tank.
     boolean bProcess = false;
     for(byte i = 0; i < 13; i++){
-      if(params.slots[i] == SLOT_PAPER){
+      if(slots[i] == SLOT_PAPER){
         bProcess = true;
         break;
       }
@@ -121,7 +147,7 @@ void process(){
       // Agitate.
       unsigned long startMillis = millis();
       unsigned long currentMillis = startMillis;
-      while(currentMillis - startMillis < TANK_TIME){
+      while(currentMillis - startMillis < parametres.tankTime){
         agitate();
         currentMillis = millis();
       }
@@ -130,14 +156,14 @@ void process(){
     }
 
     //In case paper go to last stage (delivery) we go down a little bit before rotating.
-    if(params.slots[12] == SLOT_PAPER){
+    if(slots[12] == SLOT_PAPER){
       downABitSpider();
     }
     
-    rotateSpider(params.slots);
+    rotateSpider(slots);
 
     // If paper need delivery
-    if(params.slots[13] == SLOT_PAPER){
+    if(slots[13] == SLOT_PAPER){
       
       unsigned long startMillis = millis();
       unsigned long currentMillis = startMillis;
@@ -146,23 +172,70 @@ void process(){
         initSpiderUp();
       }
       stopDelivery();
-      params.slots[13] == SLOT_OPEN;
+      slots[13] == SLOT_OPEN;
       // if no order for a place we close the arm.
-      if(params.order != ORDER_NEW_SLOT){
+      if(order != ORDER_NEW_SLOT){
         closeArm();
-        params.slots[13] == SLOT_CLOSED;
+        slots[13] == SLOT_CLOSED;
       }
     }
 
-    EEPROM.updateBlock(EEPROM_ADRESS, params);
-
     // If nothing to do we stop.
-    params.bWait = true;
+    bWait = true;
     for(byte i = 0; i < 13; i++){
-      if(params.slots[i] == SLOT_PAPER){
-        params.bWait = false;
+      if(slots[i] == SLOT_PAPER || slots[i] == SLOT_OPEN){
+        bWait = false;
         break;
       }
     }
+
+    if(bWait){
+      parametres.isRunning = false;
+      EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+    }
+    
   }
 }
+
+void respondToOrder(char answer){
+  /* UNCOMMENT Serial1.print(answer);
+  Serial1.flush();*/
+  Serial.print(answer);
+  Serial.flush();
+  order = NO_ORDER;
+}
+
+void respondToOrder(float answer){
+  /* UNCOMMENT Serial1.print(answer);
+  Serial1.flush();*/
+  Serial.print(answer);
+  Serial.flush();
+  order = NO_ORDER;
+}
+
+void respondToOrder(byte answer){
+  /* UNCOMMENT Serial1.print(answer);
+  Serial1.flush();*/
+  Serial.print(answer);
+  Serial.flush();
+  order = NO_ORDER;
+}
+
+/*
+ * Interrupt for pause/emergency stop.
+ */
+void emergencyStop(){
+  Serial.println("bstop");
+  digitalWrite(LED_BUILTIN, HIGH);
+  // Emergency stop, endless loop. It's wrong I know...
+  while(digitalRead(PAUSE_PIN) == LOW){
+  }
+  digitalWrite(LED_BUILTIN, LOW);
+  Serial.println("estop");
+}
+
+void getTemperature(){
+  tempProbe.requestTemperatures();
+  tempC = tempProbe.getTempCByIndex(0);
+}
+

@@ -60,6 +60,8 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 #define RADIO_MOSI 51
 #define RADIO_MISO 50
 
+#define ORDER_INTERRUPT_PIN 43
+
 #define WAIT_BETWEEN_SHOT 5000 // Wait between shot in ms.
 
 // Modes and prices
@@ -72,9 +74,11 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 // EEPROM data & work variables
 #define EEPROM_ADRESS 0
 struct storage {
+  byte checkCode = 0;
   int totStrip = 0;
   byte mode = MODE_PAYING;// O = paying, 1 = Free price, 2 = Free
   bool isRunning = false; // Camera was working before shutdown ?
+  float totMoney = 0;
 };
 
 #endif

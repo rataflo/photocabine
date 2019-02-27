@@ -1,13 +1,17 @@
 /*
- * SDA A4
- * SCL A5
- */
+   SDA A4
+   SCL A5
+*/
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
 #include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
 #include "orders.h"
+
+#define MODE_PAYING 0
+#define MODE_FREE_PRICE 1
+#define MODE_FREE 2
 
 #define MENU_BTN1_PIN 5
 #define MENU_BTN2_PIN 6
@@ -36,10 +40,10 @@ unsigned long previousMenuMillis = 0;
 // Define menu structure.
 typedef struct
 {
-    byte id; 
-    String label; 
-    byte parentMenu;
-}menuItem;
+  byte id;
+  String label;
+  byte parentMenu;
+} menuItem;
 
 #define TAILLE_MENU 32
 const String MENU_RETOUR = "...";
@@ -49,44 +53,45 @@ const menuItem MENUS[TAILLE_MENU] = {
   {2, "Pause", 0},
   {3, "Take shot", 0},
   {4, "Setup", 0},
-  {5, "Tests", 0},
+  {5, "Start tests", 0},
   {6, MENU_RETOUR, 5},
   {7, "Motors", 5},
   {8, "Microswitchs", 5},
   {9, "Flash", 5},
-  {10,"Relay", 5},
+  {10, "Relay", 5},
   {11, MENU_RETOUR, 7},
-  {12,"Shutter", 7},
-  {13,"Scissor", 7},
-  {14,"Paper feeder", 7},
-  {15,"Spider up/down", 7},
-  {16,"Spider rotate", 7},
-  {17,"Paper exit", 7},
+  {12, "Shutter", 7},
+  {13, "Scissor", 7},
+  {14, "Paper feeder", 7},
+  {15, "Spider up/down", 7},
+  {16, "Spider rotate", 7},
+  {17, "Paper exit", 7},
   {18, MENU_RETOUR, 8},
-  {19,"Shutter", 8},
-  {20,"Scissor", 8},
-  {21,"Paper 1", 8},
-  {22,"Paper 2", 8},
-  {23,"Paper 3", 8},
-  {24,"Paper 4", 8},
-  {25,"Start btn", 8},
-  {26,"Spider up", 8},
-  {27,"Spider down", 8},
-  {28,"Rotate 1", 8},
-  {29,"Rotate 2", 8},
+  {19, "Shutter", 8},
+  {20, "Scissor", 8},
+  {21, "Paper 1", 8},
+  {22, "Paper 2", 8},
+  {23, "Paper 3", 8},
+  {24, "Paper 4", 8},
+  {25, "Start btn", 8},
+  {26, "Spider up", 8},
+  {27, "Spider down", 8},
+  {28, "Rotate 1", 8},
+  {29, "Rotate 2", 8},
   {30, MENU_RETOUR, 9},
-  {31,"Flash on", 9},
-  {32,"Start LED on", 9},
+  {31, "Flash on", 9},
+  {32, "Start LED on", 9},
 };
 
 String sel = ">";
 String espace = " ";
 
-bool bPause = true;
+bool bPause = false;
+bool bTests = false;
 
 void setup() {
   Serial.begin(9600);
-  
+
   radio.begin();
   radio.openWritingPipe(RADIO_ADRESS_EMITTER); // 00001
   radio.openReadingPipe(1, RADIO_ADRESS_RECEIVER); // 00002
@@ -94,8 +99,8 @@ void setup() {
   radio.enableAckPayload();
   radio.setPALevel(RF24_PA_MIN);;
   radio.startListening();
-  
-  initRemote();
+
+  lcd.begin();
   showMainScreen();
 }
 
@@ -104,91 +109,133 @@ void loop() {
 }
 
 /*****************
-* MENU - GO PRO STYLE
+  MENU - GO PRO STYLE
 ******************/
 
-void initRemote(){
-  lcd.begin();
-}
-
 /* Check and do action on both menu button */
-void checkMenu(){
+void checkMenu() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMenuMillis >= MENU_SPEED) {
     previousMenuMillis = currentMillis;
-    if(btnMenu1.read()){
+    if (btnMenu1.read()) {
       nextMenu();
-    } else if(!bMainScreen && btnMenu2.read()){
+    } else if (!bMainScreen && btnMenu2.read()) {
       doMenu();
     }
   }
 }
 
 /*
- * Show main screen
- */
-void showMainScreen(){
+   Show main screen
+*/
+void showMainScreen() {
   bMainScreen = true;
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("-- MAIN SCREEN --");
+  lcd.print("   -- NO-MATON --   ");
+
+  // Ask & display infos
+  char state = sendOrderAndWaitForChar(ORDER_GET_STATUS);
+  Serial.println(state);
+  lcd.setCursor(0, 1);
+  lcd.print("Status:");
+  lcd.print(state == RESPONSE_STATUS_RUNNING ? "Running      " : state == RESPONSE_STATUS_TEST ? "Tests        " : "Pause        ");
+  bPause = state == RESPONSE_STATUS_PAUSE ? true : false;
+  bTests = state == RESPONSE_STATUS_TEST ? true : false;
+
+  if (!bPause && !bTests) {
+    int temp = sendOrderAndWaitForInt(ORDER_TEMP);
+    Serial.println(temp);
+    lcd.setCursor(0, 2);
+    lcd.print("Temp:");
+    lcd.print(temp);
+
+    char mode = sendOrderAndWaitForChar(ORDER_MODE);
+    lcd.print(" Mode:");
+    lcd.print(mode == MODE_PAYING ? "$$" : mode == MODE_FREE_PRICE ? "$/Free" : "Free");
+
+    int totStrip = sendOrderAndWaitForInt(ORDER_NBSTRIP);
+    Serial.println(totStrip);
+    lcd.setCursor(0, 3);
+    lcd.print("Strip:");
+    lcd.print(totStrip);
+    float totMoney = sendOrderAndWaitForFloat(ORDER_TOTCENT);
+    Serial.println(totMoney);
+    lcd.print(" $:");
+    lcd.print(totMoney);
+  }
+  Serial.println("fin main screen");
+
 }
 
-void printMsgToLCD(String message, bool isSelected){
+void printMsgToLCD(String message, bool isSelected) {
   String tmp;
-  if(isSelected){
+  if (isSelected) {
     tmp = sel;
   } else {
     tmp = espace;
   }
-  tmp+= message;
+  tmp += message;
   // add space for 20 caracters
-  for(int i = tmp.length(); i < 20; i++){
+  for (int i = tmp.length(); i < 20; i++) {
     tmp += " ";
   }
   lcd.print(tmp);
 }
 
 /*
- * Display a menu.
- */
-void showMenu(){
+   Display a menu.
+*/
+void showMenu() {
   int ligneLCD = 0;
   int lineInMenu = 0;
-  
-  for(int i = 0; i < TAILLE_MENU; i++){
+
+  for (int i = 0; i < TAILLE_MENU; i++) {
     menuItem menu = MENUS[i];
-    if(menu.parentMenu == currentMenu){
-      if(lineInMenu >= currentLineInMenu) {
+    if (menu.parentMenu == currentMenu) {
+      if (lineInMenu >= currentLineInMenu) {
         lcd.setCursor(0, ligneLCD);
-        printMsgToLCD(menu.label, lineInMenu == currentLineInMenu);
+        // Special cases
+        switch (menu.id) {
+          case 2: //Pause
+            printMsgToLCD(bPause ? "Resume" : "Pause", lineInMenu == currentLineInMenu);
+            break;
+
+          case 5: //Tests
+            printMsgToLCD(bTests ? "Stop tests" : "Start tests", lineInMenu == currentLineInMenu);
+            break;
+
+          default:
+            printMsgToLCD(menu.label, lineInMenu == currentLineInMenu);
+        }
+
         ligneLCD++;
-        if(ligneLCD == 4){
+        if (ligneLCD == 4) {
           break;
         }
       }
       lineInMenu++;
     }
   }
-  
-  for(int i = ligneLCD; i < 4; i++){
+
+  for (int i = ligneLCD; i < 4; i++) {
     lcd.setCursor(0, i);
     lcd.print("                    ");
   }
 }
 
 /*
- * What to do on action button
- */
-void doMenu(){
+   What to do on action button
+*/
+void doMenu() {
   // Get the menu in action
   int line = 0;
   menuItem menu;
-  for(int i = 0; i < TAILLE_MENU; i++){
+  for (int i = 0; i < TAILLE_MENU; i++) {
     menu = MENUS[i];
-    if(menu.parentMenu == currentMenu){
-      if(line == currentLineInMenu){
-          break;
+    if (menu.parentMenu == currentMenu) {
+      if (line == currentLineInMenu) {
+        break;
       }
       line++;
     }
@@ -200,24 +247,27 @@ void doMenu(){
       showMainScreen();
       break;
     case 2: // Pause & resume
-      sendOrder(bPause ? ORDER_PAUSE : ORDER_RESUME);
+      sendOrder(bPause ? ORDER_RESUME : ORDER_PAUSE);
+      bPause = !bPause;
       lcd.setCursor(0, currentLineInMenu % 4);
       printMsgToLCD(bPause ? "Resume" : "Pause", true);
-      bPause = !bPause;
-      
       break;
     case 3: // Take shot
     case 4: // Setup
     case 5: // Tests
-      Serial.print(ENTER_TEST);
-      Serial.flush();
-      currentMenu = menu.id;
-      currentLineInMenu = 0;
-      showMenu();
+      sendOrder(bTests ? EXIT_TEST : ENTER_TEST);
+      bTests = !bTests;
+      lcd.setCursor(0, currentLineInMenu % 4);
+      printMsgToLCD(bTests ? "Stop tests" : "Start tests", true);
+      if(bTests){
+        currentMenu = menu.id;
+        currentLineInMenu = 0;
+        showMenu();
+      }
       break;
     case 6: // Return 0
-      Serial.print(EXIT_TEST);
-      Serial.flush();
+      sendOrder(EXIT_TEST);
+      bTests = false;
       currentMenu = 0;
       currentLineInMenu = 0;
       showMenu();
@@ -245,33 +295,33 @@ void doMenu(){
       showMenu();
       break;
     case 12: // Test shutter
-     //takeShot();
+      //takeShot();
       break;
-    case 13: // Test 
+    case 13: // Test
       // close scissor.
-      //closeScissor(); 
+      //closeScissor();
       // Open scissor
       ////openScissor();
       // close again
       //closeScissor(); // close scissor.
       break;
-     case 18: // Return menu tests
-     case 23: // Return menu tests
+    case 18: // Return menu tests
+    case 23: // Return menu tests
       currentMenu = 5;
       currentLineInMenu = 0;
       showMenu();
       break;
-      
-     case 19: // Test switch shutter.
+
+    case 19: // Test switch shutter.
       testSwitch(ORDER_SWUP, menu.id);
-      
+
       break;
-      
-     case 20: // Test switch scissor.
+
+    case 20: // Test switch scissor.
       delay(200);
-      while(!btnMenu2.read()){
-       //testSwitchScissor(lcd, currentLineInMenu);
-       delay(200);
+      while (!btnMenu2.read()) {
+        //testSwitchScissor(lcd, currentLineInMenu);
+        delay(200);
       }
       lcd.setCursor(0, currentLineInMenu % 4);
       printMsgToLCD(menu.label, true);
@@ -280,81 +330,81 @@ void doMenu(){
 
     case 21: // Test switch up
       delay(200);
-      while(!btnMenu2.read()){
-       //testSwitchUpDown(lcd, currentLineInMenu);
-       delay(200);
+      while (!btnMenu2.read()) {
+        //testSwitchUpDown(lcd, currentLineInMenu);
+        delay(200);
       }
       lcd.setCursor(0, currentLineInMenu % 4);
       printMsgToLCD(menu.label, true);
       delay(200);
       break;
-    
+
     case 22: // Start button
       delay(200);
-      while(!btnMenu2.read()){
-       //testStartButton(lcd, currentLineInMenu);
-       delay(200);
+      while (!btnMenu2.read()) {
+        //testStartButton(lcd, currentLineInMenu);
+        delay(200);
       }
       lcd.setCursor(0, currentLineInMenu % 4);
       printMsgToLCD(menu.label, true);
       delay(200);
       break;
-      
+
     case 24: // Test flash
       /*if(!isFlashOn()){
         flashOn();
         lcd.setCursor(0, currentLineInMenu % 4);
         lcd.print(">Flash off          ");
-      }else{
+        }else{
         flashOff();
         lcd.setCursor(0, currentLineInMenu % 4);
         printMsgToLCD(menu.label, true);
-      }*/
+        }*/
       break;
-      
+
     case 25: // Test led start button
       /*if(!isStartLedOn()){
         startLedOn();
         lcd.setCursor(0, currentLineInMenu % 4);
         lcd.print(">Start LED off      ");
-      }else{
+        }else{
         startLedOff();
         lcd.setCursor(0, currentLineInMenu % 4);
         printMsgToLCD(menu.label, true);
-      }*/
+        }*/
       break;
   }
 }
 
 /*
- * Action on button next
- */
-void nextMenu(){
-  if(bMainScreen) { // if currently on main screen, show first menu.
+   Action on button next
+*/
+void nextMenu() {
+  if (bMainScreen) { // if currently on main screen, show first menu.
     bMainScreen = false;
     currentMenu = 0;
     currentLineInMenu = 0;
     showMenu();
-    
+
   } else {
     // Get number of items in menu.
     int nbItemMenu = 0;
-    for(int i = 0; i < TAILLE_MENU; i++){
+    for (int i = 0; i < TAILLE_MENU; i++) {
       menuItem menu = MENUS[i];
-      if(menu.parentMenu == currentMenu){
+      if (menu.parentMenu == currentMenu) {
         nbItemMenu++;
       }
     }
 
     // Case end of menu, return to first line.
-    if(currentLineInMenu + 1  >= nbItemMenu){
+    if (currentLineInMenu + 1  >= nbItemMenu) {
       currentLineInMenu =  0;
       showMenu();
-      
-    } else if(currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11){ // Case show next page in menu
+
+    } else if (currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11) { // Case show next page in menu
       currentLineInMenu++;
       showMenu();
-      
+
     } else { // Move one step in menu
       lcd.setCursor(0, currentLineInMenu % 4);
       lcd.print(espace);
@@ -365,29 +415,60 @@ void nextMenu(){
   }
 }
 
-void testSwitch(char order, byte idTest){
-  
+void testSwitch(char order, byte idTest) {
+
   sendOrder(order);
-  
+
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(MENUS[idTest - 1].label);
-  
-  while(!btnMenu2.read()){
+
+  while (!btnMenu2.read()) {
     if (radio.available()) {
-     char state = ' ';
-     radio.read(&order, sizeof(order));
-     lcd.setCursor(0, 1);
-     lcd.print(state);
+      char state = ' ';
+      radio.read(&order, sizeof(order));
+      lcd.setCursor(0, 1);
+      lcd.print(state);
     }
     delay(MENU_SPEED);
   }
   showMenu();
 }
 
-void sendOrder(char order){
+void sendOrder(char order) {
   radio.stopListening();
   radio.write(&order, sizeof(order));
+  radio.flush_rx();
   radio.startListening();
+}
+
+char sendOrderAndWaitForChar(char order) {
+  sendOrder(order);
+  while (!radio.available()) {
+    Serial.println("wait");
+  }
+  char answer = NO_ORDER;
+  radio.read(&answer, sizeof(answer));
+  return answer;
+}
+
+int sendOrderAndWaitForInt(char order) {
+  sendOrder(order);
+  while (!radio.available()) {
+    Serial.println("wait");
+  }
+  int answer = 0;
+  radio.read(&answer, sizeof(answer));
+  return answer;
+}
+
+float sendOrderAndWaitForFloat(char order) {
+  sendOrder(order);
+  while (!radio.available()) {
+    Serial.println("wait");
+  }
+  float answer = 0;
+  radio.read(&answer, sizeof(answer));
+  return answer;
 }
 

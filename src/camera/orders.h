@@ -28,4 +28,14 @@
 #define ORDER_PAUSE 'S'
 #define ORDER_RESUME 'T'
 
+// Ask infos
+#define ORDER_TEMP 'U'
+#define ORDER_NBSTRIP 'V'
+#define ORDER_TOTCENT 'W'
+#define ORDER_MODE 'X'
+#define ORDER_GET_STATUS 'Y'
+#define RESPONSE_STATUS_RUNNING 'Z'
+#define RESPONSE_STATUS_PAUSE 'a'
+#define RESPONSE_STATUS_TEST 'b'
+
 #endif
