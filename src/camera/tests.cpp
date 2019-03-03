@@ -27,17 +27,12 @@ void testMode(RF24 radio){
         Serial.flush();
         break;
       case ORDER_SWUP: // test upper switch.
-        //Serial.println("swup");
         Serial2.print(ORDER_SWUP);
         Serial2.flush();
-        answer = ORDER_SWUP;
-        radio.write(&answer, sizeof(answer));
         break; 
       case ORDER_SWDOWN: // Test switch bottom
         Serial2.print(ORDER_SWDOWN);
         Serial2.flush();
-        answer = ORDER_SWDOWN;
-        radio.write(&answer, sizeof(answer));
         break;
       case ORDER_GET_STATUS:
         answer = RESPONSE_STATUS_TEST;
@@ -45,7 +40,7 @@ void testMode(RF24 radio){
         break;
     }
     
-    // check from answer from paper process.
+    // check answer from paper process.
     if(Serial2.available() > 0){
       answer = Serial2.read();
       radio.write(&answer, sizeof(answer));

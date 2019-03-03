@@ -21,10 +21,10 @@
 // Work variables
 byte stepTakeShot = 0;
 int freeSlot = 7;
-storage parametres;
+volatile storage parametres;
 RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 volatile char order = NO_ORDER;
-int bathTemp = 10;
+volatile int bathTemp = 10;
 
 Output<ORDER_INTERRUPT_PIN> orderPause;
 
@@ -45,6 +45,7 @@ void setup() {
   radio.setAutoAck(1);                    // Ensure autoACK is enabled so rec sends ack packet to let you know it got the transmit packet payload
   radio.enableAckPayload();
   radio.setPALevel(RF24_PA_LOW);
+  radio.setRetries(250, 2);
   radio.maskIRQ(1,1,0);
   radio.startListening();
 
@@ -57,33 +58,37 @@ void setup() {
   if(parametres.checkCode != 123){
     Serial.println("init eeprom");
     parametres.checkCode = 123;
+    parametres.totMoney = 0;
+    parametres.totStrip = 0;
+    parametres.isRunning = false;
+    parametres.mode = MODE_PAYING;
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
   
-  // If the photomation was previously running we start in test mode to force pause and avoid any problem.
-  if(parametres.isRunning){
+  // If the photomaton was previously running we start in test mode to force pause and avoid any problem.
+  //if(parametres.isRunning){
     detachInterrupt(digitalPinToInterrupt(2));
     testMode(radio);
+    parametres.isRunning = false;
+    EEPROM.updateBlock(EEPROM_ADRESS, parametres);
     attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
-  }
+  //}
   //initPhotomaton();
 }
 
 void loop() {
-  Serial.println("loop");
-
   if(order == ENTER_TEST){
     detachInterrupt(digitalPinToInterrupt(2));
     testMode(radio);
     order = NO_ORDER;
     attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
   }
-
+  
   // Every minute we ask for bath temp.
   sendOrderAndWait(ORDER_TEMP);
   
   // If coin acceptor OK and clic start button.
-  if(stepTakeShot == 0 && manageCoinsAndStart(parametres)) { // BLOCKING :(
+  if(stepTakeShot == 0 && manageCoinsAndStart(parametres)) {
     parametres.totStrip += 1;
     parametres.isRunning = true;
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
@@ -93,6 +98,7 @@ void loop() {
   if(stepTakeShot > 0) {
     manageStepsTakeShot(); 
   }
+  
 }
 
 void manageStepsTakeShot(){
@@ -156,7 +162,6 @@ void manageStepsTakeShot(){
 
 boolean sendOrderAndWait(char order){
 
-  char response;
   boolean bOK = false;
   
   unsigned long lastMillis = 0;
@@ -166,32 +171,38 @@ boolean sendOrderAndWait(char order){
     currentMillis = millis();
     // if no response for 1 second we send the order again.
     if(currentMillis - lastMillis > 1000){
-      Serial1.print(order);
-      Serial1.flush();
+      Serial2.print(order);
+      Serial2.flush();
       lastMillis = currentMillis;
     }
-  
-    if (Serial1.available() > 0) {// if new response coming.
-      response = Serial1.read();
     
+    if (Serial2.available() > 0) {// if new response coming.
       switch(order){
-        case ORDER_NEW_SLOT:
+        case ORDER_NEW_SLOT:{
           // Ready to send paper.
+          char response = Serial2.read();
           bOK = response == RESPONSE_OK;
           break;
-    
-        case ORDER_NB_FREE_SLOT: // Get number of free slot.
-          freeSlot = response - '0';
+        }
+        case ORDER_NB_FREE_SLOT:{ // Get number of free slot.
+          freeSlot = Serial2.parseInt();
+          Serial.println(freeSlot);
+          //freeSlot = response - '0';
           bOK = true;
           break;
-
-        case ORDER_SPIDER_READY: // Spider is ready ?
+        }
+        case ORDER_SPIDER_READY:{ // Spider is ready ?
+          char response = Serial2.read();
           bOK = response == RESPONSE_OK;
           break;
-
-        case ORDER_TEMP: // Bath temp?
-          bathTemp = response - '0';
+        }
+        case ORDER_TEMP:{ // Bath temp?
+          bathTemp = Serial2.parseFloat();
+          Serial.println(bathTemp);
+          //bathTemp = response - '0';
+          bOK = true;
           break;
+        }
       }
     }
   }
@@ -246,7 +257,7 @@ void check_radio(){
         case ORDER_PAUSE:
           digitalWrite(LED_BUILTIN, HIGH);
           orderPause.write(LOW);
-          // Emergency stop, endless loop.
+          // Emergency stop, endless loop. Inside interrupt, fuck yeah
           while(order == ORDER_PAUSE){
             if (radio.available()) {
               radio.read(&order, sizeof(order));
@@ -305,6 +316,15 @@ void check_radio(){
           radio.startListening();
           order = NO_ORDER;
           break;
+
+        case ORDER_SET_MODE:
+          delay(250);
+          if (radio.available()) {
+            byte newMode = MODE_PAYING;
+            radio.read(&newMode, sizeof(newMode));
+            parametres.mode = newMode;
+            EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+          }
       }
       
     }

@@ -6,7 +6,7 @@ Servo servoArm;
 Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(84, LEDSTRIP_PIN, NEO_RGB + NEO_KHZ800);
 
 bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
-
+volatile byte currentSpeed = 0;
 
 void setupSpider(){
   pinMode(SPIDER_UPDOWN_PIN_PWM, OUTPUT);
@@ -41,6 +41,7 @@ void downSpider(){
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
     for(int i = 50; i < 255; i++){
+      currentSpeed = i;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, i); //max speed.
       delay(5);
     }
@@ -49,17 +50,20 @@ void downSpider(){
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
     if(currentMillis - startMoove > 4000){
+      currentSpeed = 125;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); // mid speed
     }
     currentMillis = millis();
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
+  currentSpeed = 0;
 }
 
 void downABitSpider(){
   digitalWrite(SPIDER_UPDOWN_PIN_DIR,LOW);
-  analogWrite(SPIDER_UPDOWN_PIN_PWM, 250); //mid speed.
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
+  currentSpeed = 125;
   unsigned long startMoove = millis();
   unsigned long currentMillis = startMoove;
   while(currentMillis - startMoove < 500){
@@ -67,6 +71,7 @@ void downABitSpider(){
     currentMillis = millis();
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
+  currentSpeed = 0;
 }
 
 void upSpider(){
@@ -77,6 +82,7 @@ void upSpider(){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
     for(int i = 50; i < 255; i++){
       analogWrite(SPIDER_UPDOWN_PIN_PWM, i); //max speed.
+      currentSpeed = i;
       delay(5);
     }
   }
@@ -85,11 +91,13 @@ void upSpider(){
   while (!bEndStop) { 
     if(currentMillis - startMoove > 4000){
       analogWrite(SPIDER_UPDOWN_PIN_PWM, 125);
+      currentSpeed = 125;
     }
     currentMillis = millis();
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
+  currentSpeed = 0;
 }
 
 void asyncSpiderUp() {
@@ -97,8 +105,10 @@ void asyncSpiderUp() {
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
     analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
+    currentSpeed = 125;
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
+  currentSpeed = 0;
 }
 
 void rotateSpider(byte *slots){
@@ -135,7 +145,8 @@ void rotateSpider(byte *slots){
 
 void agitate(){
   digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
-  analogWrite(SPIDER_UPDOWN_PIN_PWM, 250); //mid speed.
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
+  currentSpeed = 125;
   unsigned long startMoove = millis();
   unsigned long currentMillis = startMoove;
   while(currentMillis - startMoove < 800){
@@ -150,6 +161,7 @@ void agitate(){
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
+  currentSpeed = 0;
 }
 
 void setServoArmWaitPos() {
@@ -195,12 +207,14 @@ void initSpiderBottom() {
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
-    analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //max speed.
+    analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
+    currentSpeed = 125;
   }
   while (!bEndStop) { 
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
+  currentSpeed = 0;
 }
 
 
@@ -209,11 +223,13 @@ void initSpiderUp() {
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
     analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
+    currentSpeed = 125;
   }
   while (!bEndStop) { 
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
+  currentSpeed = 0;
 }
 
 void initRotate(byte *slots) {
@@ -268,3 +284,8 @@ void lightStrip(byte *slots){
   }
   ledstrip.show();
 }
+
+byte getSpiderCurrentSpeed(){
+  return currentSpeed;
+}
+

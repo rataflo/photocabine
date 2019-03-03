@@ -21,6 +21,7 @@ void initSpiderUp();
 void initRotate(byte *slots);
 boolean isSpiderUp();
 void lightStrip(byte *slots);
+byte getSpiderCurrentSpeed();
 
 void initServoArm();
 void setServoArmWaitPos();

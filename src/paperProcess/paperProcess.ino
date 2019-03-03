@@ -26,6 +26,7 @@ float tempC = 0;
 // Temperature probe
 OneWire oneWire(TEMP_PIN); 
 DallasTemperature tempProbe(&oneWire);
+DeviceAddress tempProbAdress;
 
 void setup() {
   Serial.begin(9600);
@@ -36,7 +37,7 @@ void setup() {
   digitalWrite(LED_BUILTIN, LOW);
   
   // Interrupt for incoming order
-  attachInterrupt(digitalPinToInterrupt(PAUSE_PIN), emergencyStop, FALLING);
+  //attachInterrupt(digitalPinToInterrupt(PAUSE_PIN), emergencyStop, FALLING);
   
   // load params from eeprom
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
@@ -44,15 +45,22 @@ void setup() {
   // Check verif code, if not correct init eeprom.
   if(parametres.checkCode != 222){
     parametres.checkCode = 222;
+    parametres.isRunning = false;
+    parametres.tankTime = TANK_TIME;
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
   
-  //setupSpider();
-  //setupDelivery();
+  setupSpider();
+  setupDelivery();
+  
   tempProbe.begin();
+  tempProbe.getAddress(tempProbAdress, 0);
+  tempProbe.setResolution(tempProbAdress, 9);
   
   if(parametres.isRunning){
     testMode();
+    parametres.isRunning = false;
+    EEPROM.updateBlock(EEPROM_ADRESS, parametres);
   }
 
   getTemperature();
@@ -208,7 +216,7 @@ void respondToOrder(char answer){
 void respondToOrder(float answer){
   /* UNCOMMENT Serial1.print(answer);
   Serial1.flush();*/
-  Serial.print(answer);
+  Serial.print(answer, 1);
   Serial.flush();
   order = NO_ORDER;
 }
@@ -225,17 +233,18 @@ void respondToOrder(byte answer){
  * Interrupt for pause/emergency stop.
  */
 void emergencyStop(){
-  Serial.println("bstop");
+  // halt spider
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   digitalWrite(LED_BUILTIN, HIGH);
   // Emergency stop, endless loop. It's wrong I know...
   while(digitalRead(PAUSE_PIN) == LOW){
   }
   digitalWrite(LED_BUILTIN, LOW);
-  Serial.println("estop");
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, getSpiderCurrentSpeed());
 }
 
 void getTemperature(){
-  tempProbe.requestTemperatures();
-  tempC = tempProbe.getTempCByIndex(0);
+  tempProbe.requestTemperatures(); // Send the command to get temperatures
+  tempC = tempProbe.getTempC(tempProbAdress);
 }
 

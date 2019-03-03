@@ -32,20 +32,31 @@ boolean manageCoinsAndStart(storage parametres){
   boolean bStart = false;
   refreshCoinSegment(parametres);
   
-  // if price is OK, let's go.
-  if((parametres.mode == MODE_PAYING && cents >= PRICE_CTS) || (parametres.mode == MODE_FREE_PRICE && cents >= FREE_PRICE_CTS) || parametres.mode == MODE_FREE) {
-    if(parametres.mode != MODE_FREE_PRICE){
+  switch(parametres.mode){
+    case MODE_PAYING:
+      if(cents >= PRICE_CTS){
+        disableCoinAcceptor();
+        showArrowDown();
+        startLedOn();
+        bStart = startBtn.read();
+      }
+      break;
+    case MODE_FREE_PRICE:
+      if(cents >= FREE_PRICE_CTS){
+        showArrowDown();
+        startLedOn();
+        if(startBtn.read()){
+          disableCoinAcceptor();
+          bStart = true;
+        }else{
+          refreshCoinSegment(parametres);
+        }
+      }
+      break;
+    case MODE_FREE:
       disableCoinAcceptor();
-    }
-    
-    // wait indefinitely for start button.
-    showArrowDown();
-    startLedOn();
-    while(!startBtn.read()){
-      refreshCoinSegment(parametres); // <= refresh needed in cas of free price. People can add all the money they want.
-    }
-    disableCoinAcceptor();
-    bStart = true;
+      bStart = startBtn.read();
+      break;
   }
   
   return bStart;
@@ -126,12 +137,14 @@ void disableCoinAcceptor(){
 }
 
 void enableCoinAcceptor(storage parametres){
-  pinMode(COIN_PIN, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, FALLING);
-  refreshCoinSegment(parametres);
-  enableCoin.write(HIGH);
-  bCoinEnabled = true;
-  cents = 0;
+  if(parametres.mode != MODE_FREE){
+    pinMode(COIN_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, FALLING);
+    refreshCoinSegment(parametres);
+    enableCoin.write(HIGH);
+    bCoinEnabled = true;
+    cents = 0;
+  }
 }
 
 void startLedOn() {

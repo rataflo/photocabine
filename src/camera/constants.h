@@ -65,9 +65,6 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 #define WAIT_BETWEEN_SHOT 5000 // Wait between shot in ms.
 
 // Modes and prices
-#define MODE_PAYING 0
-#define MODE_FREE_PRICE 1
-#define MODE_FREE 2
 #define PRICE_CTS 200 // Price of a photo in cents.
 #define FREE_PRICE_CTS 100 // Minimum in free price mode
 
