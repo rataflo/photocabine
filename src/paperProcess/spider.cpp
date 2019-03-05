@@ -6,7 +6,7 @@ Servo servoArm;
 Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(84, LEDSTRIP_PIN, NEO_RGB + NEO_KHZ800);
 
 bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
-volatile byte currentSpeed = 0;
+volatile byte currentSpeed = 0; // use to reset speed after a pause.
 
 void setupSpider(){
   pinMode(SPIDER_UPDOWN_PIN_PWM, OUTPUT);
@@ -287,5 +287,13 @@ void lightStrip(byte *slots){
 
 byte getSpiderCurrentSpeed(){
   return currentSpeed;
+}
+
+void lightFullStrip(){
+  // light open slots
+  for(byte i = 0; i < 84; i++){
+    ledstrip.setPixelColor(i, 255, 0, 0); 
+  }
+  ledstrip.show();
 }
 

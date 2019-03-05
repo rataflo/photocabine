@@ -62,33 +62,43 @@ void setup() {
     parametres.totStrip = 0;
     parametres.isRunning = false;
     parametres.mode = MODE_PAYING;
+    parametres.price_cts = 200;
+    parametres.free_price_cts = 100;
+    parametres.tank_time = 18000;
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
   
   // If the photomaton was previously running we start in test mode to force pause and avoid any problem.
-  //if(parametres.isRunning){
+  bool bTest = parametres.isRunning || sendOrderAndWait(ORDER_GET_STATUS) == RESPONSE_STATUS_TEST ? true : false;
+  if(bTest){
     detachInterrupt(digitalPinToInterrupt(2));
     testMode(radio);
     parametres.isRunning = false;
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
     attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
-  //}
-  //initPhotomaton();
+  }
+  //initPhotomaton(); // TODO: remove comment when test are over.
 }
 
 void loop() {
   if(order == ENTER_TEST){
     detachInterrupt(digitalPinToInterrupt(2));
     testMode(radio);
-    order = NO_ORDER;
     attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
-  }
   
+  } else if(order == ORDER_SET_TANK_TIME){
+    Serial2.print(ORDER_SET_TANK_TIME);
+    Serial2.flush();
+    Serial2.print(parametres.tank_time);
+    Serial2.flush();
+    order = NO_ORDER;
+  }
+
   // Every minute we ask for bath temp.
   sendOrderAndWait(ORDER_TEMP);
-  
+
   // If coin acceptor OK and clic start button.
-  if(stepTakeShot == 0 && manageCoinsAndStart(parametres)) {
+  if(stepTakeShot == 0 && manageCoinsAndStart(parametres.mode)) {
     parametres.totStrip += 1;
     parametres.isRunning = true;
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
@@ -98,7 +108,7 @@ void loop() {
   if(stepTakeShot > 0) {
     manageStepsTakeShot(); 
   }
-  
+
 }
 
 void manageStepsTakeShot(){
@@ -154,7 +164,7 @@ void manageStepsTakeShot(){
           sendOrderAndWait(ORDER_NB_FREE_SLOT);
         }
       }
-      enableCoinAcceptor(parametres);
+      enableCoinAcceptor(parametres.mode);
       break;
   }
   stepTakeShot = stepTakeShot >= 13 ? 0 : stepTakeShot + 1;
@@ -181,13 +191,12 @@ boolean sendOrderAndWait(char order){
         case ORDER_NEW_SLOT:{
           // Ready to send paper.
           char response = Serial2.read();
-          bOK = response == RESPONSE_OK;
+          bOK = response == ORDER_NEW_SLOT_READY;
           break;
         }
         case ORDER_NB_FREE_SLOT:{ // Get number of free slot.
           freeSlot = Serial2.parseInt();
           Serial.println(freeSlot);
-          //freeSlot = response - '0';
           bOK = true;
           break;
         }
@@ -199,7 +208,16 @@ boolean sendOrderAndWait(char order){
         case ORDER_TEMP:{ // Bath temp?
           bathTemp = Serial2.parseFloat();
           Serial.println(bathTemp);
-          //bathTemp = response - '0';
+          bOK = true;
+          break;
+        }
+        case ORDER_PAPER_READY:{ // Do the paper process got the message that paper as been delivered?
+          char response = Serial2.read();
+          bOK = response == RESPONSE_OK;
+          break;
+        }
+        case ORDER_GET_STATUS:{ // get status from paper process.
+          char response = Serial2.read();
           bOK = true;
           break;
         }
@@ -241,7 +259,7 @@ void initPhotomaton(){
     //Wait for paper process.
     sendOrderAndWait(ORDER_SPIDER_READY);
     
-    enableCoinAcceptor(parametres);
+    enableCoinAcceptor(parametres.mode);
 }
 
 /*
@@ -309,14 +327,14 @@ void check_radio(){
           order = NO_ORDER;
           break;
 
-       case ORDER_GET_STATUS:
-          byte answer = RESPONSE_STATUS_RUNNING;
+        case ORDER_GET_STATUS:{
+          byte state = RESPONSE_STATUS_RUNNING;
           radio.stopListening();
-          radio.write(&answer, sizeof(answer));
+          radio.write(&state, sizeof(state));
           radio.startListening();
           order = NO_ORDER;
           break;
-
+        }
         case ORDER_SET_MODE:
           delay(250);
           if (radio.available()) {
@@ -325,6 +343,56 @@ void check_radio(){
             parametres.mode = newMode;
             EEPROM.updateBlock(EEPROM_ADRESS, parametres);
           }
+          order = NO_ORDER;
+          break;
+        case ORDER_GET_PRICE:
+          radio.stopListening();
+          radio.write(&parametres.price_cts, sizeof(parametres.price_cts));
+          radio.startListening();
+          order = NO_ORDER;
+          break;
+        case ORDER_SET_PRICE:
+          delay(250);
+          if (radio.available()) {
+            int price = 200;
+            radio.read(&price, sizeof(price));
+            Serial.println(price);
+            parametres.price_cts = price;
+            EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+          }
+          order = NO_ORDER;
+          break;
+        case ORDER_GET_FREE_PRICE:
+          radio.stopListening();
+          radio.write(&parametres.free_price_cts, sizeof(parametres.free_price_cts));
+          radio.startListening();
+          order = NO_ORDER;
+          break;
+        case ORDER_SET_FREE_PRICE:
+          delay(250);
+          if (radio.available()) {
+            int freePrice = 100;
+            radio.read(&freePrice, sizeof(freePrice));
+            parametres.free_price_cts = freePrice;
+            EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+          }
+          order = NO_ORDER;
+          break;
+        case ORDER_GET_TANK_TIME:
+          radio.stopListening();
+          radio.write(&parametres.tank_time, sizeof(parametres.tank_time));
+          radio.startListening();
+          order = NO_ORDER;
+          break;
+        case ORDER_SET_TANK_TIME:
+          delay(250);
+          if (radio.available()) {
+            int tankTime = 18000;
+            radio.read(&tankTime, sizeof(tankTime));
+            parametres.tank_time = tankTime;
+            EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+          }
+          break;
       }
       
     }

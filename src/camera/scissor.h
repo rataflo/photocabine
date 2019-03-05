@@ -10,5 +10,5 @@
 void initScissor();
 void openScissor();
 void closeScissor();
-
+bool readSWScissor();
 #endif

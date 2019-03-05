@@ -8,6 +8,7 @@
 #include "constants.h"
 #include "orders.h"
 #include "spider.h"
+#include "paperDelivery.h"
 
 void testMode();
 

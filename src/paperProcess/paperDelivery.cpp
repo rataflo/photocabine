@@ -1,6 +1,7 @@
 #include "paperDelivery.h"
 
 AccelStepper stepperExit(1, SPIDER_EXIT_PIN_STP, SPIDER_EXIT_PIN_DIR);
+bool deliveryRunning = false;
 
 void setupDelivery(){
   pinMode(SPIDER_EXIT_PIN_ENABLE, OUTPUT);
@@ -19,6 +20,7 @@ void runDelivery(){
   stepperExit.setCurrentPosition(0);
   stepperExit.moveTo(1);
   stepperExit.run();
+  deliveryRunning = true;
 }
 
 void stopDelivery(){
@@ -26,5 +28,10 @@ void stopDelivery(){
   stepperExit.setCurrentPosition(0);
   stepperExit.run();
   digitalWrite(SPIDER_EXIT_PIN_ENABLE, HIGH);
+  deliveryRunning = false;
+}
+
+bool isDeliveryRunning(){
+  return deliveryRunning;
 }
 

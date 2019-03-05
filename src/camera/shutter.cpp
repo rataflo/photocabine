@@ -149,3 +149,7 @@ boolean isFlashOn(){
   return bFlashOn;
 }
 
+boolean readSWShutter(){
+  return endstopShutter.read();
+}
+

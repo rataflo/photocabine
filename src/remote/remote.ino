@@ -1,13 +1,18 @@
+
+
 /*
    SDA A4
    SCL A5
 */
+#include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
 #include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
+#include <Flash.h>
 #include "orders.h"
 #include "constants.h"
+//#include <MemoryUsage.h>
 
 
 const byte RADIO_ADRESS_EMITTER[6] = "00001";
@@ -27,6 +32,9 @@ unsigned long previousMainMenuMillis = 0;
 bool bPause = false;
 bool bTests = false;
 char mode = MODE_PAYING;
+int price_cts = 200;
+int free_price_cts = 100;
+int tank_time = 18000;
 
 void setup() {
   Serial.begin(9600);
@@ -103,32 +111,37 @@ void showMainScreen() {
     float totMoney = sendOrderAndWaitForFloat(ORDER_TOTCENT);
     lcd.print(" $:");
     lcd.print(totMoney);
+    delay(100);
+    price_cts = sendOrderAndWaitForInt(ORDER_GET_PRICE);
+    delay(100);
+    free_price_cts = sendOrderAndWaitForInt(ORDER_GET_FREE_PRICE);
+    delay(100);
+    tank_time = sendOrderAndWaitForInt(ORDER_GET_TANK_TIME);
   }
 }
 
 void printMsgToLCD(char *message, bool isSelected) {
-  char *tmp;
   if (isSelected) {
-    strcpy(tmp, sel);
+    lcd.print(sel);
   } else {
-    strcpy(tmp, espace);
+    lcd.print(espace);
   }
-  strcat(tmp, message);
+  lcd.print(message);
   // add space for 20 caracters
-  for (int i = strlen(tmp); i < 20; i++) {
-    strcat(tmp, " ");
+  for (byte i = strlen(message) + 1; i < 20; i++) {
+    lcd.print(" ");
   }
-  lcd.print(tmp);
 }
 
 /*
    Display a menu.
 */
 void showMenu() {
-  int ligneLCD = 0;
-  int lineInMenu = 0;
+  lcd.clear();
+  byte ligneLCD = 0;
+  byte lineInMenu = 0;
 
-  for (int i = 0; i < TAILLE_MENU; i++) {
+  for (byte i = 0; i < TAILLE_MENU; i++) {
     if (MENUS[i].parentMenu == currentMenu) {
       if (lineInMenu >= currentLineInMenu) {
         lcd.setCursor(0, ligneLCD);
@@ -143,11 +156,20 @@ void showMenu() {
             break;
 
           case 39: //Mode
-            printMsgToLCD(mode == MODE_PAYING ? "$$" : mode == MODE_FREE_PRICE ? "$/Free" : "Free",  lineInMenu == currentLineInMenu);
+            printMsgToLCD(mode == MODE_PAYING ? "Mode:$$" : mode == MODE_FREE_PRICE ? "Mode:$/Free" : "Mode:Free",  lineInMenu == currentLineInMenu);
+            break;
+
+          case 40: // Price
+          case 41:// Free Price
+            lcd.print(lineInMenu == currentLineInMenu ? ">" : " ");
+            lcd.print(MENUS[i].id == 40 ? "Price:" : "Free price:");
+            lcd.print(MENUS[i].id == 40 ? price_cts : free_price_cts);
             break;
 
           default:
-            printMsgToLCD(MENUS[i].label, lineInMenu == currentLineInMenu);
+            char label[20];
+            strcpy_P(label, (PGM_P)pgm_read_word(&(LABELS[i])));
+            printMsgToLCD(label, lineInMenu == currentLineInMenu);
         }
 
         ligneLCD++;
@@ -157,11 +179,6 @@ void showMenu() {
       }
       lineInMenu++;
     }
-  }
-
-  for (int i = ligneLCD; i < 4; i++) {
-    lcd.setCursor(0, i);
-    lcd.print("                    ");
   }
 }
 
@@ -174,12 +191,13 @@ void doMenu() {
   for (byte i = 0; i < TAILLE_MENU; i++) {
     if (MENUS[i].parentMenu == currentMenu) {
       if (line == currentLineInMenu) {
+        line = i;
         break;
       }
       line++;
-    }
+    }  
   }
-
+  
   // Do action for menu.
   switch (MENUS[line].id) {
     case 1: // Return
@@ -198,6 +216,7 @@ void doMenu() {
       currentMenu = MENUS[line].id;
       currentLineInMenu = 0;
       showMenu();
+      break;
     case 5: // Tests
       sendOrder(bTests ? EXIT_TEST : ENTER_TEST);
       bTests = !bTests;
@@ -224,7 +243,7 @@ void doMenu() {
       currentLineInMenu = 0;
       showMenu();
       break;
-    case 11: // Return menu tests
+    case 11: // Return menu shutter
       currentMenu = 5;
       currentLineInMenu = 0;
       showMenu();
@@ -259,10 +278,11 @@ void doMenu() {
     case 21: // Servo arm idle pos
       sendOrder(ORDER_IDLEARM);
       break;
-    case 22: // Return menu tests
+    case 22: // Return menu switch
       currentMenu = 5;
       currentLineInMenu = 0;
       showMenu();
+      break;
     case 23: // Test switch shutter
       testSwitch(ORDER_SWSHUTTER, MENUS[line].id);
       break;
@@ -296,7 +316,7 @@ void doMenu() {
     case 33: // Test rotate impair
       testSwitch(ORDER_SWROTIMPAIR, MENUS[line].id);
       break;
-    case 34: // Return menu tests
+    case 34: // Return menu flash
       currentMenu = 5;
       currentLineInMenu = 0;
       showMenu();
@@ -310,18 +330,94 @@ void doMenu() {
     case 37: // Test led strip
       sendOrder(ORDER_LEDSTRIP);
       break;
-    case 38: // Return menu tests
-      currentMenu = 5;
+    case 38: // Return menu setup
+      currentMenu = 0;
       currentLineInMenu = 0;
       showMenu();
       break;
     case 39: // Setup Mode
       sendOrder(ORDER_SET_MODE);
-      sendOrder(mode == MODE_PAYING ? MODE_FREE_PRICE : mode == MODE_FREE_PRICE ?  MODE_FREE : MODE_PAYING);
       mode = mode == MODE_PAYING ? MODE_FREE_PRICE : mode == MODE_FREE_PRICE ?  MODE_FREE : MODE_PAYING;
+      sendOrder(mode);
       lcd.setCursor(0, currentLineInMenu % 4);
-      printMsgToLCD(mode == MODE_PAYING ? "$$" : mode == MODE_FREE_PRICE ? "$/Free" : "Free", true);
+      printMsgToLCD(mode == MODE_PAYING ? "Mode:$$" : mode == MODE_FREE_PRICE ? "Mode:$/Free" : "Mode:Free", true);
       break;
+    case 40:{ // Setup price
+      sendOrder(ORDER_SET_PRICE);
+      price_cts = price_cts == 500 ? 50 : price_cts + 50; // Max 5eur
+      sendParam(price_cts);
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print("                    ");
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print(">Price:");
+      lcd.print(price_cts);
+      break;
+    }
+    case 41:{ // Setup free price
+      sendOrder(ORDER_SET_FREE_PRICE);
+      free_price_cts = price_cts == 500 ? 50 : price_cts + 50; // Max 5eur
+      sendParam(free_price_cts);
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print("                    ");
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print(">Free Price:");
+      lcd.print(free_price_cts);
+      break;
+    }
+    case 42:{ // Setup tank time
+      sendOrder(ORDER_SET_FREE_PRICE);
+      free_price_cts = price_cts == 500 ? 50 : price_cts + 50; // Max 5eur
+      sendParam(free_price_cts);
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print("                    ");
+      lcd.setCursor(0, currentLineInMenu % 4);
+      lcd.print(">Free Price:");
+      lcd.print(free_price_cts);
+      break;
+    }
+    case 43: // Return menu simulation
+      currentMenu = 0;
+      currentLineInMenu = 0;
+      showMenu();
+      break;
+    case 44:{ // Simulate paper process.
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      char label[20];
+      strcpy_P(label, (PGM_P)pgm_read_word(&(LABELS[line])));
+      lcd.print(label);
+      
+      sendOrder(ORDER_NEW_SLOT);
+      lcd.setCursor(0, 1);
+      lcd.print("Send order new slot:OK");
+      // wait for slot ready.
+      lcd.setCursor(0, 1);
+      lcd.print("Wait for slot ready.  ");
+      char answer = NO_ORDER;
+      while (answer != ORDER_NEW_SLOT_READY){
+        if(radio.available()){
+          radio.read(&answer, sizeof(answer));
+        }
+      }
+      lcd.setCursor(0, 1);
+      lcd.print("Slot ready          ");
+      delay(1000);
+      sendOrder(ORDER_PAPER_READY);
+      lcd.setCursor(0, 1);
+      lcd.print("Send paper ready:");
+      answer = NO_ORDER;
+      while (answer != RESPONSE_OK){
+        if(radio.available()){
+          radio.read(&answer, sizeof(answer));
+        }
+      }
+      lcd.print("OK");
+      lcd.setCursor(0, 2);
+      lcd.print("Press button to exit");
+      while (!btnMenu2.read()) {
+      }
+      showMenu();
+    }
   }
 }
 
@@ -337,19 +433,18 @@ void nextMenu() {
 
   } else {
     // Get number of items in menu.
-    int nbItemMenu = 0;
-    for (int i = 0; i < TAILLE_MENU; i++) {
+    byte nbItemMenu = 0;
+    for (byte i = 0; i < TAILLE_MENU; i++) {
       if (MENUS[i].parentMenu == currentMenu) {
         nbItemMenu++;
       }
     }
-
     // Case end of menu, return to first line.
     if (currentLineInMenu + 1  >= nbItemMenu) {
       currentLineInMenu =  0;
       showMenu();
 
-    } else if (currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11) { // Case show next page in menu
+    } else if (currentLineInMenu == 3 || currentLineInMenu == 7 || currentLineInMenu == 11 || currentLineInMenu == 15) { // Case show next page in menu
       currentLineInMenu++;
       showMenu();
 
@@ -369,7 +464,9 @@ void testSwitch(char order, byte idTest) {
 
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print(MENUS[idTest - 1].label);
+  char label[20];
+  strcpy_P(label, (PGM_P)pgm_read_word(&(LABELS[idTest - 1])));
+  lcd.print(label);
 
   while (!btnMenu2.read()) {
     if (radio.available()) {
@@ -378,7 +475,6 @@ void testSwitch(char order, byte idTest) {
       lcd.setCursor(0, 1);
       lcd.print(state);
     }
-    delay(MENU_SPEED);
   }
   showMenu();
 }
@@ -390,30 +486,52 @@ void sendOrder(char order) {
   radio.startListening();
 }
 
+void sendParam(int param) {
+  radio.stopListening();
+  radio.write(&param, sizeof(param));
+  radio.flush_rx();
+  radio.startListening();
+}
+
 char sendOrderAndWaitForChar(char order) {
   sendOrder(order);
-  while (!radio.available()) {
+  unsigned long startOrder = millis();
+  unsigned long currMillis = startOrder;
+  while (!radio.available() || currMillis - startOrder < TIMEOUT_ORDER) {
+    currMillis = millis();
   }
   char answer = NO_ORDER;
-  radio.read(&answer, sizeof(answer));
+  if(radio.available()){
+    radio.read(&answer, sizeof(answer));
+  }
   return answer;
 }
 
 int sendOrderAndWaitForInt(char order) {
   sendOrder(order);
-  while (!radio.available()) {
+  unsigned long startOrder = millis();
+  unsigned long currMillis = startOrder;
+  while (!radio.available() || currMillis - startOrder < TIMEOUT_ORDER) {
+    currMillis = millis();
   }
   int answer = 0;
-  radio.read(&answer, sizeof(answer));
+  if(radio.available()){
+    radio.read(&answer, sizeof(answer));
+  }
   return answer;
 }
 
 float sendOrderAndWaitForFloat(char order) {
   sendOrder(order);
-  while (!radio.available()) {
+  unsigned long startOrder = millis();
+  unsigned long currMillis = startOrder;
+  while (!radio.available() || currMillis - startOrder < TIMEOUT_ORDER) {
+    currMillis = millis();
   }
   float answer = 0;
-  radio.read(&answer, sizeof(answer));
+  if(radio.available()){
+    radio.read(&answer, sizeof(answer));
+  }
   return answer;
 }
 

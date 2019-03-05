@@ -7,17 +7,18 @@
 #include "constants.h"
 #include "shutter.h"
 
-boolean manageCoinsAndStart(storage parametres);
+boolean manageCoinsAndStart(byte mode);
 void setCoinDigit(int number);
 void coinSegmentFull();
-void refreshCoinSegment(storage parametres);
+void refreshCoinSegment(byte mode);
 void initCoinSegment();
 void coinInterrupt();
 void disableCoinAcceptor();
-void enableCoinAcceptor(storage parametres);
+void enableCoinAcceptor(byte mode);
 void startLedOn();
 void startLedOff(); 
 boolean isCoinEnabled();
 boolean isStartLedOn();
+bool readSWStart();
 
 #endif

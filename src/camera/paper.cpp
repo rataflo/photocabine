@@ -148,3 +148,19 @@ void movePaperOut() {
   }
   enablePaper.write(HIGH);
 }
+
+boolean readSWPaper1(){
+  return opto1.read();
+}
+
+boolean readSWPaper2(){
+  return opto2.read();
+}
+
+boolean readSWPaper3(){
+  return opto3.read();
+}
+
+boolean readSWPaper4(){
+  return opto4.read();
+}

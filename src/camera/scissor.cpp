@@ -69,3 +69,8 @@ void closeScissor() {
   }
   scissor.setCurrentPosition(0);
 }
+
+bool readSWScissor(){
+  return endstopScissor.read();
+}
+

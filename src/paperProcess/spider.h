@@ -27,5 +27,6 @@ void initServoArm();
 void setServoArmWaitPos();
 void openArm();
 void closeArm();
+void lightFullStrip();
 
 #endif

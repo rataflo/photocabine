@@ -93,7 +93,7 @@ void checkOrder(){
       respondToOrder(tempC);
       break;
 
-    case ORDER_NB_FREE_SLOT: // Get number of freee slot.
+    case ORDER_NB_FREE_SLOT:{ // Get number of freee slot.
       byte nbFreeSlot = 0;
       for(byte i = 0; i < 14; i++){
         if(slots[i] == SLOT_CLOSED || slots[i] == SLOT_OPEN){
@@ -101,6 +101,16 @@ void checkOrder(){
         }
       }
       respondToOrder(nbFreeSlot);
+      break;
+    }
+    case ORDER_SET_TANK_TIME:
+      parametres.tankTime = Serial2.parseInt();
+      EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+      order = NO_ORDER;
+      break;
+      
+    case ORDER_GET_STATUS:
+      respondToOrder(RESPONSE_STATUS_RUNNING);
       break;
   }
   
@@ -110,7 +120,7 @@ void checkOrder(){
       case ORDER_NEW_SLOT: // Need a place for paper.
         // Arm ready on slot 0.
         if(slots[0] == SLOT_OPEN){
-          respondToOrder(RESPONSE_OK);
+          respondToOrder(ORDER_NEW_SLOT_READY);
           bWait = true;
           
         } else if(slots[13] == SLOT_CLOSED){ // Arm on exit slot but closed.

@@ -6,6 +6,10 @@
 #include <RF24.h>
 #include "constants.h"
 #include "orders.h"
+#include "shutter.h"
+#include "scissor.h"
+#include "paper.h"
+#include "coinAcceptor.h"
 
 void testMode(RF24 radio);
 

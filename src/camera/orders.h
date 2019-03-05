@@ -1,6 +1,9 @@
 #ifndef orders_h
 #define ordes_h
 
+// Timeout
+#define TIMEOUT_ORDER 1000
+
 // ORDERS LIST
 #define NO_ORDER '0'
 #define RESPONSE_OK 'A'
@@ -40,9 +43,6 @@
 
 // Modify param
 #define ORDER_SET_MODE 'c'
-#define MODE_PAYING 0
-#define MODE_FREE_PRICE 1
-#define MODE_FREE 2
 
 #define ORDER_SET_TANK_TIME 'd'
 #define ORDER_SET_PRICE 'e'
@@ -55,7 +55,6 @@
 #define ORDER_PAPER_FEEDER 'j'
 #define ORDER_SWSHUTTER 'l'
 #define ORDER_SWSCISSOR 'm'
-#define ORDER_SWPAPER1 'm'
 #define ORDER_SWPAPER2 'n'
 #define ORDER_SWPAPER3 'o'
 #define ORDER_SWPAPER4 'p'
@@ -65,4 +64,10 @@
 #define ORDER_START_LIGHT 's'
 #define ORDER_LEDSTRIP 't'
 
+#define ORDER_GET_PRICE 'u'
+#define ORDER_GET_FREE_PRICE 'v'
+#define ORDER_GET_TANK_TIME 'w'
+
+#define ORDER_NEW_SLOT_READY 'x'  // When slot ready to accept paper
+#define ORDER_SWPAPER1 'y'
 #endif

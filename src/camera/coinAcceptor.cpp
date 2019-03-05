@@ -28,11 +28,11 @@ bool bCoinEnabled = false;
 bool bStartLedOn = false;
 unsigned long oldInterruptMillis;// no need to be volatile, exclusively used by coin interrupt.
 
-boolean manageCoinsAndStart(storage parametres){
+boolean manageCoinsAndStart(byte mode){
   boolean bStart = false;
-  refreshCoinSegment(parametres);
+  refreshCoinSegment(mode);
   
-  switch(parametres.mode){
+  switch(mode){
     case MODE_PAYING:
       if(cents >= PRICE_CTS){
         disableCoinAcceptor();
@@ -49,7 +49,7 @@ boolean manageCoinsAndStart(storage parametres){
           disableCoinAcceptor();
           bStart = true;
         }else{
-          refreshCoinSegment(parametres);
+          refreshCoinSegment(mode);
         }
       }
       break;
@@ -58,7 +58,9 @@ boolean manageCoinsAndStart(storage parametres){
       bStart = startBtn.read();
       break;
   }
-  
+  Serial.print("bStart=");
+  Serial.print(startBtn.read());
+  bStart = false; // TODO : remove when tests finished.
   return bStart;
 }
 
@@ -92,10 +94,10 @@ void coinSegmentFull(){
 /*
  * Refresh if needed according to cents the segment.
  */
-void refreshCoinSegment(storage parametres){
-  if(parametres.mode == MODE_PAYING){
+void refreshCoinSegment(byte mode){
+  if(mode == MODE_PAYING){
     setCoinDigit(PRICE_CTS - cents);
-  } else if (parametres.mode == MODE_FREE_PRICE){
+  } else if (mode == MODE_FREE_PRICE){
     setCoinDigit(cents);
   } else {
     coinSegment.setSegments(SEG_FREE);
@@ -136,11 +138,11 @@ void disableCoinAcceptor(){
   cents = 0;
 }
 
-void enableCoinAcceptor(storage parametres){
-  if(parametres.mode != MODE_FREE){
+void enableCoinAcceptor(byte mode){
+  if(mode != MODE_FREE){
     pinMode(COIN_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, FALLING);
-    refreshCoinSegment(parametres);
+    refreshCoinSegment(mode);
     enableCoin.write(HIGH);
     bCoinEnabled = true;
     cents = 0;
@@ -163,5 +165,9 @@ boolean isCoinEnabled(){
 
 boolean isStartLedOn(){
   return bStartLedOn;
+}
+
+bool readSWStart(){
+  return startBtn.read();
 }
 

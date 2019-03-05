@@ -12,4 +12,9 @@ void initPaper();
 void movePaperNextShot(byte numShot);
 void movePaperOut();
 
+boolean readSWPaper1();
+boolean readSWPaper2();
+boolean readSWPaper3();
+boolean readSWPaper4();
+
 #endif

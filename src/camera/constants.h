@@ -67,15 +67,21 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 // Modes and prices
 #define PRICE_CTS 200 // Price of a photo in cents.
 #define FREE_PRICE_CTS 100 // Minimum in free price mode
+#define MODE_PAYING 0
+#define MODE_FREE_PRICE 1
+#define MODE_FREE 2
 
 // EEPROM data & work variables
 #define EEPROM_ADRESS 0
 struct storage {
   byte checkCode = 0;
   int totStrip = 0;
-  byte mode = MODE_PAYING;// O = paying, 1 = Free price, 2 = Free
+  byte mode = 0;// O = paying, 1 = Free price, 2 = Free
   bool isRunning = false; // Camera was working before shutdown ?
   float totMoney = 0;
+  int price_cts = 200;
+  int free_price_cts = 100;
+  int tank_time = 18000;
 };
 
 #endif

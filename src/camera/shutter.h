@@ -92,5 +92,6 @@ void showArrowDown();
 void clearLedMatrix();
 byte getCountDown();
 boolean isFlashOn();
+boolean readSWShutter();
 
 #endif

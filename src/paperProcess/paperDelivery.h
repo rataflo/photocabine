@@ -10,5 +10,6 @@ void setupDelivery();
 void initDelivery();
 void runDelivery();
 void stopDelivery();
+bool isDeliveryRunning();
 
 #endif
