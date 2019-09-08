@@ -22,7 +22,7 @@
 
 #define SCISSOR_PIN_STP 25
 #define SCISSOR_PIN_DIR 24
-#define SCISSOR_ENDSTOP_PIN 56 // TODO: Changer de 52 à 56
+#define SCISSOR_ENDSTOP_PIN 40 // TODO: Changer de 52 à 40
 #define SCISSOR_SPEED 200
 #define SCISSOR_ACCEL 200
 #define SCISSOR_STEP_OPENED 350 // Number of step to fully open the scissor.
@@ -46,7 +46,7 @@
 #define START_BTN_PIN 45
 #define LED_START_BTN_PIN 47
 
-#define COIN_PIN 3 // Add 10k/100k pull up resistor on pin to 5V.
+#define COIN_PIN 3 // Add 10k/100k pull up resistor on pin to 5V. TODO: à ressouder.
 #define ENABLE_COIN_PIN 44 // If High coin acceptor is enable. LOW coin acceptor reject coins.
 #define COIN_SEGMENT_CLK_PIN 6
 #define COIN_SEGMENT_DIO_PIN 5 // TODO : Changer de 7 à 5
@@ -56,9 +56,9 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 
 #define RADIO_CSN 8
 #define RADIO_CE 7
-#define RADIO_SCK 52
-#define RADIO_MOSI 51
-#define RADIO_MISO 50
+#define RADIO_SCK 52 // Fixed SPI pin on arduino mega
+#define RADIO_MOSI 51 // Fixed SPI pin on arduino mega
+#define RADIO_MISO 50 // Fixed SPI pin on arduino mega
 
 #define ORDER_INTERRUPT_PIN 43
 

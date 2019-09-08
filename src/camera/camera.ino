@@ -112,6 +112,7 @@ void loop() {
 }
 
 void manageStepsTakeShot(){
+  Serial.println("manageStepsTakeShot");
   switch (stepTakeShot) {
     case 1: // First countdown
       showCountdown();
@@ -271,6 +272,7 @@ void check_radio(){
       radio.read(&order, sizeof(order));
       Serial.println(order);
 
+      // Respond to quick orders.
       switch(order){
         case ORDER_PAUSE:
           digitalWrite(LED_BUILTIN, HIGH);
