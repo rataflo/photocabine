@@ -8,12 +8,11 @@ void testMode(RF24 radio){
   while (order != EXIT_TEST){
     // check for an incoming order.
     radio.startListening();
-    delay(5); // leave time to receive message.
+    delay(10); // leave time to receive message.
     if (radio.available()) {
       radio.read(&order, sizeof(order));
-      Serial.println(order);
+      Serial.print("ORDER=");Serial.println(order);
     }
-    radio.stopListening();
     
     switch(order){
       case ENTER_TEST:
@@ -23,45 +22,51 @@ void testMode(RF24 radio){
       case EXIT_TEST:
         Serial2.print(EXIT_TEST);
         Serial2.flush();
-        Serial.print(RESPONSE_OK);
-        Serial.flush();
         break;
       case ORDER_GET_STATUS:
         answer = RESPONSE_STATUS_TEST;
+        radio.stopListening();
         radio.write(&answer, sizeof(answer));
         break;
       case ORDER_SWSHUTTER:{
         bool swState = readSWShutter();
+        radio.stopListening();
         radio.write(&swState, sizeof(swState));
       }
       break;
       case ORDER_SWSCISSOR:{
         bool swState = readSWScissor();
+        radio.stopListening();
         radio.write(&swState, sizeof(swState));
       }
       break;
       case ORDER_SWPAPER1:{
         bool swState = readSWPaper1();
+        radio.stopListening();
         radio.write(&swState, sizeof(swState));
       }
       break;
       case ORDER_SWPAPER2:{
         bool swState = readSWPaper2();
+        radio.stopListening();
         radio.write(&swState, sizeof(swState));
       }
       break;
       case ORDER_SWPAPER3:{
         bool swState = readSWPaper3();
+        radio.stopListening();
         radio.write(&swState, sizeof(swState));
       }
       break;
       case ORDER_SWPAPER4:{
         bool swState = readSWPaper4();
+        radio.stopListening();
         radio.write(&swState, sizeof(swState));
       }
       break;
       case ORDER_SWSTART:{
         bool swState = readSWStart();
+        radio.stopListening();
         radio.write(&swState, sizeof(swState));
       }
       break;
@@ -92,20 +97,16 @@ void testMode(RF24 radio){
           startLedOff();
         }
         break;
-      default : // Orders for paper process
-        Serial.print(order);
-        Serial.flush();
-        break;
     }
-
-    order = NO_ORDER;
     
     // check answer from paper process.
     delay(250); // leave time to paper process to respond.
     if(Serial2.available() > 0){
       answer = Serial2.read();
+      radio.stopListening();
       radio.write(&answer, sizeof(answer));
     }
+    Serial.println(order);
   }
   radio.startListening();
 }
