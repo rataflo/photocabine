@@ -6,7 +6,7 @@
 
 #define MENU_BTN1_PIN 5
 #define MENU_BTN2_PIN 6
-#define MENU_SPEED 100 // check button menu each 200ms.
+#define MENU_SPEED 150 // check button menu each 200ms.
 
 // Define menu structure.
 typedef struct
@@ -162,5 +162,3 @@ PGM_P const LABELS[] PROGMEM = {
 #define MODE_PAYING 0
 #define MODE_FREE_PRICE 1
 #define MODE_FREE 2
-
-

@@ -17,6 +17,7 @@
 #include "shutter.h"
 #include "paper.h"
 #include "tests.h"
+#include <Adafruit_NeoPixel.h>
 
 // Work variables
 byte stepTakeShot = 0;
@@ -24,11 +25,20 @@ int freeSlot = 7;
 volatile storage parametres;
 RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 volatile char order = NO_ORDER;
-volatile int bathTemp = 10;
+volatile float bathTemp = 10;
 
 Output<ORDER_INTERRUPT_PIN> orderPause;
+Adafruit_NeoPixel ceilingPixels = Adafruit_NeoPixel(CEILING_NBPIXEL, CEILING_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
+
+  // Ligth the ceiling
+  ceilingPixels.begin(); 
+  for(int i=0;i<CEILING_NBPIXEL;i++){
+    ceilingPixels.setPixelColor(i, 255,255,255); // white as hell
+    ceilingPixels.show();
+  }
+  
   Serial.begin(9600);
   Serial2.begin(9600);
 
@@ -51,12 +61,10 @@ void setup() {
 
   // Interrupt for radio message.
   attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
-  
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
   
   // Check verif code, if not correct init eeprom.
   if(parametres.checkCode != 123){
-    Serial.println("init eeprom");
     parametres.checkCode = 123;
     parametres.totMoney = 0;
     parametres.totStrip = 0;
@@ -67,9 +75,9 @@ void setup() {
     parametres.tank_time = 18000;
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
-  
+
   // If the photomaton was previously running we start in test mode to force pause and avoid any problem.
-  bool bTest = parametres.isRunning || sendOrderAndWait(ORDER_GET_STATUS) == RESPONSE_STATUS_TEST ? true : false;
+  bool bTest = (parametres.isRunning || sendOrderAndWait(ORDER_GET_STATUS) == RESPONSE_STATUS_TEST) ? true : false;
   if(bTest){
     detachInterrupt(digitalPinToInterrupt(2));
     testMode(radio);
@@ -77,10 +85,11 @@ void setup() {
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
     attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
   }
-  //initPhotomaton(); // TODO: remove comment when test are over.
+  initPhotomaton(); // TODO: remove comment when test are over.
 }
 
 void loop() {
+  
   if(order == ENTER_TEST){
     detachInterrupt(digitalPinToInterrupt(2));
     testMode(radio);
@@ -95,7 +104,7 @@ void loop() {
   }
 
   // Every minute we ask for bath temp.
-  sendOrderAndWait(ORDER_TEMP);
+  sendOrderAndWait(ORDER_TEMP); 
 
   // If coin acceptor OK and clic start button.
   if(stepTakeShot == 0 && manageCoinsAndStart(parametres.mode)) {
@@ -171,8 +180,8 @@ void manageStepsTakeShot(){
   stepTakeShot = stepTakeShot >= 13 ? 0 : stepTakeShot + 1;
 }
 
-boolean sendOrderAndWait(char order){
-
+boolean sendOrderAndWait(char sendOrder){
+  Serial.print("sendOrderAndWait - begin:");Serial.println(sendOrder);
   boolean bOK = false;
   
   unsigned long lastMillis = 0;
@@ -182,13 +191,14 @@ boolean sendOrderAndWait(char order){
     currentMillis = millis();
     // if no response for 1 second we send the order again.
     if(currentMillis - lastMillis > 1000){
-      Serial2.print(order);
+      Serial2.print(sendOrder);
       Serial2.flush();
       lastMillis = currentMillis;
     }
     
     if (Serial2.available() > 0) {// if new response coming.
-      switch(order){
+      Serial.print("response:");Serial.println(sendOrder);
+      switch(sendOrder){
         case ORDER_NEW_SLOT:{
           // Ready to send paper.
           char response = Serial2.read();
@@ -207,6 +217,7 @@ boolean sendOrderAndWait(char order){
           break;
         }
         case ORDER_TEMP:{ // Bath temp?
+          Serial.println("temp=");
           bathTemp = Serial2.parseFloat();
           Serial.println(bathTemp);
           bOK = true;
@@ -229,7 +240,7 @@ boolean sendOrderAndWait(char order){
 }
 
 /***************************
- *  INIT
+ *  INIT & STARTUP
  **************************/
 void initPhotomaton(){
   
@@ -255,10 +266,10 @@ void initPhotomaton(){
     initShutter();
   
     // Paper
-    initPaper();
+    //initPaper();
     
     //Wait for paper process.
-    sendOrderAndWait(ORDER_SPIDER_READY);
+    /*sendOrderAndWait(ORDER_SPIDER_READY);*/
     
     enableCoinAcceptor(parametres.mode);
 }
@@ -399,4 +410,3 @@ void check_radio(){
       
     }
 }
-

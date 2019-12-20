@@ -7,7 +7,6 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-#include <DirectIO.h>
 #include <LiquidCrystal_I2C.h>
 #include <Flash.h>
 #include "orders.h"
@@ -21,8 +20,6 @@ RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 
 // LCD
 LiquidCrystal_I2C lcd(0x27, 20, 4);
-Input<MENU_BTN1_PIN> btnMenu1;
-Input<MENU_BTN2_PIN> btnMenu2;
 
 bool bMainScreen = true;
 byte currentMenu = 0;
@@ -39,6 +36,14 @@ int tank_time = 18000;
 void setup() {
   Serial.begin(9600);
 
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Init");
+  
+  pinMode(MENU_BTN1_PIN, INPUT_PULLUP);
+  pinMode(MENU_BTN2_PIN, INPUT_PULLUP);
   radio.begin();
   radio.openWritingPipe(RADIO_ADRESS_EMITTER); // 00001
   radio.openReadingPipe(1, RADIO_ADRESS_RECEIVER); // 00002
@@ -48,7 +53,7 @@ void setup() {
   radio.setRetries(250, 2);
   radio.startListening();
 
-  lcd.begin();
+  
   showMainScreen();
 }
 
@@ -62,14 +67,15 @@ void loop() {
 
 /* Check and do action on both menu button */
 void checkMenu() {
+  
   unsigned long currentMillis = millis();
   if (currentMillis - previousMenuMillis >= MENU_SPEED) {
     previousMenuMillis = currentMillis;
-    if (btnMenu1.read()) {
+    if (digitalRead(MENU_BTN1_PIN)) {
       nextMenu();
-    } else if (!bMainScreen && btnMenu2.read()) {
+    } else if (!bMainScreen && digitalRead(MENU_BTN2_PIN)) {
       doMenu();
-    } else if(bMainScreen && currentMillis - previousMainMenuMillis > 60000){ // Refresh main screen periodically
+    } else if(bMainScreen && currentMillis - previousMainMenuMillis > 5000){ // Refresh main screen periodically
       showMainScreen();
       previousMainMenuMillis = currentMillis;
     }
@@ -80,6 +86,7 @@ void checkMenu() {
    Show main screen
 */
 void showMainScreen() {
+  Serial.println("showMainScreen");
   bMainScreen = true;
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -87,35 +94,30 @@ void showMainScreen() {
 
   // Ask & display infos
   char state = sendOrderAndWaitForChar(ORDER_GET_STATUS);
+  
   lcd.setCursor(0, 1);
   lcd.print("Status:");
-  lcd.print(state == RESPONSE_STATUS_RUNNING ? "Running      " : state == RESPONSE_STATUS_TEST ? "Tests        " : "Pause        ");
+  lcd.print(state == RESPONSE_STATUS_RUNNING ? "Running      " : state == RESPONSE_STATUS_TEST ? "Tests        " : state == RESPONSE_STATUS_PAUSE ? "Pause        " : "?            ");
   bPause = state == RESPONSE_STATUS_PAUSE ? true : false;
   bTests = state == RESPONSE_STATUS_TEST ? true : false;
-  delay(100);
+
   if (!bPause && !bTests) {
     int temp = sendOrderAndWaitForInt(ORDER_TEMP);
     lcd.setCursor(0, 2);
     lcd.print("Temp:");
     lcd.print(temp);
-    delay(100);
     mode = sendOrderAndWaitForChar(ORDER_MODE);
     lcd.print(" Mode:");
-    lcd.print(mode == MODE_PAYING ? "$$" : mode == MODE_FREE_PRICE ? "$/Free" : "Free");
-    delay(100);
+    lcd.print(mode == MODE_PAYING ? "$$" : mode == MODE_FREE_PRICE ? "$/Free" : mode == MODE_FREE ? "Free" : "?");
     int totStrip = sendOrderAndWaitForInt(ORDER_NBSTRIP);
     lcd.setCursor(0, 3);
     lcd.print("Strip:");
     lcd.print(totStrip);
-    delay(100);
     float totMoney = sendOrderAndWaitForFloat(ORDER_TOTCENT);
     lcd.print(" $:");
     lcd.print(totMoney);
-    delay(100);
     price_cts = sendOrderAndWaitForInt(ORDER_GET_PRICE);
-    delay(100);
     free_price_cts = sendOrderAndWaitForInt(ORDER_GET_FREE_PRICE);
-    delay(100);
     tank_time = sendOrderAndWaitForInt(ORDER_GET_TANK_TIME);
   }
 }
@@ -284,36 +286,56 @@ void doMenu() {
       showMenu();
       break;
     case 23: // Test switch shutter
+      currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWSHUTTER, MENUS[line].id);
       break;
     case 24: // Test switch scissor
+    currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWSCISSOR, MENUS[line].id);
       break;
     case 25: // Test switch paper 1
+    currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWPAPER1, MENUS[line].id);
       break;
     case 26: // Test switch paper 2
+    currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWPAPER2, MENUS[line].id);
       break;
     case 27: // Test switch paper 3
+    currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWPAPER3, MENUS[line].id);
       break;
     case 28: // Test switch paper 4
+    currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWPAPER4, MENUS[line].id);
       break;
     case 29: // Test switch start btn
+    currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWSTART, MENUS[line].id);
       break;
     case 30: // Test switch spider up
       testSwitch(ORDER_SWUP, MENUS[line].id);
       break;  
     case 31: // Test switch spider bottom
+      currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWDOWN, MENUS[line].id);
       break;  
     case 32: // Test rotate pair
+      currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWROTPAIR, MENUS[line].id);
       break;
     case 33: // Test rotate impair
+      currentMenu = MENUS[line].parentMenu;
+      currentLineInMenu = 0;
       testSwitch(ORDER_SWROTIMPAIR, MENUS[line].id);
       break;
     case 34: // Return menu flash
@@ -414,7 +436,7 @@ void doMenu() {
       lcd.print("OK");
       lcd.setCursor(0, 2);
       lcd.print("Press button to exit");
-      while (!btnMenu2.read()) {
+      while (!digitalRead(MENU_BTN2_PIN)) {
       }
       showMenu();
     }
@@ -459,31 +481,36 @@ void nextMenu() {
 }
 
 void testSwitch(char order, byte idTest) {
-
+  Serial.println("testSwitch - begin");
   sendOrder(order);
 
   lcd.clear();
   lcd.setCursor(0, 0);
   char label[20];
   strcpy_P(label, (PGM_P)pgm_read_word(&(LABELS[idTest - 1])));
+  lcd.print("Switch:");
   lcd.print(label);
-
-  while (!btnMenu2.read()) {
+  delay(MENU_SPEED);
+  while (!digitalRead(MENU_BTN2_PIN)) {
     if (radio.available()) {
-      char state = ' ';
-      radio.read(&order, sizeof(order));
+      char state = '?';
+      radio.read(&state, sizeof(state));
       lcd.setCursor(0, 1);
-      lcd.print(state);
+      lcd.print(state == ORDER_TRUE ? "True " : "False");
+      Serial.print("state=");Serial.println(state);
     }
   }
   showMenu();
+  Serial.println("testSwitch - end");
 }
 
 void sendOrder(char order) {
+  Serial.print("sendOrder - begin:"); Serial.println(order);
   radio.stopListening();
   radio.write(&order, sizeof(order));
   radio.flush_rx();
   radio.startListening();
+  Serial.println("sendOrder - end");
 }
 
 void sendParam(int param) {
@@ -494,16 +521,20 @@ void sendParam(int param) {
 }
 
 char sendOrderAndWaitForChar(char order) {
+  Serial.println("sendOrderAndWaitForChar");
   sendOrder(order);
   unsigned long startOrder = millis();
   unsigned long currMillis = startOrder;
-  while (!radio.available() || currMillis - startOrder < TIMEOUT_ORDER) {
+  
+  while (!radio.available() && currMillis - startOrder < TIMEOUT_ORDER) {
     currMillis = millis();
   }
+  
   char answer = NO_ORDER;
   if(radio.available()){
     radio.read(&answer, sizeof(answer));
   }
+  Serial.print("sendOrderAndWaitForChar - end");Serial.println(answer);
   return answer;
 }
 
@@ -511,7 +542,7 @@ int sendOrderAndWaitForInt(char order) {
   sendOrder(order);
   unsigned long startOrder = millis();
   unsigned long currMillis = startOrder;
-  while (!radio.available() || currMillis - startOrder < TIMEOUT_ORDER) {
+  while (!radio.available() && currMillis - startOrder < TIMEOUT_ORDER) {
     currMillis = millis();
   }
   int answer = 0;
@@ -525,7 +556,7 @@ float sendOrderAndWaitForFloat(char order) {
   sendOrder(order);
   unsigned long startOrder = millis();
   unsigned long currMillis = startOrder;
-  while (!radio.available() || currMillis - startOrder < TIMEOUT_ORDER) {
+  while (!radio.available() && currMillis - startOrder < TIMEOUT_ORDER) {
     currMillis = millis();
   }
   float answer = 0;
@@ -534,4 +565,3 @@ float sendOrderAndWaitForFloat(char order) {
   }
   return answer;
 }
-

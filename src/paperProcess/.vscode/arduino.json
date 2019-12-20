@@ -1,4 +1,6 @@
 {
-    "board": "arduino:avr:diecimila",
-    "configuration": "cpu=atmega328"
+    "board": "arduino:avr:mega",
+    "configuration": "cpu=atmega2560",
+    "sketch": "paperProcess.ino",
+    "programmer": "AVR ISP"
 }

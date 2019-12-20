@@ -11,6 +11,5 @@
 #include "paperDelivery.h"
 
 void testMode();
-
+void sendAnswer(boolean answer);
 #endif
-

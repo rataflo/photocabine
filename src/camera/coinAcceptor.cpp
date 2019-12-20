@@ -38,14 +38,14 @@ boolean manageCoinsAndStart(byte mode){
         disableCoinAcceptor();
         showArrowDown();
         startLedOn();
-        bStart = startBtn.read();
+        bStart = !startBtn.read();
       }
       break;
     case MODE_FREE_PRICE:
       if(cents >= FREE_PRICE_CTS){
         showArrowDown();
         startLedOn();
-        if(startBtn.read()){
+        if(!startBtn.read()){
           disableCoinAcceptor();
           bStart = true;
         }else{
@@ -55,12 +55,11 @@ boolean manageCoinsAndStart(byte mode){
       break;
     case MODE_FREE:
       disableCoinAcceptor();
-      bStart = startBtn.read();
+      bStart = !startBtn.read();
       break;
   }
-  Serial.print("bStart=");
-  Serial.print(startBtn.read());
-  bStart = false; // TODO : remove when tests finished.
+
+  //bStart = false; // TODO : remove when tests finished.
   return bStart;
 }
 
@@ -170,4 +169,3 @@ boolean isStartLedOn(){
 bool readSWStart(){
   return startBtn.read();
 }
-

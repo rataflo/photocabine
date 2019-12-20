@@ -3,11 +3,6 @@
 
 #include "Arduino.h"
 
-// X: 22 / 23 
-// Y: 24 / 25
-// Z: 30 / 31
-// Ext: 26 / 27
-
 // Uncomment to activate TEST_MODE
 #define TEST_MODE
 
@@ -37,8 +32,8 @@
 #define DELTA_FIRST_SHOT -80 //Delta in step to do after paper reach opto 1.
 #define PAPER_SWITCH1_PIN 48
 #define PAPER_SWITCH2_PIN 49
-#define PAPER_SWITCH3_PIN 54 // TODO: Changer de 50 à 54
-#define PAPER_SWITCH4_PIN 55 // TODO: Changer de 51 à 55
+#define PAPER_SWITCH3_PIN 36 // TODO: Changer de 50 à 54
+#define PAPER_SWITCH4_PIN 37 // TODO: Changer de 51 à 55
 #define PAPER_PIN_ENABLE 35
 
 #define FLASH_PIN 46
@@ -46,7 +41,7 @@
 #define START_BTN_PIN 45
 #define LED_START_BTN_PIN 47
 
-#define COIN_PIN 3 // Add 10k/100k pull up resistor on pin to 5V. TODO: à ressouder.
+#define COIN_PIN 3 // Add 10k/100k pull up resistor on pin to 5V.
 #define ENABLE_COIN_PIN 44 // If High coin acceptor is enable. LOW coin acceptor reject coins.
 #define COIN_SEGMENT_CLK_PIN 6
 #define COIN_SEGMENT_DIO_PIN 5 // TODO : Changer de 7 à 5
@@ -70,6 +65,10 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 #define MODE_PAYING 0
 #define MODE_FREE_PRICE 1
 #define MODE_FREE 2
+
+// ceiling lamp
+#define CEILING_PIXEL_PIN 13
+#define CEILING_NBPIXEL 40
 
 // EEPROM data & work variables
 #define EEPROM_ADRESS 0

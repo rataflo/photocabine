@@ -12,5 +12,7 @@
 #include "coinAcceptor.h"
 
 void testMode(RF24 radio);
+void sendAnswer(RF24 radio, boolean answer);
+void sendAnswer(RF24 radio, char answer);
 
 #endif

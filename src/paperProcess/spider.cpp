@@ -40,7 +40,7 @@ void downSpider(){
   // we start fast.
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
-    for(int i = 50; i < 255; i++){
+    for(int i = 40; i < SPIDER_UPDOWN_MAX_SPEED; i++){
       currentSpeed = i;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, i); //max speed.
       delay(5);
@@ -50,8 +50,8 @@ void downSpider(){
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
     if(currentMillis - startMoove > 4000){
-      currentSpeed = 125;
-      analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); // mid speed
+      currentSpeed = SPIDER_UPDOWN_MAX_SPEED / 2;
+      analogWrite(SPIDER_UPDOWN_PIN_PWM, SPIDER_UPDOWN_MAX_SPEED / 2); // mid speed
     }
     currentMillis = millis();
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
@@ -62,8 +62,8 @@ void downSpider(){
 
 void downABitSpider(){
   digitalWrite(SPIDER_UPDOWN_PIN_DIR,LOW);
-  analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
-  currentSpeed = 125;
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, SPIDER_UPDOWN_MAX_SPEED / 2); //mid speed.
+  currentSpeed = SPIDER_UPDOWN_MAX_SPEED / 2;
   unsigned long startMoove = millis();
   unsigned long currentMillis = startMoove;
   while(currentMillis - startMoove < 500){
@@ -80,7 +80,7 @@ void upSpider(){
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
-    for(int i = 50; i < 255; i++){
+    for(int i = 40; i < SPIDER_UPDOWN_MAX_SPEED; i++){
       analogWrite(SPIDER_UPDOWN_PIN_PWM, i); //max speed.
       currentSpeed = i;
       delay(5);
@@ -90,8 +90,8 @@ void upSpider(){
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
     if(currentMillis - startMoove > 4000){
-      analogWrite(SPIDER_UPDOWN_PIN_PWM, 125);
-      currentSpeed = 125;
+      currentSpeed = SPIDER_UPDOWN_MAX_SPEED / 2;
+      analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
     }
     currentMillis = millis();
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
@@ -104,8 +104,8 @@ void asyncSpiderUp() {
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
-    analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
-    currentSpeed = 125;
+    currentSpeed = SPIDER_UPDOWN_MAX_SPEED / 2;
+    analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   currentSpeed = 0;
@@ -145,8 +145,8 @@ void rotateSpider(byte *slots){
 
 void agitate(){
   digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
-  analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
-  currentSpeed = 125;
+  currentSpeed = SPIDER_UPDOWN_MAX_SPEED / 2;
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   unsigned long startMoove = millis();
   unsigned long currentMillis = startMoove;
   while(currentMillis - startMoove < 800){
@@ -204,14 +204,18 @@ void initServoArm(){
 }
 
 void initSpiderBottom() {
-  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
+  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM); // true if not pressed.
+  Serial.println("bottom=");
+  Serial.println(bEndStop);
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
-    analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
-    currentSpeed = 125;
+    currentSpeed = SPIDER_UPDOWN_MAX_SPEED / 2;
+    analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   }
   while (!bEndStop) { 
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
+    Serial.println("bottom=");
+  Serial.println(bEndStop);
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   currentSpeed = 0;
@@ -222,8 +226,8 @@ void initSpiderUp() {
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
-    analogWrite(SPIDER_UPDOWN_PIN_PWM, 125); //mid speed.
-    currentSpeed = 125;
+    currentSpeed = SPIDER_UPDOWN_MAX_SPEED / 2;
+    analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   }
   while (!bEndStop) { 
     bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
@@ -296,4 +300,3 @@ void lightFullStrip(){
   }
   ledstrip.show();
 }
-

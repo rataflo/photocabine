@@ -1,7 +1,12 @@
-
-/*
- * LCD lib : https://github.com/fdebrabander/Arduino-LiquidCrystal-I2C-library. Pin 20 SDA, 21 SCL. Adresse 0x27.
- * Fast Read\Write : https://github.com/mmarchetti/DirectIO
+/**
+ * No-Maton paper process code.
+ * Flo Gales 2019
+ * License rien à branler / Do what the fuck you want.
+ * 
+ * Libraries used:
+ * 
+ * Do all the processing of paper, dip in tank and exit.
+ * Communicate with camera by Serial2 (cf orders.h)
  */
 #include <Arduino.h>
 #include <EEPROMex.h>
@@ -29,12 +34,10 @@ DallasTemperature tempProbe(&oneWire);
 DeviceAddress tempProbAdress;
 
 void setup() {
-  Serial.begin(9600);
-  //UNCOMMENT:Serial1.begin(9600);
-
-  //tests
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  #ifdef DEBUG_MODE
+    Serial.begin(9600);
+  #endif
+  Serial2.begin(9600);
   
   // Interrupt for incoming order
   //attachInterrupt(digitalPinToInterrupt(PAUSE_PIN), emergencyStop, FALLING);
@@ -50,13 +53,14 @@ void setup() {
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
   
-  setupSpider();
-  setupDelivery();
-  
   tempProbe.begin();
   tempProbe.getAddress(tempProbAdress, 0);
   tempProbe.setResolution(tempProbAdress, 9);
   
+  setupSpider();
+  setupDelivery();
+
+  // If previously running we enter test mode to avoid any problem.
   if(parametres.isRunning){
     testMode();
     parametres.isRunning = false;
@@ -64,8 +68,8 @@ void setup() {
   }
 
   getTemperature();
-  //initSpider(slots);
-  //initDelivery();
+  initSpider(slots);
+  initDelivery();
 }
 
 void loop() {
@@ -75,12 +79,9 @@ void loop() {
 }
 
 void checkOrder(){
-  /* UNCOMMENT if (Serial1.available()) {
-    order = Serial1.read();
-  }*/
-
-  if (Serial.available()) {
-    order = Serial.read();
+  if (Serial2.available()) {
+    order = Serial2.read();
+    debug("checkOrder - begin", String(order));
   }
   
   switch(order){
@@ -160,6 +161,8 @@ void process(){
     }
 
     if(bProcess){
+      //Calculate tank time.
+
       downSpider();
           
       // Agitate.
@@ -218,24 +221,25 @@ void process(){
 void respondToOrder(char answer){
   /* UNCOMMENT Serial1.print(answer);
   Serial1.flush();*/
-  Serial.print(answer);
-  Serial.flush();
+  Serial2.print(answer);
+  Serial2.flush();
   order = NO_ORDER;
 }
 
 void respondToOrder(float answer){
+  Serial.print("respondToOrder - begin:"); Serial.println(answer);
   /* UNCOMMENT Serial1.print(answer);
   Serial1.flush();*/
-  Serial.print(answer, 1);
-  Serial.flush();
+  Serial2.println(answer, 1);
+  Serial2.flush();
   order = NO_ORDER;
 }
 
 void respondToOrder(byte answer){
   /* UNCOMMENT Serial1.print(answer);
   Serial1.flush();*/
-  Serial.print(answer);
-  Serial.flush();
+  Serial2.print(answer);
+  Serial2.flush();
   order = NO_ORDER;
 }
 
@@ -256,5 +260,15 @@ void emergencyStop(){
 void getTemperature(){
   tempProbe.requestTemperatures(); // Send the command to get temperatures
   tempC = tempProbe.getTempC(tempProbAdress);
+  Serial.print("temp:");Serial.println(tempC);
 }
 
+void calcTankTime(){
+  parametres.tankTime = tempC;
+}
+
+void debug(String functionName, String varValue){
+  #ifdef DEBUG_MODE
+    Serial.println(functionName + ":" + varValue);
+  #endif
+}
