@@ -3,18 +3,28 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:\\Users\\frup54765\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.21\\cores\\arduino"
+                "${workspaceFolder}/**",
+                "C:/Users/flo/Documents/Arduino/libraries/**",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/**",
+                "C:/Program Files (x86)/Arduino/libraries/**"
             ],
-            "browse": {
-                "limitSymbolsToIncludedHeaders": false,
-                "path": [
-                    "C:\\Users\\frup54765\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.21\\cores\\arduino"
-                ]
-            },
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
             "intelliSenseMode": "msvc-x64",
-            "cStandard": "c11",
-            "cppStandard": "c++17"
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "C:/Users/flo/Documents/Arduino/libraries",
+                    "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino",
+                    "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries",
+                    "C:/Program Files (x86)/Arduino/libraries"
+                ]
+            }
         }
     ],
-    "version": 3
+    "version": 4
 }

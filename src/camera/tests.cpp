@@ -2,71 +2,97 @@
 
 
 void testMode(RF24 radio){
-  Serial.println("testMode");
-  char order = NO_ORDER;
+  Serial.println("testMode - begin");
+  // tell paper process to enter test mode.
+  Serial2.print(ENTER_TEST);
+  Serial2.flush();
+
+  unsigned long lastMillis = 0;
+  unsigned long currentMillis = 0;
+  char testOrder = NO_ORDER;
   byte answer;
-  while (order != EXIT_TEST){
-    // check for an incoming order.
-    radio.startListening();
-    delay(5); // leave time to receive message.
-    if (radio.available()) {
-      radio.read(&order, sizeof(order));
-      Serial.println(order);
-    }
-    radio.stopListening();
+  
+  radio.startListening();
+  while (testOrder != EXIT_TEST){
+    currentMillis = millis();
     
-    switch(order){
-      case ENTER_TEST:
-        Serial2.print(ENTER_TEST);
-        Serial2.flush();
-        break;
+    // check for an incoming order.
+    if (radio.available()) {
+      radio.read(&testOrder, sizeof(testOrder));
+      Serial.println(testOrder);
+    }
+    
+    switch(testOrder){
       case EXIT_TEST:
         Serial2.print(EXIT_TEST);
         Serial2.flush();
-        Serial.print(RESPONSE_OK);
-        Serial.flush();
+        sendAnswer(radio, RESPONSE_OK);
+        testOrder = EXIT_TEST;
         break;
       case ORDER_GET_STATUS:
-        answer = RESPONSE_STATUS_TEST;
-        radio.write(&answer, sizeof(answer));
+      Serial.println("getStatus");
+        sendAnswer(radio, RESPONSE_STATUS_TEST);
+        testOrder = NO_ORDER;
         break;
       case ORDER_SWSHUTTER:{
-        bool swState = readSWShutter();
-        radio.write(&swState, sizeof(swState));
+        if(currentMillis - lastMillis > 1000){
+          Serial.println("shutter");
+          sendAnswer(radio, readSWShutter());
+          lastMillis = currentMillis;
+        }
       }
       break;
       case ORDER_SWSCISSOR:{
-        bool swState = readSWScissor();
-        radio.write(&swState, sizeof(swState));
+        if(currentMillis - lastMillis > 1000){
+          Serial.println("shutter");
+          sendAnswer(radio, readSWScissor());
+          lastMillis = currentMillis;
+        }
       }
       break;
       case ORDER_SWPAPER1:{
-        bool swState = readSWPaper1();
-        radio.write(&swState, sizeof(swState));
+        if(currentMillis - lastMillis > 1000){
+          Serial.println("shutter");
+          sendAnswer(radio, readSWPaper1());
+          lastMillis = currentMillis;
+        }
       }
       break;
       case ORDER_SWPAPER2:{
-        bool swState = readSWPaper2();
-        radio.write(&swState, sizeof(swState));
+        if(currentMillis - lastMillis > 1000){
+          Serial.println("shutter");
+          sendAnswer(radio, readSWPaper2());
+          lastMillis = currentMillis;
+        }
       }
       break;
       case ORDER_SWPAPER3:{
-        bool swState = readSWPaper3();
-        radio.write(&swState, sizeof(swState));
+        if(currentMillis - lastMillis > 1000){
+          Serial.println("shutter");
+          sendAnswer(radio, readSWPaper3());
+          lastMillis = currentMillis;
+        }
       }
       break;
       case ORDER_SWPAPER4:{
-        bool swState = readSWPaper4();
-        radio.write(&swState, sizeof(swState));
+        if(currentMillis - lastMillis > 1000){
+          Serial.println("shutter");
+          sendAnswer(radio, readSWPaper4());
+          lastMillis = currentMillis;
+        }
       }
       break;
       case ORDER_SWSTART:{
-        bool swState = readSWStart();
-        radio.write(&swState, sizeof(swState));
+        if(currentMillis - lastMillis > 1000){
+          Serial.println("start");
+          sendAnswer(radio, readSWStart());
+          lastMillis = currentMillis;
+        }
       }
       break;
       case ORDER_SHUTTER:
         takeShot();
+        testOrder = NO_ORDER;
         break;
       case ORDER_SCISSOR:{
         if(!readSWScissor()){
@@ -74,9 +100,11 @@ void testMode(RF24 radio){
         } else {
           openScissor();
         }
+        testOrder = NO_ORDER;
       }
       case ORDER_PAPER_FEEDER:
         initPaper();
+        testOrder = NO_ORDER;
         break;
       case ORDER_FLASH:
         if(!isFlashOn()){
@@ -84,6 +112,7 @@ void testMode(RF24 radio){
         } else {
           flashOff();
         }
+        testOrder = NO_ORDER;
         break;
       case ORDER_START_LIGHT:
         if(!isStartLedOn()){
@@ -91,21 +120,46 @@ void testMode(RF24 radio){
         } else {
           startLedOff();
         }
+        testOrder = NO_ORDER;
         break;
-      default : // Orders for paper process
-        Serial.print(order);
-        Serial.flush();
+      case ORDER_SWUP :
+      case ORDER_SWDOWN :
+      case ORDER_SWROTPAIR :
+      case ORDER_SWROTIMPAIR : // Switch orders for paper process
+        if(currentMillis - lastMillis > 1000){
+          Serial2.print(testOrder);
+          Serial2.flush();
+          // check answer from paper process.
+          delay(250); // leave time to paper process to respond.
+          if(Serial2.available() > 0){
+            char transco = Serial2.read();
+            Serial.println(transco);
+            sendAnswer(radio, transco);
+          }
+          lastMillis = currentMillis;
+        }
         break;
+        
     }
-
-    order = NO_ORDER;
     
-    // check answer from paper process.
-    delay(250); // leave time to paper process to respond.
-    if(Serial2.available() > 0){
-      answer = Serial2.read();
-      radio.write(&answer, sizeof(answer));
-    }
+    
   }
+  Serial.println("testMode - end");
+}
+
+void sendAnswer(RF24 radio, boolean answer){
+  Serial.println(answer);
+  radio.stopListening();
+  char transco = answer ? ORDER_TRUE : ORDER_FALSE;
+  radio.write(&transco, sizeof(transco));
+  radio.flush_rx();
+  radio.startListening();
+}
+
+void sendAnswer(RF24 radio, char answer){
+  Serial.println(answer);
+  radio.stopListening();
+  radio.write(&answer, sizeof(answer));
+  radio.flush_rx();
   radio.startListening();
 }

@@ -70,4 +70,6 @@
 
 #define ORDER_NEW_SLOT_READY 'x'  // When slot ready to accept paper
 #define ORDER_SWPAPER1 'y'
+#define ORDER_TRUE '1'
+#define ORDER_FALSE '2'
 #endif
