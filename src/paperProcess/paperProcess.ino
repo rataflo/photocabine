@@ -21,9 +21,9 @@
 
 /*
  * GLOBAL VARIABLES
- */
-byte slots[14]; 
+ */ 
 storage parametres;
+byte slots[14]; // State of each arm (closed, open, open with paper);
 char order = NO_ORDER; // 0 = no order.
 bool bWait = true; // true if we freeze movement to allow operation like waiting for paper from camera or we have nothing to do.
 float tempC = 0;
@@ -44,14 +44,18 @@ void setup() {
   
   // load params from eeprom
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
+  memcpy(slots, parametres.slots, sizeof(parametres.slots));
 
   // Check verif code, if not correct init eeprom.
   if(parametres.checkCode != 222){
     parametres.checkCode = 222;
     parametres.isRunning = false;
     parametres.tankTime = TANK_TIME;
+    initSlots();
+    memcpy(parametres.slots, slots, sizeof(slots));
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
+  initSlots();// Remove if check made in spider::initSpider.
   
   tempProbe.begin();
   tempProbe.getAddress(tempProbAdress, 0);
@@ -74,6 +78,7 @@ void setup() {
 
 void loop() {
   getTemperature();
+  debug("temp", String(order));
   checkOrder();
   process();
 }
@@ -260,11 +265,29 @@ void emergencyStop(){
 void getTemperature(){
   tempProbe.requestTemperatures(); // Send the command to get temperatures
   tempC = tempProbe.getTempC(tempProbAdress);
-  Serial.print("temp:");Serial.println(tempC);
+  debug("getTemperature:", String(tempC));
 }
 
 void calcTankTime(){
   parametres.tankTime = tempC;
+}
+
+void initSlots(){
+  // Init the slots
+  slots[0] = SLOT_NO_ARM; 
+  slots[1] = SLOT_CLOSED; 
+  slots[2] = SLOT_NO_ARM; 
+  slots[3] = SLOT_CLOSED; 
+  slots[4] = SLOT_NO_ARM; 
+  slots[5] = SLOT_CLOSED; 
+  slots[6] = SLOT_NO_ARM; 
+  slots[7] = SLOT_CLOSED; 
+  slots[8] = SLOT_NO_ARM; 
+  slots[9] = SLOT_CLOSED; 
+  slots[10] = SLOT_NO_ARM; 
+  slots[11] = SLOT_CLOSED; 
+  slots[12] = SLOT_NO_ARM;
+  slots[13] = SLOT_CLOSED;
 }
 
 void debug(String functionName, String varValue){

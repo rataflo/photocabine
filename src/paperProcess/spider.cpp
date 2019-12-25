@@ -21,8 +21,10 @@ void setupSpider(){
 }
 
 void initSpider(byte *slots){
-  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
+  // TODO: Check slots state maybre?
+  
   ledstrip.begin(); 
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   for(int i=0;i<LEDSTRIP_NB;i++){
     ledstrip.setPixelColor(i, 0, 0, 0); 
   }
@@ -165,31 +167,33 @@ void agitate(){
 }
 
 void setServoArmWaitPos() {
-  servoArm.write(SERVO_ARM_IDLE_POS);  
+  servoArm.write(SERVO_ARM_IDLE_POS);   
 }
 
 void openArm() {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch on rotation stepper to avoid rotation
-  downABitSpider();
+  servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_OPEN_POS_BEGIN); 
   delay(500);
   for(int i = SERVO_ARM_OPEN_POS_BEGIN; i < 150; i++){
     servoArm.write(i);
     delay(10);
   }
-  upSpider();
+  servoArm.detach();// To save power.
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 }
 
 void closeArm() {
-  downABitSpider();
+  //downABitSpider();
+  servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_CLOSE_POS_BEGIN); 
   delay(500);
   for(int i = SERVO_ARM_CLOSE_POS_BEGIN; i >= SERVO_ARM_CLOSE_POS_END; i--){
     servoArm.write(i);
     delay(10);
   }
-  upSpider();
+  servoArm.detach();// To save power.
+  //upSpider();
 }
 
 
@@ -201,6 +205,7 @@ void initServoArm(){
   servoArm.attach(SERVO_ARM);
   servoArm.write(0);  
   setServoArmWaitPos();
+  servoArm.detach();// To save power.
 }
 
 void initSpiderBottom() {
@@ -237,7 +242,7 @@ void initSpiderUp() {
 }
 
 void initRotate(byte *slots) {
-  // Position an arm before the exit of the camera ready to be opened.
+  // 
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   spiderRotate.setCurrentPosition(0);
   spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
@@ -255,22 +260,6 @@ void initRotate(byte *slots) {
   bImpair = true;
   spiderRotate.setCurrentPosition(0);
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
-
-  // Init the slots
-  slots[0] = SLOT_NO_ARM; 
-  slots[1] = SLOT_CLOSED; 
-  slots[2] = SLOT_NO_ARM; 
-  slots[3] = SLOT_CLOSED; 
-  slots[4] = SLOT_NO_ARM; 
-  slots[5] = SLOT_CLOSED; 
-  slots[6] = SLOT_NO_ARM; 
-  slots[7] = SLOT_CLOSED; 
-  slots[8] = SLOT_NO_ARM; 
-  slots[9] = SLOT_CLOSED; 
-  slots[10] = SLOT_NO_ARM; 
-  slots[11] = SLOT_CLOSED; 
-  slots[12] = SLOT_NO_ARM;
-  slots[13] = SLOT_CLOSED;
 
   lightStrip(slots);
 }

@@ -21,10 +21,10 @@
 
 #define SERVO_ARM 6
 #define SERVO_ARM_IDLE_POS 35
-#define SERVO_ARM_OPEN_POS_BEGIN 0
-#define SERVO_ARM_OPEN_POS_END 150
-#define SERVO_ARM_CLOSE_POS_BEGIN 190
-#define SERVO_ARM_CLOSE_POS_END 90
+#define SERVO_ARM_OPEN_POS_BEGIN 10
+#define SERVO_ARM_OPEN_POS_END 120
+#define SERVO_ARM_CLOSE_POS_BEGIN 180
+#define SERVO_ARM_CLOSE_POS_END 40
 
 #define SPIDER_EXIT_PIN_STP 10
 #define SPIDER_EXIT_PIN_DIR 13
@@ -48,11 +48,12 @@
 #define SLOT_PAPER 3 // 3 = arm open with paper.
 
 // EEPROM data
-#define EEPROM_ADRESS 0
+#define EEPROM_ADRESS 0 // Lot of update/read so change adress from time to time to avoid corrupted memory.
 struct storage {
   byte checkCode = 222;
   bool isRunning = false; // Process was working before shutdown ?
   int tankTime = TANK_TIME;
+  byte slots[14];
 };
 
 #endif
