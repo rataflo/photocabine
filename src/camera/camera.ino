@@ -18,29 +18,38 @@
 #include "paper.h"
 #include "tests.h"
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_TSL2591.h>
 
 // Work variables
 byte stepTakeShot = 0;
 int freeSlot = 7;
-volatile storage parametres;
+storage parametres;
 RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 volatile char order = NO_ORDER;
-volatile float bathTemp = 10;
+float bathTemp = 10;
+float lux = 0;
 
 Output<ORDER_INTERRUPT_PIN> orderPause;
 Adafruit_NeoPixel ceilingPixels = Adafruit_NeoPixel(CEILING_NBPIXEL, CEILING_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_TSL2591 luxMeter = Adafruit_TSL2591(2591);
 
 void setup() {
 
-  // Ligth the ceiling
-  ceilingPixels.begin(); 
-  for(int i=0;i<CEILING_NBPIXEL;i++){
-    ceilingPixels.setPixelColor(i, 255,255,255); // white as hell
-    ceilingPixels.show();
-  }
-  
   Serial.begin(9600);
   Serial2.begin(9600);
+
+  ceilingPixels.begin(); 
+
+  /* Lux sensor */
+  if(!luxMeter.begin()){
+    Serial.println("No TSL2591!");
+  }
+  //Gain config
+  luxMeter.setGain(TSL2591_GAIN_MED);
+  //Timing config
+  luxMeter.setTiming(TSL2591_INTEGRATIONTIME_400MS);
+  checkLuminosity();
 
   // Pin to create pause on paper process
   orderPause.write(HIGH);
@@ -89,6 +98,8 @@ void setup() {
 }
 
 void loop() {
+  Serial.println("loop-begin");
+  checkLuminosity();
   
   if(order == ENTER_TEST){
     detachInterrupt(digitalPinToInterrupt(2));
@@ -240,10 +251,37 @@ boolean sendOrderAndWait(char sendOrder){
 }
 
 /***************************
+ *  LUMINOSITY & LIGHTS
+ **************************/
+/*
+ * Retrieve luminosity from the lux sensor 2591.
+ * On low ligth, light up ceiling and billboard.
+ * Ligth up flash or not during shot.
+ */
+void checkLuminosity(){
+  lux = luxMeter.getLuminosity(TSL2591_VISIBLE);;
+  Serial.print("lux:");Serial.println(lux);
+  // The sun is down
+  if(lux < 4){
+    // Ligth the ceiling
+    for(int i=0;i<CEILING_NBPIXEL;i++){
+      ceilingPixels.setPixelColor(i, 255,255,255); // white as hell
+    }
+    ceilingPixels.show();
+  } else if(lux > 10){
+    // switch off the ceiling
+    for(int i=0;i<CEILING_NBPIXEL;i++){
+      ceilingPixels.setPixelColor(i, 0, 0, 0); // Dark
+    }
+    ceilingPixels.show();
+  }
+}
+
+/***************************
  *  INIT & STARTUP
  **************************/
 void initPhotomaton(){
-  
+    Serial.println("initPhotomaton-begin");
     // Coin acceptor off 
     disableCoinAcceptor();
   
@@ -272,6 +310,7 @@ void initPhotomaton(){
     /*sendOrderAndWait(ORDER_SPIDER_READY);*/
     
     enableCoinAcceptor(parametres.mode);
+    Serial.println("initPhotomaton-end");
 }
 
 /*
@@ -280,7 +319,9 @@ void initPhotomaton(){
 void check_radio(){
   Serial.println("check_radio");
   if (radio.available()) {
-      radio.read(&order, sizeof(order));
+      char tmp = NO_ORDER;
+      radio.read(&tmp, sizeof(tmp));
+      order = tmp;
       Serial.println(order);
 
       // Respond to quick orders.
@@ -291,7 +332,9 @@ void check_radio(){
           // Emergency stop, endless loop. Inside interrupt, fuck yeah
           while(order == ORDER_PAUSE){
             if (radio.available()) {
-              radio.read(&order, sizeof(order));
+              char tmp = NO_ORDER;
+              radio.read(&tmp, sizeof(tmp));
+              order = tmp;
               if(order == ORDER_GET_STATUS){
                 byte state = RESPONSE_STATUS_PAUSE;
                 radio.stopListening();

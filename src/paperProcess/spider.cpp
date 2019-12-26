@@ -30,10 +30,12 @@ void initSpider(byte *slots){
   }
   ledstrip.show();
   
-  initSpiderBottom();
+  /*
+   * TODO: uncomment
+   * initSpiderBottom();
   initServoArm();
   initSpiderUp();
-  initRotate(slots);
+  initRotate(slots);*/
 }
 
 void downSpider(){

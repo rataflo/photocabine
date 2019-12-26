@@ -10,6 +10,7 @@ Input<SCISSOR_ENDSTOP_PIN> endstopScissor(true);
 Output<SCISSOR_PIN_ENABLE> enableScissor;
 
 void initScissor() {
+  Serial.println("initScissor");
   int homing = 0;
   
   // stepper scissor
@@ -73,4 +74,3 @@ void closeScissor() {
 bool readSWScissor(){
   return endstopScissor.read();
 }
-

@@ -108,6 +108,7 @@ void refreshCoinSegment(byte mode){
  * Brigthness is from 1 to 7.
  */
 void initCoinSegment(){
+  Serial.println("initCoinSegment");
   uint8_t data[] = { 0x0, 0x0, 0x0, 0x0 };
   coinSegment.setBrightness(1); // min brightness (max 7)
   coinSegment.setSegments(data);  // All segments off
@@ -130,6 +131,7 @@ void coinInterrupt(){
 }
 
 void disableCoinAcceptor(){
+  Serial.println("disableCoinAcceptor");
   detachInterrupt(digitalPinToInterrupt(COIN_PIN));
   enableCoin.write(LOW);
   setCoinDigit(0);
@@ -154,6 +156,7 @@ void startLedOn() {
 }
 
 void startLedOff() {
+  Serial.println("startLedOff");
   startLED.write(LOW);
   bStartLedOn = false;
 }

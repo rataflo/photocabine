@@ -22,6 +22,7 @@ void flashOn() {
 }
 
 void flashOff() {
+  Serial.println("flashOff");
   flash.write(LOW);
   bFlashOn = false;
 }
@@ -99,6 +100,7 @@ void takeShot() {
  *  LED MATRIX FOR COUNTDOWN
  ********************************/
 void initLedMatrix(){
+  Serial.println("initCoinSegment");
   ledMatrix.shutdown(0,false);  // Wake up displays
   ledMatrix.setIntensity(0,1);  // Set intensity levels at the minimum
   ledMatrix.clearDisplay(0);  // Clear Displays
@@ -152,4 +154,3 @@ boolean isFlashOn(){
 boolean readSWShutter(){
   return endstopShutter.read();
 }
-
