@@ -29,6 +29,7 @@ RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 volatile char order = NO_ORDER;
 float bathTemp = 10;
 float lux = 0;
+bool ceilingOn = false; // Ceiling ligth switched on or not.
 
 Output<ORDER_INTERRUPT_PIN> orderPause;
 Adafruit_NeoPixel ceilingPixels = Adafruit_NeoPixel(CEILING_NBPIXEL, CEILING_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
@@ -257,18 +258,21 @@ boolean sendOrderAndWait(char sendOrder){
  * Retrieve luminosity from the lux sensor 2591.
  * On low ligth, light up ceiling and billboard.
  * Ligth up flash or not during shot.
+ * TODO: switch to a RTC.
  */
 void checkLuminosity(){
   lux = luxMeter.getLuminosity(TSL2591_VISIBLE);;
   Serial.print("lux:");Serial.println(lux);
   // The sun is down
-  if(lux < 4){
+  if(!ceilingOn && lux < 4){
+    ceilingOn = true;
     // Ligth the ceiling
     for(int i=0;i<CEILING_NBPIXEL;i++){
       ceilingPixels.setPixelColor(i, 255,255,255); // white as hell
     }
     ceilingPixels.show();
-  } else if(lux > 10){
+  } else if(ceilingOn && lux > 30){
+    ceilingOn = false;
     // switch off the ceiling
     for(int i=0;i<CEILING_NBPIXEL;i++){
       ceilingPixels.setPixelColor(i, 0, 0, 0); // Dark
