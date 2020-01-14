@@ -3,8 +3,8 @@
 
 #include "Arduino.h"
 
-// Uncomment to activate TEST_MODE
-#define TEST_MODE
+// uncomment to activate debug and serial output.
+#define DEBUG_MODE
 
 #define SHUTTER_PIN_STP 23
 #define SHUTTER_PIN_DIR 22

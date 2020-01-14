@@ -2,7 +2,7 @@
 
 
 void testMode(RF24 radio){
-  Serial.println("testMode - begin");
+  debug("testMode-begin", "");
   // tell paper process to enter test mode.
   Serial2.print(ENTER_TEST);
   Serial2.flush();
@@ -19,7 +19,7 @@ void testMode(RF24 radio){
     // check for an incoming order.
     if (radio.available()) {
       radio.read(&testOrder, sizeof(testOrder));
-      Serial.println(testOrder);
+      debug("testOrder", testOrder);
     }
     
     switch(testOrder){
@@ -30,13 +30,11 @@ void testMode(RF24 radio){
         testOrder = EXIT_TEST;
         break;
       case ORDER_GET_STATUS:
-      Serial.println("getStatus");
         sendAnswer(radio, RESPONSE_STATUS_TEST);
         testOrder = NO_ORDER;
         break;
       case ORDER_SWSHUTTER:{
         if(currentMillis - lastMillis > 1000){
-          Serial.println("shutter");
           sendAnswer(radio, readSWShutter());
           lastMillis = currentMillis;
         }
@@ -44,7 +42,6 @@ void testMode(RF24 radio){
       break;
       case ORDER_SWSCISSOR:{
         if(currentMillis - lastMillis > 1000){
-          Serial.println("shutter");
           sendAnswer(radio, readSWScissor());
           lastMillis = currentMillis;
         }
@@ -52,7 +49,6 @@ void testMode(RF24 radio){
       break;
       case ORDER_SWPAPER1:{
         if(currentMillis - lastMillis > 1000){
-          Serial.println("shutter");
           sendAnswer(radio, readSWPaper1());
           lastMillis = currentMillis;
         }
@@ -60,7 +56,6 @@ void testMode(RF24 radio){
       break;
       case ORDER_SWPAPER2:{
         if(currentMillis - lastMillis > 1000){
-          Serial.println("shutter");
           sendAnswer(radio, readSWPaper2());
           lastMillis = currentMillis;
         }
@@ -68,7 +63,6 @@ void testMode(RF24 radio){
       break;
       case ORDER_SWPAPER3:{
         if(currentMillis - lastMillis > 1000){
-          Serial.println("shutter");
           sendAnswer(radio, readSWPaper3());
           lastMillis = currentMillis;
         }
@@ -76,7 +70,6 @@ void testMode(RF24 radio){
       break;
       case ORDER_SWPAPER4:{
         if(currentMillis - lastMillis > 1000){
-          Serial.println("shutter");
           sendAnswer(radio, readSWPaper4());
           lastMillis = currentMillis;
         }
@@ -84,7 +77,6 @@ void testMode(RF24 radio){
       break;
       case ORDER_SWSTART:{
         if(currentMillis - lastMillis > 1000){
-          Serial.println("start");
           sendAnswer(radio, readSWStart());
           lastMillis = currentMillis;
         }
@@ -133,7 +125,6 @@ void testMode(RF24 radio){
           delay(250); // leave time to paper process to respond.
           if(Serial2.available() > 0){
             char transco = Serial2.read();
-            Serial.println(transco);
             sendAnswer(radio, transco);
           }
           lastMillis = currentMillis;
@@ -148,7 +139,7 @@ void testMode(RF24 radio){
 }
 
 void sendAnswer(RF24 radio, boolean answer){
-  Serial.println(answer);
+  debug("sendAnswer-boolean", "");
   radio.stopListening();
   char transco = answer ? ORDER_TRUE : ORDER_FALSE;
   radio.write(&transco, sizeof(transco));
@@ -157,9 +148,24 @@ void sendAnswer(RF24 radio, boolean answer){
 }
 
 void sendAnswer(RF24 radio, char answer){
-  Serial.println(answer);
+  debug("sendAnswer-char", "");
   radio.stopListening();
   radio.write(&answer, sizeof(answer));
   radio.flush_rx();
   radio.startListening();
 }
+
+#ifdef DEBUG_MODE
+void debug(String functionName, String varValue){
+  Serial.println(functionName + ":" + varValue);
+}
+void debug(String functionName, float varValue){
+  Serial.println(functionName + ":" + varValue);
+}
+void debug(String functionName, char varValue){
+  Serial.println(functionName + ":" + varValue);
+}
+void debug(String functionName, int varValue){
+  Serial.println(functionName + ":" + varValue);
+}
+#endif

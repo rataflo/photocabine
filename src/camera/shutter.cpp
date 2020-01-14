@@ -22,7 +22,6 @@ void flashOn() {
 }
 
 void flashOff() {
-  Serial.println("flashOff");
   flash.write(LOW);
   bFlashOn = false;
 }

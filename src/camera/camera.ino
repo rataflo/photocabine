@@ -37,14 +37,16 @@ Adafruit_TSL2591 luxMeter = Adafruit_TSL2591(2591);
 
 void setup() {
 
-  Serial.begin(9600);
+  #ifdef DEBUG_MODE
+    Serial.begin(9600);
+  #endif
   Serial2.begin(9600);
 
   ceilingPixels.begin(); 
 
   /* Lux sensor */
   if(!luxMeter.begin()){
-    Serial.println("No TSL2591!");
+    debug("setup", "No TSL2591!");
   }
   //Gain config
   luxMeter.setGain(TSL2591_GAIN_MED);
@@ -99,7 +101,7 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("loop-begin");
+  debug("loop-begin","");
   checkLuminosity();
   
   if(order == ENTER_TEST){
@@ -133,7 +135,7 @@ void loop() {
 }
 
 void manageStepsTakeShot(){
-  Serial.println("manageStepsTakeShot");
+  debug("manageStepsTakeShot-begin:", stepTakeShot);
   switch (stepTakeShot) {
     case 1: // First countdown
       showCountdown();
@@ -193,7 +195,7 @@ void manageStepsTakeShot(){
 }
 
 boolean sendOrderAndWait(char sendOrder){
-  Serial.print("sendOrderAndWait - begin:");Serial.println(sendOrder);
+  debug("sendOrderAndWait-begin:", sendOrder);
   boolean bOK = false;
   
   unsigned long lastMillis = 0;
@@ -209,7 +211,7 @@ boolean sendOrderAndWait(char sendOrder){
     }
     
     if (Serial2.available() > 0) {// if new response coming.
-      Serial.print("response:");Serial.println(sendOrder);
+      debug("response:", sendOrder);
       switch(sendOrder){
         case ORDER_NEW_SLOT:{
           // Ready to send paper.
@@ -219,7 +221,7 @@ boolean sendOrderAndWait(char sendOrder){
         }
         case ORDER_NB_FREE_SLOT:{ // Get number of free slot.
           freeSlot = Serial2.parseInt();
-          Serial.println(freeSlot);
+          debug("freeSlot:", freeSlot);
           bOK = true;
           break;
         }
@@ -229,9 +231,8 @@ boolean sendOrderAndWait(char sendOrder){
           break;
         }
         case ORDER_TEMP:{ // Bath temp?
-          Serial.println("temp=");
           bathTemp = Serial2.parseFloat();
-          Serial.println(bathTemp);
+          debug("temp:", bathTemp);
           bOK = true;
           break;
         }
@@ -262,7 +263,7 @@ boolean sendOrderAndWait(char sendOrder){
  */
 void checkLuminosity(){
   lux = luxMeter.getLuminosity(TSL2591_VISIBLE);;
-  Serial.print("lux:");Serial.println(lux);
+  debug("lux:", lux);
   // The sun is down
   if(!ceilingOn && lux < 4){
     ceilingOn = true;
@@ -285,48 +286,49 @@ void checkLuminosity(){
  *  INIT & STARTUP
  **************************/
 void initPhotomaton(){
-    Serial.println("initPhotomaton-begin");
-    // Coin acceptor off 
-    disableCoinAcceptor();
-  
-    // flash off
-    flashOff();
-  
-    // Start button off
-    startLedOff();
-  
-    // 4 * 7 segment display for coin
-    initCoinSegment();
-  
-    // Led Matrix
-    initLedMatrix();
-  
-    // Init steppers position.
-    initScissor();
-  
-    // Shutter
-    initShutter();
-  
-    // Paper
-    //initPaper();
+  debug("initPhotomaton-", "begin");
     
-    //Wait for paper process.
-    /*sendOrderAndWait(ORDER_SPIDER_READY);*/
+  // Coin acceptor off 
+  disableCoinAcceptor();
+  
+  // flash off
+  flashOff();
+  
+  // Start button off
+  startLedOff();
+  
+  // 4 * 7 segment display for coin
+  initCoinSegment();
+  
+  // Led Matrix
+  initLedMatrix();
+  
+  // Init steppers position.
+  initScissor();
+  
+  // Shutter
+  initShutter();
+  
+  // Paper
+  //initPaper();
     
-    enableCoinAcceptor(parametres.mode);
-    Serial.println("initPhotomaton-end");
+  //Wait for paper process.
+  sendOrderAndWait(ORDER_SPIDER_READY);*/
+    
+  enableCoinAcceptor(parametres.mode);
+  debug("initPhotomaton-", "end");
 }
 
 /*
  * Interrupt on incoming message from remote.
  */
 void check_radio(){
-  Serial.println("check_radio");
+  debug("check_radio-", "begin");
   if (radio.available()) {
       char tmp = NO_ORDER;
       radio.read(&tmp, sizeof(tmp));
       order = tmp;
-      Serial.println(order);
+      debug("order:", "order");
 
       // Respond to quick orders.
       switch(order){
@@ -372,8 +374,7 @@ void check_radio(){
           break;
 
         case ORDER_TEMP:
-          Serial.println("temp");
-          Serial.println(bathTemp);
+          debug("bathTemp:", "bathTemp");
           radio.stopListening();
           radio.write(&bathTemp, sizeof(bathTemp));
           radio.startListening();
@@ -416,7 +417,7 @@ void check_radio(){
           if (radio.available()) {
             int price = 200;
             radio.read(&price, sizeof(price));
-            Serial.println(price);
+            debug("price:", "price");
             parametres.price_cts = price;
             EEPROM.updateBlock(EEPROM_ADRESS, parametres);
           }
