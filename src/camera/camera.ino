@@ -313,7 +313,7 @@ void initPhotomaton(){
   //initPaper();
     
   //Wait for paper process.
-  sendOrderAndWait(ORDER_SPIDER_READY);*/
+  sendOrderAndWait(ORDER_SPIDER_READY);
     
   enableCoinAcceptor(parametres.mode);
   debug("initPhotomaton-", "end");
