@@ -34,6 +34,12 @@ void initSpider(byte *slots){
   initServoArm();
   initSpiderUp();
   initRotate(slots);
+
+  //Tests
+  delay(500);
+  openArm();
+  delay(2000);
+  closeArm();
 }
 
 void downSpider(){
@@ -70,7 +76,7 @@ void downABitSpider(){
   currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
   analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed); //mid speed.
   
-  while(currentMillis - startMoove < 500){
+  while(currentMillis - startMoove < 300){
     // do nothing
     currentMillis = millis();
   }
@@ -168,17 +174,22 @@ void agitate(){
 }
 
 void setServoArmWaitPos() {
+  servoArm.attach(SERVO_ARM); 
   servoArm.write(SERVO_ARM_IDLE_POS);   
+  delay(1000);
+  servoArm.detach();// To save power.
 }
 
 void openArm() {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch rotation stepper activated to avoid rotation during operation.
+  downABitSpider();
   servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_OPEN_POS_BEGIN); 
-  delay(500);
-  for(int i = SERVO_ARM_OPEN_POS_BEGIN; i < 150; i++){
+  delay(2000);
+  upSpider();
+  for(int i = SERVO_ARM_OPEN_POS_BEGIN; i < SERVO_ARM_OPEN_POS_END; i++){
     servoArm.write(i);
-    delay(10);
+    delay(40);
   }
   servoArm.detach();// To save power.
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
@@ -186,12 +197,14 @@ void openArm() {
 
 void closeArm() {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch rotation stepper activated to avoid rotation during operation.
+  downABitSpider();
   servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_CLOSE_POS_BEGIN); 
-  delay(500);
-  for(int i = SERVO_ARM_CLOSE_POS_BEGIN; i >= SERVO_ARM_CLOSE_POS_END; i--){
+  delay(1000);
+  upSpider();
+  for(int i = SERVO_ARM_CLOSE_POS_BEGIN; i > SERVO_ARM_CLOSE_POS_END; i--){
     servoArm.write(i);
-    delay(10);
+    delay(40);
   }
   servoArm.detach();// To save power.
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
@@ -203,13 +216,11 @@ void closeArm() {
  **************************/
 void initServoArm(){
   // servo arm position
-  servoArm.attach(SERVO_ARM);
-  servoArm.write(0);  
   setServoArmWaitPos();
-  servoArm.detach();// To save power.
 }
 
 void initSpiderBottom() {
+  Serial.println("initSpiderBottom");
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM); // true if not pressed.
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
@@ -225,6 +236,7 @@ void initSpiderBottom() {
 
 
 void initSpiderUp() {
+  Serial.println("initSpiderUp-begin");
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, HIGH);
@@ -236,10 +248,11 @@ void initSpiderUp() {
   }
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   currentSpeed = 0;
+  Serial.println("initSpiderUp-end");
 }
 
 void initRotate(byte *slots) {
-  // 
+  Serial.println("initRotate-begin"); 
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   spiderRotate.setCurrentPosition(0);
   spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
@@ -259,6 +272,7 @@ void initRotate(byte *slots) {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 
   lightStrip(slots);
+  Serial.println("initRotate-end"); 
 }
 
 boolean isSpiderUp(){
