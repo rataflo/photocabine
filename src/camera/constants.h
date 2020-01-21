@@ -37,7 +37,7 @@
 #define PAPER_PIN_ENABLE 35
 
 #define FLASH_PIN 46
-
+#define AUX_PIN 42
 #define START_BTN_PIN 45
 #define LED_START_BTN_PIN 47
 
