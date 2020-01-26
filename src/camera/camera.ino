@@ -72,7 +72,7 @@ void setup() {
   radio.startListening();
 
   // Interrupt for radio message.
-  attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
+  attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
   
   // Check verif code, if not correct init eeprom.
@@ -91,11 +91,11 @@ void setup() {
   // If the photomaton was previously running we start in test mode to force pause and avoid any problem.
   bool bTest = (parametres.isRunning || sendOrderAndWait(ORDER_GET_STATUS) == RESPONSE_STATUS_TEST) ? true : false;
   if(bTest){
-    detachInterrupt(digitalPinToInterrupt(2));
+    detachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT));
     testMode(radio);
     parametres.isRunning = false;
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
-    attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
+    attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
   }
   initPhotomaton(); // TODO: remove comment when test are over.
 }
@@ -105,9 +105,9 @@ void loop() {
   checkLuminosity();
   
   if(order == ENTER_TEST){
-    detachInterrupt(digitalPinToInterrupt(2));
+    detachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT));
     testMode(radio);
-    attachInterrupt(digitalPinToInterrupt(2), check_radio, LOW);
+    attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
   
   } else if(order == ORDER_SET_TANK_TIME){
     Serial2.print(ORDER_SET_TANK_TIME);

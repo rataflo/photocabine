@@ -54,6 +54,7 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 #define RADIO_SCK 52 // Fixed SPI pin on arduino mega
 #define RADIO_MOSI 51 // Fixed SPI pin on arduino mega
 #define RADIO_MISO 50 // Fixed SPI pin on arduino mega
+#define RADIO_INTERRUPT 2
 
 #define ORDER_INTERRUPT_PIN 43
 
