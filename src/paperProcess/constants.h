@@ -42,7 +42,7 @@
 #define DELIVERY_TIME 5000 // Time to exit paper
 
 #define TEMP_PIN 8
-#define PAUSE_PIN 2
+#define ORDER_INTERRUPT_PIN 2
 
 // SLOT STATE
 #define SLOT_NO_ARM 0 // 0 = no arm, 

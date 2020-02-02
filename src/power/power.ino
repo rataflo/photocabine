@@ -1,7 +1,7 @@
 /*
  * Manage power usage if on battery. Shut power on system on shortage from battery and switch to a power bank.
  * Light billoard and ceiling at night (RTC).
- * RTC DS3231 (3.3v, SDA, SCL, empty, GND)
+ * RTC DS3231 (3.3v, SDA, SCL, empty, GND). Adress: 0x68
  * Arduino nano
  * SDA->A4
  * SCL->45

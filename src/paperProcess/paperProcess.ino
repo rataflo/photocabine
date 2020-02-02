@@ -40,7 +40,7 @@ void setup() {
   Serial2.begin(9600);
   
   // Interrupt for incoming order
-  //attachInterrupt(digitalPinToInterrupt(PAUSE_PIN), emergencyStop, FALLING);
+  //attachInterrupt(digitalPinToInterrupt(ORDER_INTERRUPT_PIN), emergencyStop, FALLING);
   
   // load params from eeprom
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
@@ -256,7 +256,7 @@ void emergencyStop(){
   analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
   digitalWrite(LED_BUILTIN, HIGH);
   // Emergency stop, endless loop. It's wrong I know...
-  while(digitalRead(PAUSE_PIN) == LOW){
+  while(digitalRead(ORDER_INTERRUPT_PIN) == LOW){
   }
   digitalWrite(LED_BUILTIN, LOW);
   analogWrite(SPIDER_UPDOWN_PIN_PWM, getSpiderCurrentSpeed());
