@@ -1,11 +1,11 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
-# nofilterbooth_+12V-power
+# +12V-power
 #
-DEF nofilterbooth_+12V-power #PWR 0 0 Y Y 1 F P
+DEF +12V-power #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "nofilterbooth_+12V-power" 0 140 50 H V C CNN
+F1 "+12V-power" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -16,11 +16,11 @@ X +12V 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_+5V-power
+# +5V-power
 #
-DEF nofilterbooth_+5V-power #PWR 0 0 Y Y 1 F P
+DEF +5V-power #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "nofilterbooth_+5V-power" 0 140 50 H V C CNN
+F1 "+5V-power" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -31,11 +31,11 @@ X +5V 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_ATtiny85-20PU-MCU_Microchip_ATtiny
+# ATtiny85-20PU-MCU_Microchip_ATtiny
 #
-DEF nofilterbooth_ATtiny85-20PU-MCU_Microchip_ATtiny U 0 20 Y Y 1 F N
+DEF ATtiny85-20PU-MCU_Microchip_ATtiny U 0 20 Y Y 1 F N
 F0 "U" -500 550 50 H V L BNN
-F1 "nofilterbooth_ATtiny85-20PU-MCU_Microchip_ATtiny" 100 -550 50 H V L TNN
+F1 "ATtiny85-20PU-MCU_Microchip_ATtiny" 100 -550 50 H V L TNN
 F2 "Package_DIP:DIP-8_W7.62mm" 0 0 50 H I C CIN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -54,11 +54,11 @@ X VCC 8 0 600 100 D 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_C-Device
+# C-Device
 #
-DEF nofilterbooth_C-Device C 0 10 N Y 1 F N
+DEF C-Device C 0 10 N Y 1 F N
 F0 "C" 25 100 50 H V L CNN
-F1 "nofilterbooth_C-Device" 25 -100 50 H V L CNN
+F1 "C-Device" 25 -100 50 H V L CNN
 F2 "" 38 -150 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -72,11 +72,11 @@ X ~ 2 0 -150 110 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_CP-Device
+# CP-Device
 #
-DEF nofilterbooth_CP-Device C 0 10 N Y 1 F N
+DEF CP-Device C 0 10 N Y 1 F N
 F0 "C" 25 100 50 H V L CNN
-F1 "nofilterbooth_CP-Device" 25 -100 50 H V L CNN
+F1 "CP-Device" 25 -100 50 H V L CNN
 F2 "" 38 -150 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -92,11 +92,11 @@ X ~ 2 0 -150 110 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_Conn_01x02-Connector_Generic
+# Conn_01x02-Connector_Generic
 #
-DEF nofilterbooth_Conn_01x02-Connector_Generic J 0 40 Y N 1 F N
+DEF Conn_01x02-Connector_Generic J 0 40 Y N 1 F N
 F0 "J" 0 100 50 H V C CNN
-F1 "nofilterbooth_Conn_01x02-Connector_Generic" 0 -200 50 H V C CNN
+F1 "Conn_01x02-Connector_Generic" 0 -200 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -111,11 +111,11 @@ X Pin_2 2 -200 -100 150 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_Conn_01x03-Connector_Generic
+# Conn_01x03-Connector_Generic
 #
-DEF nofilterbooth_Conn_01x03-Connector_Generic J 0 40 Y N 1 F N
+DEF Conn_01x03-Connector_Generic J 0 40 Y N 1 F N
 F0 "J" 0 200 50 H V C CNN
-F1 "nofilterbooth_Conn_01x03-Connector_Generic" 0 -200 50 H V C CNN
+F1 "Conn_01x03-Connector_Generic" 0 -200 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -132,11 +132,11 @@ X Pin_3 3 -200 -100 150 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_Conn_01x04-Connector_Generic
+# Conn_01x04-Connector_Generic
 #
-DEF nofilterbooth_Conn_01x04-Connector_Generic J 0 40 Y N 1 F N
+DEF Conn_01x04-Connector_Generic J 0 40 Y N 1 F N
 F0 "J" 0 200 50 H V C CNN
-F1 "nofilterbooth_Conn_01x04-Connector_Generic" 0 -300 50 H V C CNN
+F1 "Conn_01x04-Connector_Generic" 0 -300 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -155,11 +155,11 @@ X Pin_4 4 -200 -200 150 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_Conn_01x05-Connector_Generic
+# Conn_01x05-Connector_Generic
 #
-DEF nofilterbooth_Conn_01x05-Connector_Generic J 0 40 Y N 1 F N
+DEF Conn_01x05-Connector_Generic J 0 40 Y N 1 F N
 F0 "J" 0 300 50 H V C CNN
-F1 "nofilterbooth_Conn_01x05-Connector_Generic" 0 -300 50 H V C CNN
+F1 "Conn_01x05-Connector_Generic" 0 -300 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -180,11 +180,11 @@ X Pin_5 5 -200 -200 150 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_D24V90F5
+# D24V90F5
 #
-DEF nofilterbooth_D24V90F5 U 0 40 Y Y 1 F N
+DEF D24V90F5 U 0 40 Y Y 1 F N
 F0 "U" -500 -300 50 H V C CNN
-F1 "nofilterbooth_D24V90F5" -325 -250 50 H V C CNN
+F1 "D24V90F5" -325 -250 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -200,11 +200,11 @@ X ~ VOUT 200 -100 100 L 50 50 1 1 O
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_GND-power
+# GND-power
 #
-DEF nofilterbooth_GND-power #PWR 0 0 Y Y 1 F P
+DEF GND-power #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -250 50 H I C CNN
-F1 "nofilterbooth_GND-power" 0 -150 50 H V C CNN
+F1 "GND-power" 0 -150 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -213,11 +213,11 @@ X GND 1 0 0 0 D 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_LED_Small-Device
+# LED_Small-Device
 #
-DEF nofilterbooth_LED_Small-Device D 0 10 N N 1 F N
+DEF LED_Small-Device D 0 10 N N 1 F N
 F0 "D" -50 125 50 H V L CNN
-F1 "nofilterbooth_LED_Small-Device" -175 -100 50 H V L CNN
+F1 "LED_Small-Device" -175 -100 50 H V L CNN
 F2 "" 0 0 50 V I C CNN
 F3 "" 0 0 50 V I C CNN
 $FPLIST
@@ -236,11 +236,11 @@ X A 2 100 0 70 L 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_MEGA2560PRO-EMBED
+# MEGA2560PRO-EMBED
 #
-DEF nofilterbooth_MEGA2560PRO-EMBED MEGA2560PRO 0 40 N Y 1 F N
+DEF MEGA2560PRO-EMBED MEGA2560PRO 0 40 N Y 1 F N
 F0 "MEGA2560PRO" -400 2100 50 H V L BNN
-F1 "nofilterbooth_MEGA2560PRO-EMBED" -400 2000 50 H V L BNN
+F1 "MEGA2560PRO-EMBED" -400 2000 50 H V L BNN
 F2 "MEGA2560PRO-EMBED:MEGA2560PRO-EMBED" -50 -1400 50 V I L BNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -337,11 +337,11 @@ X VIN VIN -500 1900 100 R 40 40 0 0 B
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_NRF24L01_Breakout-RF
+# NRF24L01_Breakout-RF
 #
-DEF nofilterbooth_NRF24L01_Breakout-RF U 0 40 Y Y 1 F N
+DEF NRF24L01_Breakout-RF U 0 40 Y Y 1 F N
 F0 "U" -350 500 50 H V L CNN
-F1 "nofilterbooth_NRF24L01_Breakout-RF" 150 500 50 H V L CNN
+F1 "NRF24L01_Breakout-RF" 150 500 50 H V L CNN
 F2 "RF_Module:nRF24L01_Breakout" 150 600 50 H I L CIN
 F3 "" 0 -100 50 H I C CNN
 $FPLIST
@@ -365,11 +365,11 @@ X IRQ 8 -500 -300 150 R 50 50 1 1 O
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_Pololu_Breakout_DRV8825
+# Pololu_Breakout_DRV8825
 #
-DEF nofilterbooth_Pololu_Breakout_DRV8825 A 0 20 Y Y 1 F N
+DEF Pololu_Breakout_DRV8825 A 0 20 Y Y 1 F N
 F0 "A" -100 650 50 H V R CNN
-F1 "nofilterbooth_Pololu_Breakout_DRV8825" -100 550 50 H V R CNN
+F1 "Pololu_Breakout_DRV8825" -100 550 50 H V R CNN
 F2 "Module:Pololu_Breakout-16_15.2x20.3mm" 200 -800 50 H I L CNN
 F3 "" 100 -300 50 H I C CNN
 $FPLIST
@@ -396,11 +396,11 @@ X ~EN 9 -400 0 100 R 50 50 1 1 I
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_R_Small-Device
+# R_Small-Device
 #
-DEF nofilterbooth_R_Small-Device R 0 10 N N 1 F N
+DEF R_Small-Device R 0 10 N N 1 F N
 F0 "R" 30 20 50 H V L CNN
-F1 "nofilterbooth_R_Small-Device" 30 -40 50 H V L CNN
+F1 "R_Small-Device" 30 -40 50 H V L CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -413,11 +413,11 @@ X ~ 2 0 -100 30 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# nofilterbooth_TIP120-Transistor_BJT
+# TIP120-Transistor_BJT
 #
-DEF nofilterbooth_TIP120-Transistor_BJT Q 0 0 Y N 1 F N
+DEF TIP120-Transistor_BJT Q 0 0 Y N 1 F N
 F0 "Q" 200 75 50 H V L CNN
-F1 "nofilterbooth_TIP120-Transistor_BJT" 200 0 50 H V L CNN
+F1 "TIP120-Transistor_BJT" 200 0 50 H V L CNN
 F2 "Package_TO_SOT_THT:TO-220-3_Vertical" 200 -75 50 H I L CIN
 F3 "" 0 0 50 H I L CNN
 $FPLIST

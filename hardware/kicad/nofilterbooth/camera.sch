@@ -22,7 +22,7 @@ Wire Wire Line
 Wire Wire Line
 	1450 1950 1450 2000
 $Comp
-L pololu_breakout_drv8825:Pololu_Breakout_DRV8825 DRV_PAPER1
+L nofilterbooth:Pololu_Breakout_DRV8825 DRV_PAPER1
 U 1 1 5E403735
 P 1850 1900
 F 0 "DRV_PAPER1" V 1950 1850 50  0000 C CNN
@@ -33,7 +33,7 @@ F 3 "https://www.pololu.com/product/2982" H 1950 1600 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:GND #PWR0101
+L nofilterbooth:GND-power #PWR0101
 U 1 1 5E40373B
 P 1750 1100
 F 0 "#PWR0101" H 1750 850 50  0001 C CNN
@@ -44,7 +44,7 @@ F 3 "" H 1750 1100 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:GND #PWR0102
+L nofilterbooth:GND-power #PWR0102
 U 1 1 5E403741
 P 1850 1100
 F 0 "#PWR0102" H 1850 850 50  0001 C CNN
@@ -55,7 +55,7 @@ F 3 "" H 1850 1100 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:+12V #PWR0103
+L nofilterbooth:+12V-power #PWR0103
 U 1 1 5E403747
 P 2400 2500
 F 0 "#PWR0103" H 2400 2350 50  0001 C CNN
@@ -82,7 +82,7 @@ Wire Wire Line
 Wire Wire Line
 	1500 4000 1500 4050
 $Comp
-L pololu_breakout_drv8825:Pololu_Breakout_DRV8825 DRV_SHUTTER1
+L nofilterbooth:Pololu_Breakout_DRV8825 DRV_SHUTTER1
 U 1 1 5E403755
 P 1900 3950
 F 0 "DRV_SHUTTER1" V 2000 3900 50  0000 C CNN
@@ -93,7 +93,7 @@ F 3 "https://www.pololu.com/product/2982" H 2000 3650 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:GND #PWR0104
+L nofilterbooth:GND-power #PWR0104
 U 1 1 5E40375B
 P 1800 3150
 F 0 "#PWR0104" H 1800 2900 50  0001 C CNN
@@ -104,7 +104,7 @@ F 3 "" H 1800 3150 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:GND #PWR0105
+L nofilterbooth:GND-power #PWR0105
 U 1 1 5E403761
 P 1900 3150
 F 0 "#PWR0105" H 1900 2900 50  0001 C CNN
@@ -115,7 +115,7 @@ F 3 "" H 1900 3150 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:+12V #PWR0106
+L nofilterbooth:+12V-power #PWR0106
 U 1 1 5E403767
 P 2400 4550
 F 0 "#PWR0106" H 2400 4400 50  0001 C CNN
@@ -142,7 +142,7 @@ Wire Wire Line
 Wire Wire Line
 	1500 6100 1500 6150
 $Comp
-L pololu_breakout_drv8825:Pololu_Breakout_DRV8825 DRV_SCISSOR1
+L nofilterbooth:Pololu_Breakout_DRV8825 DRV_SCISSOR1
 U 1 1 5E403775
 P 1900 6050
 F 0 "DRV_SCISSOR1" V 2000 6000 50  0000 C CNN
@@ -153,7 +153,7 @@ F 3 "https://www.pololu.com/product/2982" H 2000 5750 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:GND #PWR0107
+L nofilterbooth:GND-power #PWR0107
 U 1 1 5E40377B
 P 1800 5250
 F 0 "#PWR0107" H 1800 5000 50  0001 C CNN
@@ -164,7 +164,7 @@ F 3 "" H 1800 5250 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:GND #PWR0108
+L nofilterbooth:GND-power #PWR0108
 U 1 1 5E403781
 P 1900 5250
 F 0 "#PWR0108" H 1900 5000 50  0001 C CNN
@@ -175,11 +175,11 @@ F 3 "" H 1900 5250 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:+12V #PWR0109
+L nofilterbooth:+12V-power #PWR0109
 U 1 1 5E403787
 P 2400 6650
 F 0 "#PWR0109" H 2400 6500 50  0001 C CNN
-F 1 "+12V" V 2415 6778 50  0000 L CNN
+F 1 "+12V-power" V 2415 6778 50  0000 L CNN
 F 2 "" H 2400 6650 50  0001 C CNN
 F 3 "" H 2400 6650 50  0001 C CNN
 	1    2400 6650
@@ -189,7 +189,7 @@ NoConn ~ 2250 2300
 NoConn ~ 2300 4350
 NoConn ~ 2300 6450
 $Comp
-L Connector_Generic:Conn_01x04 CONN_STEP_SCISSOR1
+L nofilterbooth:Conn_01x04-Connector_Generic CONN_STEP_SCISSOR1
 U 1 1 5E4037AE
 P 1050 6000
 F 0 "CONN_STEP_SCISSOR1" H 968 5575 50  0000 C CNN
@@ -200,7 +200,7 @@ F 3 "~" H 1050 6000 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x04 CONN_STEP_SHUTTER1
+L nofilterbooth:Conn_01x04-Connector_Generic CONN_STEP_SHUTTER1
 U 1 1 5E4037B4
 P 1050 3900
 F 0 "CONN_STEP_SHUTTER1" H 968 3475 50  0000 C CNN
@@ -211,7 +211,7 @@ F 3 "~" H 1050 3900 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x04 CONN_STEP_PAPER1
+L nofilterbooth:Conn_01x04-Connector_Generic CONN_STEP_PAPER1
 U 1 1 5E4037BA
 P 1000 1850
 F 0 "CONN_STEP_PAPER1" H 918 1425 50  0000 C CNN
@@ -249,7 +249,7 @@ Connection ~ 1850 1100
 Wire Wire Line
 	1850 1100 1750 1100
 $Comp
-L power:+5V #PWR0114
+L nofilterbooth:+5V-power #PWR0114
 U 1 1 5E4037D3
 P 2250 2100
 F 0 "#PWR0114" H 2250 1950 50  0001 C CNN
@@ -260,7 +260,7 @@ F 3 "" H 2250 2100 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0115
+L nofilterbooth:+5V-power #PWR0115
 U 1 1 5E4037D9
 P 2250 2200
 F 0 "#PWR0115" H 2250 2050 50  0001 C CNN
@@ -271,7 +271,7 @@ F 3 "" H 2250 2200 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:CP C1
+L nofilterbooth:CP-Device C1
 U 1 1 5E4037DF
 P 2200 2650
 F 0 "C1" H 2318 2696 50  0000 L CNN
@@ -287,7 +287,7 @@ Connection ~ 2200 2500
 Wire Wire Line
 	2200 2500 1850 2500
 $Comp
-L power:GND #PWR0116
+L nofilterbooth:GND-power #PWR0116
 U 1 1 5E4037E8
 P 2200 2800
 F 0 "#PWR0116" H 2200 2550 50  0001 C CNN
@@ -300,7 +300,7 @@ $EndComp
 Wire Wire Line
 	2400 4550 2250 4550
 $Comp
-L Device:CP C2
+L nofilterbooth:CP-Device C2
 U 1 1 5E4037EF
 P 2250 4700
 F 0 "C2" H 2368 4746 50  0000 L CNN
@@ -314,7 +314,7 @@ Connection ~ 2250 4550
 Wire Wire Line
 	2250 4550 1900 4550
 $Comp
-L power:GND #PWR0117
+L nofilterbooth:GND-power #PWR0117
 U 1 1 5E4037F7
 P 2250 4850
 F 0 "#PWR0117" H 2250 4600 50  0001 C CNN
@@ -346,7 +346,7 @@ SHUTTER_PIN_DIR
 Text GLabel 2300 3950 2    50   Input ~ 0
 SHUTTER_PIN_ENABLE
 $Comp
-L power:+5V #PWR0118
+L nofilterbooth:+5V-power #PWR0118
 U 1 1 5E40380D
 P 2300 4150
 F 0 "#PWR0118" H 2300 4000 50  0001 C CNN
@@ -357,7 +357,7 @@ F 3 "" H 2300 4150 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0119
+L nofilterbooth:+5V-power #PWR0119
 U 1 1 5E403813
 P 2300 4250
 F 0 "#PWR0119" H 2300 4100 50  0001 C CNN
@@ -379,22 +379,22 @@ Connection ~ 1900 5250
 Wire Wire Line
 	1900 5250 1800 5250
 $Comp
-L power:+5V #PWR0120
+L nofilterbooth:+5V-power #PWR0120
 U 1 1 5E403820
 P 2300 6350
 F 0 "#PWR0120" H 2300 6200 50  0001 C CNN
-F 1 "+5V" V 2315 6478 50  0000 L CNN
+F 1 "+5V-power" V 2315 6478 50  0000 L CNN
 F 2 "" H 2300 6350 50  0001 C CNN
 F 3 "" H 2300 6350 50  0001 C CNN
 	1    2300 6350
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0121
+L nofilterbooth:+5V-power #PWR0121
 U 1 1 5E403826
 P 2300 6250
 F 0 "#PWR0121" H 2300 6100 50  0001 C CNN
-F 1 "+5V" V 2315 6378 50  0000 L CNN
+F 1 "+5V-power" V 2315 6378 50  0000 L CNN
 F 2 "" H 2300 6250 50  0001 C CNN
 F 3 "" H 2300 6250 50  0001 C CNN
 	1    2300 6250
@@ -403,7 +403,7 @@ $EndComp
 Wire Wire Line
 	1900 6650 2250 6650
 $Comp
-L Device:CP C3
+L nofilterbooth:CP-Device C3
 U 1 1 5E40382D
 P 2250 6800
 F 0 "C3" H 2368 6846 50  0000 L CNN
@@ -417,11 +417,11 @@ Connection ~ 2250 6650
 Wire Wire Line
 	2250 6650 2400 6650
 $Comp
-L power:GND #PWR0122
+L nofilterbooth:GND-power #PWR0122
 U 1 1 5E403835
 P 2250 6950
 F 0 "#PWR0122" H 2250 6700 50  0001 C CNN
-F 1 "GND" H 2255 6777 50  0000 C CNN
+F 1 "GND-power" H 2255 6777 50  0000 C CNN
 F 2 "" H 2250 6950 50  0001 C CNN
 F 3 "" H 2250 6950 50  0001 C CNN
 	1    2250 6950
@@ -434,7 +434,7 @@ SCISSOR_PIN_STP
 Text GLabel 2300 6050 2    50   Input ~ 0
 SCISSOR_PIN_ENABLE
 $Comp
-L power:GND #PWR0129
+L nofilterbooth:GND-power #PWR0129
 U 1 1 5E40D8CD
 P 14475 1300
 F 0 "#PWR0129" H 14475 1050 50  0001 C CNN
@@ -449,9 +449,11 @@ Wire Wire Line
 Text GLabel 13875 1200 0    50   Input ~ 0
 SHUTTER_ENDSTOP_PIN
 $Comp
-L Connector_Generic:Conn_01x02 CONN_SW_SHUTTER1
+L nofilterbooth:Conn_01x02-Connector_Generic CONN_SW_SHUTTER1
 U 1 1 5E40BCA2
 P 14675 1200
+AR Path="/5E40BCA2" Ref="CONN_SW_SHUTTER1"  Part="1" 
+AR Path="/5E3BF423/5E40BCA2" Ref="CONN_SW_SHUTTER1"  Part="1" 
 F 0 "CONN_SW_SHUTTER1" H 14755 1192 50  0000 L CNN
 F 1 "JST_XH2" H 14755 1101 50  0000 L CNN
 F 2 "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal" H 14675 1200 50  0001 C CNN
@@ -460,7 +462,7 @@ F 3 "~" H 14675 1200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:LED_Small LED_SW_SHUTTER1
+L nofilterbooth:LED_Small-Device LED_SW_SHUTTER1
 U 1 1 5E41C72C
 P 14175 1100
 F 0 "LED_SW_SHUTTER1" V 14175 1800 50  0000 R CNN
@@ -474,7 +476,7 @@ Connection ~ 14175 1200
 Wire Wire Line
 	14175 1200 14475 1200
 $Comp
-L Device:R_Small R_SW_SHUTTER1
+L nofilterbooth:R_Small-Device R_SW_SHUTTER1
 U 1 1 5E41FAD3
 P 14275 1000
 F 0 "R_SW_SHUTTER1" V 14079 1000 50  0000 C CNN
@@ -485,7 +487,7 @@ F 3 "~" H 14275 1000 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0130
+L nofilterbooth:+5V-power #PWR0130
 U 1 1 5E420AD3
 P 14375 1000
 F 0 "#PWR0130" H 14375 850 50  0001 C CNN
@@ -496,7 +498,7 @@ F 3 "" H 14375 1000 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:GND #PWR0131
+L nofilterbooth:GND-power #PWR0131
 U 1 1 5E424DA9
 P 14475 2200
 F 0 "#PWR0131" H 14475 1950 50  0001 C CNN
@@ -511,9 +513,11 @@ Wire Wire Line
 Text GLabel 13875 2100 0    50   Input ~ 0
 SCISSOR_ENDSTOP_PIN
 $Comp
-L Connector_Generic:Conn_01x02 CONN_SW_SCISSOR1
+L nofilterbooth:Conn_01x02-Connector_Generic CONN_SW_SCISSOR1
 U 1 1 5E424DB1
 P 14675 2100
+AR Path="/5E424DB1" Ref="CONN_SW_SCISSOR1"  Part="1" 
+AR Path="/5E3BF423/5E424DB1" Ref="CONN_SW_SCISSOR1"  Part="1" 
 F 0 "CONN_SW_SCISSOR1" H 14755 2092 50  0000 L CNN
 F 1 "JST_XH2" H 14755 2001 50  0000 L CNN
 F 2 "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal" H 14675 2100 50  0001 C CNN
@@ -522,7 +526,7 @@ F 3 "~" H 14675 2100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:LED_Small LED_SW_SCISSOR1
+L nofilterbooth:LED_Small-Device LED_SW_SCISSOR1
 U 1 1 5E424DB7
 P 14175 2000
 F 0 "LED_SW_SCISSOR1" V 14175 2700 50  0000 R CNN
@@ -536,7 +540,7 @@ Connection ~ 14175 2100
 Wire Wire Line
 	14175 2100 14475 2100
 $Comp
-L Device:R_Small R_SW_SCISSOR1
+L nofilterbooth:R_Small-Device R_SW_SCISSOR1
 U 1 1 5E424DBF
 P 14275 1900
 F 0 "R_SW_SCISSOR1" V 14079 1900 50  0000 C CNN
@@ -547,7 +551,7 @@ F 3 "~" H 14275 1900 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0132
+L nofilterbooth:+5V-power #PWR0132
 U 1 1 5E424DC5
 P 14375 1900
 F 0 "#PWR0132" H 14375 1750 50  0001 C CNN
@@ -558,7 +562,7 @@ F 3 "" H 14375 1900 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x03 CONN_SW_PAP2
+L nofilterbooth:Conn_01x03-Connector_Generic CONN_SW_PAP2
 U 1 1 5E42FE90
 P 14675 3700
 F 0 "CONN_SW_PAP2" H 14755 3742 50  0000 L CNN
@@ -569,7 +573,7 @@ F 3 "~" H 14675 3700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR0136
+L nofilterbooth:GND-power #PWR0136
 U 1 1 5E42FE96
 P 14475 3600
 F 0 "#PWR0136" H 14475 3350 50  0001 C CNN
@@ -580,7 +584,7 @@ F 3 "" H 14475 3600 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0137
+L nofilterbooth:+5V-power #PWR0137
 U 1 1 5E42FE9C
 P 14475 3800
 F 0 "#PWR0137" H 14475 3650 50  0001 C CNN
@@ -595,7 +599,7 @@ Wire Wire Line
 Text GLabel 13675 3700 0    50   Input ~ 0
 PAPER_SWITCH2_PIN
 $Comp
-L Device:LED_Small LED_SW_PAPER2
+L nofilterbooth:LED_Small-Device LED_SW_PAPER2
 U 1 1 5E42FEA4
 P 13975 3600
 F 0 "LED_SW_PAPER2" V 13975 4300 50  0000 R CNN
@@ -609,7 +613,7 @@ Connection ~ 13975 3700
 Wire Wire Line
 	13975 3700 13675 3700
 $Comp
-L Device:R_Small R_SW_PAPER2
+L nofilterbooth:R_Small-Device R_SW_PAPER2
 U 1 1 5E42FEAC
 P 14075 3500
 F 0 "R_SW_PAPER2" V 13879 3500 50  0000 C CNN
@@ -620,7 +624,7 @@ F 3 "~" H 14075 3500 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0138
+L nofilterbooth:+5V-power #PWR0138
 U 1 1 5E42FEB2
 P 14175 3500
 F 0 "#PWR0138" H 14175 3350 50  0001 C CNN
@@ -631,7 +635,7 @@ F 3 "" H 14175 3500 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x03 CONN_SW_PAP3
+L nofilterbooth:Conn_01x03-Connector_Generic CONN_SW_PAP3
 U 1 1 5E4315AD
 P 14675 4500
 F 0 "CONN_SW_PAP3" H 14755 4542 50  0000 L CNN
@@ -642,7 +646,7 @@ F 3 "~" H 14675 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR0139
+L nofilterbooth:GND-power #PWR0139
 U 1 1 5E4315B3
 P 14475 4400
 F 0 "#PWR0139" H 14475 4150 50  0001 C CNN
@@ -653,7 +657,7 @@ F 3 "" H 14475 4400 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0140
+L nofilterbooth:+5V-power #PWR0140
 U 1 1 5E4315B9
 P 14475 4600
 F 0 "#PWR0140" H 14475 4450 50  0001 C CNN
@@ -668,7 +672,7 @@ Wire Wire Line
 Text GLabel 13675 4500 0    50   Input ~ 0
 PAPER_SWITCH3_PIN
 $Comp
-L Device:LED_Small LED_SW_PAPER3
+L nofilterbooth:LED_Small-Device LED_SW_PAPER3
 U 1 1 5E4315C1
 P 13975 4400
 F 0 "LED_SW_PAPER3" V 13975 5100 50  0000 R CNN
@@ -682,7 +686,7 @@ Connection ~ 13975 4500
 Wire Wire Line
 	13975 4500 13675 4500
 $Comp
-L Device:R_Small R_SW_PAPER3
+L nofilterbooth:R_Small-Device R_SW_PAPER3
 U 1 1 5E4315C9
 P 14075 4300
 F 0 "R_SW_PAPER3" V 13879 4300 50  0000 C CNN
@@ -693,7 +697,7 @@ F 3 "~" H 14075 4300 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0141
+L nofilterbooth:+5V-power #PWR0141
 U 1 1 5E4315CF
 P 14175 4300
 F 0 "#PWR0141" H 14175 4150 50  0001 C CNN
@@ -704,7 +708,7 @@ F 3 "" H 14175 4300 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x03 CONN_SW_PAP4
+L nofilterbooth:Conn_01x03-Connector_Generic CONN_SW_PAP4
 U 1 1 5E433DB8
 P 14675 5200
 F 0 "CONN_SW_PAP4" H 14755 5242 50  0000 L CNN
@@ -715,7 +719,7 @@ F 3 "~" H 14675 5200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR0142
+L nofilterbooth:GND-power #PWR0142
 U 1 1 5E433DBE
 P 14475 5100
 F 0 "#PWR0142" H 14475 4850 50  0001 C CNN
@@ -726,7 +730,7 @@ F 3 "" H 14475 5100 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0143
+L nofilterbooth:+5V-power #PWR0143
 U 1 1 5E433DC4
 P 14475 5300
 F 0 "#PWR0143" H 14475 5150 50  0001 C CNN
@@ -741,7 +745,7 @@ Wire Wire Line
 Text GLabel 13675 5200 0    50   Input ~ 0
 PAPER_SWITCH4_PIN
 $Comp
-L Device:LED_Small LED_SW_PAPER4
+L nofilterbooth:LED_Small-Device LED_SW_PAPER4
 U 1 1 5E433DCC
 P 13975 5100
 F 0 "LED_SW_PAPER4" V 13975 5800 50  0000 R CNN
@@ -755,7 +759,7 @@ Connection ~ 13975 5200
 Wire Wire Line
 	13975 5200 13675 5200
 $Comp
-L Device:R_Small R_SW_PAPER4
+L nofilterbooth:R_Small-Device R_SW_PAPER4
 U 1 1 5E433DD4
 P 14075 5000
 F 0 "R_SW_PAPER4" V 13879 5000 50  0000 C CNN
@@ -766,7 +770,7 @@ F 3 "~" H 14075 5000 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0144
+L nofilterbooth:+5V-power #PWR0144
 U 1 1 5E433DDA
 P 14175 5000
 F 0 "#PWR0144" H 14175 4850 50  0001 C CNN
@@ -777,9 +781,11 @@ F 3 "" H 14175 5000 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x02 CONN_FLASH1
+L nofilterbooth:Conn_01x02-Connector_Generic CONN_FLASH1
 U 1 1 5E3E16C9
 P 4550 775
+AR Path="/5E3E16C9" Ref="CONN_FLASH1"  Part="1" 
+AR Path="/5E3BF423/5E3E16C9" Ref="CONN_FLASH1"  Part="1" 
 F 0 "CONN_FLASH1" V 4514 587 50  0000 R CNN
 F 1 "Conn_01x02" V 4423 587 50  0000 R CNN
 F 2 "Connector_AMASS:AMASS_XT60-F_1x02_P7.20mm_Vertical" H 4550 775 50  0001 C CNN
@@ -788,7 +794,7 @@ F 3 "~" H 4550 775 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Transistor_BJT:TIP120 Q_FLASH1
+L nofilterbooth:TIP120-Transistor_BJT Q_FLASH1
 U 1 1 5E3E2EA2
 P 4550 1175
 F 0 "Q_FLASH1" H 4757 1221 50  0000 L CNN
@@ -799,7 +805,7 @@ F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 4550 1175 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R_Small R_FLASH1
+L nofilterbooth:R_Small-Device R_FLASH1
 U 1 1 5E3E5988
 P 4250 1175
 F 0 "R_FLASH1" V 4054 1175 50  0000 C CNN
@@ -810,7 +816,7 @@ F 3 "~" H 4250 1175 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:CP C_FLASH1
+L nofilterbooth:CP-Device C_FLASH1
 U 1 1 5E3E7509
 P 4800 1375
 F 0 "C_FLASH1" H 4918 1421 50  0000 L CNN
@@ -821,7 +827,7 @@ F 3 "~" H 4800 1375 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:GND #PWR0145
+L nofilterbooth:GND-power #PWR0145
 U 1 1 5E3ECE71
 P 4650 1375
 F 0 "#PWR0145" H 4650 1125 50  0001 C CNN
@@ -841,7 +847,7 @@ Wire Wire Line
 Wire Wire Line
 	4950 675  4950 1375
 $Comp
-L power:+12V #PWR0146
+L nofilterbooth:+12V-power #PWR0146
 U 1 1 5E3EF3AD
 P 4950 1375
 F 0 "#PWR0146" H 4950 1225 50  0001 C CNN
@@ -855,9 +861,11 @@ Connection ~ 4950 1375
 Text GLabel 4150 1175 0    50   Input ~ 0
 FLASH_PIN
 $Comp
-L Connector_Generic:Conn_01x02 CONN_AUX1
+L nofilterbooth:Conn_01x02-Connector_Generic CONN_AUX1
 U 1 1 5E3F8A7E
 P 6750 750
+AR Path="/5E3F8A7E" Ref="CONN_AUX1"  Part="1" 
+AR Path="/5E3BF423/5E3F8A7E" Ref="CONN_AUX1"  Part="1" 
 F 0 "CONN_AUX1" V 6714 562 50  0000 R CNN
 F 1 "Conn_01x02" V 6623 562 50  0000 R CNN
 F 2 "Connector_AMASS:AMASS_XT60-F_1x02_P7.20mm_Vertical" H 6750 750 50  0001 C CNN
@@ -866,7 +874,7 @@ F 3 "~" H 6750 750 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Transistor_BJT:TIP120 Q_AUX1
+L nofilterbooth:TIP120-Transistor_BJT Q_AUX1
 U 1 1 5E3F8A84
 P 6750 1150
 F 0 "Q_AUX1" H 6957 1196 50  0000 L CNN
@@ -877,7 +885,7 @@ F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 6750 1150 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R_Small R_FLASH2
+L nofilterbooth:R_Small-Device R_FLASH2
 U 1 1 5E3F8A8A
 P 6450 1150
 F 0 "R_FLASH2" V 6254 1150 50  0000 C CNN
@@ -888,7 +896,7 @@ F 3 "~" H 6450 1150 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:CP C_AUX1
+L nofilterbooth:CP-Device C_AUX1
 U 1 1 5E3F8A90
 P 7000 1350
 F 0 "C_AUX1" H 7118 1396 50  0000 L CNN
@@ -899,7 +907,7 @@ F 3 "~" H 7000 1350 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:GND #PWR0147
+L nofilterbooth:GND-power #PWR0147
 U 1 1 5E3F8A96
 P 6850 1350
 F 0 "#PWR0147" H 6850 1100 50  0001 C CNN
@@ -919,7 +927,7 @@ Wire Wire Line
 Wire Wire Line
 	7150 650  7150 1350
 $Comp
-L power:+12V #PWR0148
+L nofilterbooth:+12V-power #PWR0148
 U 1 1 5E3F8AA1
 P 7150 1350
 F 0 "#PWR0148" H 7150 1200 50  0001 C CNN
@@ -933,7 +941,7 @@ Connection ~ 7150 1350
 Text GLabel 6350 1150 0    50   Input ~ 0
 AUX_PIN
 $Comp
-L MCU_Microchip_ATtiny:ATtiny85-20PU U_MARQUEE1
+L nofilterbooth:ATtiny85-20PU-MCU_Microchip_ATtiny U_MARQUEE1
 U 1 1 5E3C3155
 P 9200 1475
 F 0 "U_MARQUEE1" H 8671 1521 50  0000 R CNN
@@ -966,7 +974,7 @@ PAPER_PIN_STP
 NoConn ~ 5925 7475
 NoConn ~ 4925 7475
 $Comp
-L power:GND #PWR0113
+L nofilterbooth:GND-power #PWR0113
 U 1 1 5E40379F
 P 4925 3475
 F 0 "#PWR0113" H 4925 3225 50  0001 C CNN
@@ -977,7 +985,7 @@ F 3 "" H 4925 3475 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:GND #PWR0112
+L nofilterbooth:GND-power #PWR0112
 U 1 1 5E403799
 P 4925 3375
 F 0 "#PWR0112" H 4925 3125 50  0001 C CNN
@@ -988,7 +996,7 @@ F 3 "" H 4925 3375 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+12V #PWR0111
+L nofilterbooth:+12V-power #PWR0111
 U 1 1 5E403793
 P 4925 3275
 F 0 "#PWR0111" H 4925 3125 50  0001 C CNN
@@ -999,7 +1007,7 @@ F 3 "" H 4925 3275 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L power:+12V #PWR0110
+L nofilterbooth:+12V-power #PWR0110
 U 1 1 5E40378D
 P 4925 3175
 F 0 "#PWR0110" H 4925 3025 50  0001 C CNN
@@ -1010,7 +1018,7 @@ F 3 "" H 4925 3175 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L RF:NRF24L01_Breakout U_RADIO1
+L nofilterbooth:NRF24L01_Breakout-RF U_RADIO1
 U 1 1 5E3C5018
 P 8825 5725
 F 0 "U_RADIO1" H 9205 5771 50  0000 L CNN
@@ -1028,7 +1036,7 @@ Text GLabel 9800 1475 2    50   Input ~ 0
 ENABLE_MARQUEE
 Connection ~ 11100 1675
 $Comp
-L power:+12V #PWR0149
+L nofilterbooth:+12V-power #PWR0149
 U 1 1 5E40D8A6
 P 11100 1675
 F 0 "#PWR0149" H 11100 1525 50  0001 C CNN
@@ -1040,7 +1048,7 @@ F 3 "" H 11100 1675 50  0001 C CNN
 $EndComp
 Connection ~ 11100 1375
 $Comp
-L power:GND #PWR0152
+L nofilterbooth:GND-power #PWR0152
 U 1 1 5E3DE854
 P 11100 1375
 F 0 "#PWR0152" H 11100 1125 50  0001 C CNN
@@ -1059,7 +1067,7 @@ Wire Wire Line
 Wire Wire Line
 	10450 1375 10450 1675
 $Comp
-L Device:CP C_AUX2
+L nofilterbooth:CP-Device C_AUX2
 U 1 1 5E3C6D15
 P 11100 1525
 F 0 "C_AUX2" H 11218 1571 50  0000 L CNN
@@ -1070,7 +1078,7 @@ F 3 "~" H 11100 1525 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:GND #PWR0150
+L nofilterbooth:GND-power #PWR0150
 U 1 1 5E416F27
 P 9200 2075
 F 0 "#PWR0150" H 9200 1825 50  0001 C CNN
@@ -1087,7 +1095,7 @@ Wire Wire Line
 Wire Wire Line
 	10450 1075 11100 1075
 $Comp
-L Connector_Generic:Conn_01x03 CONN_MARQUEE_WS2811
+L nofilterbooth:Conn_01x03-Connector_Generic CONN_MARQUEE_WS2811
 U 1 1 5E3C39A0
 P 10650 1275
 F 0 "CONN_MARQUEE_WS2811" H 10730 1317 50  0000 L CNN
@@ -1098,9 +1106,11 @@ F 3 "~" H 10650 1275 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x02 CONN_BATT1
+L nofilterbooth:Conn_01x02-Connector_Generic CONN_BATT1
 U 1 1 5E43A2A5
 P 8700 2975
+AR Path="/5E43A2A5" Ref="CONN_BATT1"  Part="1" 
+AR Path="/5E3BF423/5E43A2A5" Ref="CONN_BATT1"  Part="1" 
 F 0 "CONN_BATT1" V 8875 2625 50  0000 L CNN
 F 1 "JST_XH2" V 8800 2800 50  0000 L CNN
 F 2 "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal" H 8700 2975 50  0001 C CNN
@@ -1109,7 +1119,7 @@ F 3 "~" H 8700 2975 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L power:GND #PWR0151
+L nofilterbooth:GND-power #PWR0151
 U 1 1 5E43E16B
 P 8700 3175
 F 0 "#PWR0151" H 8700 2925 50  0001 C CNN
@@ -1120,7 +1130,7 @@ F 3 "" H 8700 3175 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R_Small R_BATT1
+L nofilterbooth:R_Small-Device R_BATT1
 U 1 1 5E43F09C
 P 8800 3575
 F 0 "R_BATT1" H 9025 3625 50  0000 C CNN
@@ -1131,7 +1141,7 @@ F 3 "~" H 8800 3575 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R_Small R_BATT2
+L nofilterbooth:R_Small-Device R_BATT2
 U 1 1 5E4400CC
 P 8800 4125
 F 0 "R_BATT2" H 9025 4175 50  0000 C CNN
@@ -1146,7 +1156,7 @@ Wire Wire Line
 Wire Wire Line
 	8800 4025 8800 3825
 $Comp
-L power:GND #PWR0153
+L nofilterbooth:GND-power #PWR0153
 U 1 1 5E444B22
 P 8800 4225
 F 0 "#PWR0153" H 8800 3975 50  0001 C CNN
@@ -1166,7 +1176,7 @@ Connection ~ 8800 3825
 Wire Wire Line
 	8800 3825 8800 3675
 $Comp
-L Device:R_Small R_MARQUEE1
+L nofilterbooth:R_Small-Device R_MARQUEE1
 U 1 1 5E3E2373
 P 10100 1275
 F 0 "R_MARQUEE1" V 10025 1250 50  0000 C CNN
@@ -1177,7 +1187,7 @@ F 3 "~" H 10100 1275 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Device:CP C_ATTINY1
+L nofilterbooth:CP-Device C_ATTINY1
 U 1 1 5E458335
 P 8325 2075
 F 0 "C_ATTINY1" H 8443 2121 50  0000 L CNN
@@ -1199,11 +1209,11 @@ Text GLabel 4925 3775 0    50   Input ~ 0
 Text GLabel 8825 5050 1    50   Input ~ 0
 3V3_CAMERA
 $Comp
-L power:GND #PWR0154
+L nofilterbooth:GND-power #PWR0154
 U 1 1 5E461E34
 P 8825 6350
 F 0 "#PWR0154" H 8825 6100 50  0001 C CNN
-F 1 "GND" H 8830 6177 50  0000 C CNN
+F 1 "GND-power" H 8830 6177 50  0000 C CNN
 F 2 "" H 8825 6350 50  0001 C CNN
 F 3 "" H 8825 6350 50  0001 C CNN
 	1    8825 6350
@@ -1222,7 +1232,7 @@ RADIO_MISO
 Text GLabel 4925 4475 0    50   Input ~ 0
 RADIO_INTERRUPT
 $Comp
-L Device:CP C_RADIO1
+L nofilterbooth:CP-Device C_RADIO1
 U 1 1 5E46A6E6
 P 9500 5475
 F 0 "C_RADIO1" H 9618 5521 50  0000 L CNN
@@ -1249,7 +1259,7 @@ Connection ~ 8825 6325
 Text GLabel 8325 5625 0    50   Input ~ 0
 RADIO_SCK
 $Comp
-L Connector_Generic:Conn_01x04 CONN_COIN1
+L nofilterbooth:Conn_01x04-Connector_Generic CONN_COIN1
 U 1 1 5E47C1C9
 P 14675 5800
 F 0 "CONN_COIN1" H 14593 5375 50  0000 C CNN
@@ -1260,7 +1270,7 @@ F 3 "~" H 14675 5800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:+12V #PWR0155
+L nofilterbooth:+12V-power #PWR0155
 U 1 1 5E48273C
 P 13725 5700
 F 0 "#PWR0155" H 13725 5550 50  0001 C CNN
@@ -1271,7 +1281,7 @@ F 3 "" H 13725 5700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L power:GND #PWR0156
+L nofilterbooth:GND-power #PWR0156
 U 1 1 5E484069
 P 13725 6000
 F 0 "#PWR0156" H 13725 5750 50  0001 C CNN
@@ -1282,7 +1292,7 @@ F 3 "" H 13725 6000 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:C C_COIN1
+L nofilterbooth:C-Device C_COIN1
 U 1 1 5E48B5FA
 P 13825 5850
 F 0 "C_COIN1" H 13475 5900 50  0000 L CNN
@@ -1313,7 +1323,7 @@ ENABLE_COIN_PIN
 Text GLabel 4925 4975 0    50   Input ~ 0
 ENABLE_MARQUEE
 $Comp
-L Connector_Generic:Conn_01x04 CONN_START1
+L nofilterbooth:Conn_01x04-Connector_Generic CONN_START1
 U 1 1 5E4A69A2
 P 14675 6750
 F 0 "CONN_START1" H 14593 6325 50  0000 C CNN
@@ -1324,7 +1334,7 @@ F 3 "~" H 14675 6750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Transistor_BJT:TIP120 Q_START1
+L nofilterbooth:TIP120-Transistor_BJT Q_START1
 U 1 1 5E4B9F6C
 P 13475 7075
 F 0 "Q_START1" H 13682 7121 50  0000 L CNN
@@ -1335,7 +1345,7 @@ F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 13475 7075 50  0001 L CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR0157
+L nofilterbooth:GND-power #PWR0157
 U 1 1 5E4BD673
 P 13575 7275
 F 0 "#PWR0157" H 13575 7025 50  0001 C CNN
@@ -1346,7 +1356,7 @@ F 3 "" H 13575 7275 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:CP C_START1
+L nofilterbooth:CP-Device C_START1
 U 1 1 5E4BDCA8
 P 13800 7275
 F 0 "C_START1" H 13918 7321 50  0000 L CNN
@@ -1360,7 +1370,7 @@ Wire Wire Line
 	13650 7275 13575 7275
 Connection ~ 13575 7275
 $Comp
-L power:+12V #PWR0158
+L nofilterbooth:+12V-power #PWR0158
 U 1 1 5E4C1B3C
 P 13950 7275
 F 0 "#PWR0158" H 13950 7125 50  0001 C CNN
@@ -1376,7 +1386,7 @@ Wire Wire Line
 	13950 6650 14475 6650
 Connection ~ 13950 7275
 $Comp
-L Device:R_Small R_START1
+L nofilterbooth:R_Small-Device R_START1
 U 1 1 5E4C95B3
 P 13175 7075
 F 0 "R_START1" V 12979 7075 50  0000 C CNN
@@ -1407,7 +1417,7 @@ To GND start bulb
 Text Notes 14750 6675 0    50   ~ 0
 To 12V start bulb
 $Comp
-L power:GND #PWR0159
+L nofilterbooth:GND-power #PWR0159
 U 1 1 5E418968
 P 14475 6850
 F 0 "#PWR0159" H 14475 6600 50  0001 C CNN
@@ -1424,7 +1434,7 @@ Wire Wire Line
 Text GLabel 13175 6750 0    50   Input ~ 0
 START_BTN_PIN
 $Comp
-L Device:LED_Small LED_SW_START1
+L nofilterbooth:LED_Small-Device LED_SW_START1
 U 1 1 5E41E864
 P 13475 6650
 F 0 "LED_SW_START1" V 13475 7250 50  0000 R CNN
@@ -1438,7 +1448,7 @@ Connection ~ 13475 6750
 Wire Wire Line
 	13475 6750 14475 6750
 $Comp
-L Device:R_Small R_SW_START1
+L nofilterbooth:R_Small-Device R_SW_START1
 U 1 1 5E41E86C
 P 13575 6550
 F 0 "R_SW_START1" V 13379 6550 50  0000 C CNN
@@ -1449,7 +1459,7 @@ F 3 "~" H 13575 6550 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L power:+5V #PWR0160
+L nofilterbooth:+5V-power #PWR0160
 U 1 1 5E4211BA
 P 13675 6550
 F 0 "#PWR0160" H 13675 6400 50  0001 C CNN
@@ -1464,7 +1474,7 @@ START_BTN_PIN
 Text Notes 14750 6775 0    50   ~ 0
 To switch
 $Comp
-L Connector_Generic:Conn_01x04 CONN_SEGMENT1
+L nofilterbooth:Conn_01x04-Connector_Generic CONN_SEGMENT1
 U 1 1 5E42E324
 P 14700 8075
 F 0 "CONN_SEGMENT1" H 14618 7650 50  0000 C CNN
@@ -1475,7 +1485,7 @@ F 3 "~" H 14700 8075 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR0161
+L nofilterbooth:GND-power #PWR0161
 U 1 1 5E42E338
 P 13100 8275
 F 0 "#PWR0161" H 13100 8025 50  0001 C CNN
@@ -1486,12 +1496,12 @@ F 3 "" H 13100 8275 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:C C_SEGMENT1
+L nofilterbooth:C-Device C_SEGMENT1
 U 1 1 5E42E342
 P 13425 8125
 F 0 "C_SEGMENT1" H 13075 8175 50  0000 L CNN
 F 1 "100nF" H 13075 8100 50  0000 L CNN
-F 2 "" H 13463 7975 50  0001 C CNN
+F 2 "Capacitor_THT:C_Disc_D3.0mm_W1.6mm_P2.50mm" H 13463 7975 50  0001 C CNN
 F 3 "~" H 13425 8125 50  0001 C CNN
 	1    13425 8125
 	1    0    0    -1  
@@ -1511,7 +1521,7 @@ COIN_SEGMENT_CLK_PIN
 Text GLabel 14500 8175 0    50   Input ~ 0
 COIN_SEGMENT_DIO_PIN
 $Comp
-L Connector_Generic:Conn_01x05 CONN_MATRIX1
+L nofilterbooth:Conn_01x05-Connector_Generic CONN_MATRIX1
 U 1 1 5E43FB48
 P 14700 9125
 F 0 "CONN_MATRIX1" H 14780 9167 50  0000 L CNN
@@ -1526,7 +1536,7 @@ Wire Wire Line
 Wire Wire Line
 	14500 9325 13250 9325
 $Comp
-L power:+5V #PWR0162
+L nofilterbooth:+5V-power #PWR0162
 U 1 1 5E44F053
 P 13050 8925
 F 0 "#PWR0162" H 13050 8775 50  0001 C CNN
@@ -1537,7 +1547,7 @@ F 3 "" H 13050 8925 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L power:GND #PWR0163
+L nofilterbooth:GND-power #PWR0163
 U 1 1 5E44FE96
 P 13050 9325
 F 0 "#PWR0163" H 13050 9075 50  0001 C CNN
@@ -1548,12 +1558,12 @@ F 3 "" H 13050 9325 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:C C_MATRIX1
+L nofilterbooth:C-Device C_MATRIX1
 U 1 1 5E45205C
 P 13250 9125
 F 0 "C_MATRIX1" H 12900 9175 50  0000 L CNN
 F 1 "100nF" H 12900 9100 50  0000 L CNN
-F 2 "" H 13288 8975 50  0001 C CNN
+F 2 "Capacitor_THT:C_Disc_D3.0mm_W1.6mm_P2.50mm" H 13288 8975 50  0001 C CNN
 F 3 "~" H 13250 9125 50  0001 C CNN
 	1    13250 9125
 	1    0    0    -1  
@@ -1581,7 +1591,7 @@ LED_MATRIX_CS_PIN
 Text GLabel 4925 5475 0    50   Input ~ 0
 LED_MATRIX_SDI_PIN
 $Comp
-L power:+5V #PWR0164
+L nofilterbooth:+5V-power #PWR0164
 U 1 1 5E465171
 P 13100 7975
 F 0 "#PWR0164" H 13100 7825 50  0001 C CNN
@@ -1592,7 +1602,7 @@ F 3 "" H 13100 7975 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x04 CONN_LUXSENSOR1
+L nofilterbooth:Conn_01x04-Connector_Generic CONN_LUXSENSOR1
 U 1 1 5E4657F7
 P 11725 9175
 F 0 "CONN_LUXSENSOR1" H 11643 8750 50  0000 C CNN
@@ -1603,7 +1613,7 @@ F 3 "~" H 11725 9175 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR0165
+L nofilterbooth:GND-power #PWR0165
 U 1 1 5E465801
 P 10850 9375
 F 0 "#PWR0165" H 10850 9125 50  0001 C CNN
@@ -1614,12 +1624,12 @@ F 3 "" H 10850 9375 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:C C_LUXSENSOR1
+L nofilterbooth:C-Device C_LUXSENSOR1
 U 1 1 5E46580B
 P 10975 9225
 F 0 "C_LUXSENSOR1" H 10350 9275 50  0000 L CNN
 F 1 "100nF" H 10625 9200 50  0000 L CNN
-F 2 "" H 11013 9075 50  0001 C CNN
+F 2 "Capacitor_THT:C_Disc_D3.0mm_W1.6mm_P2.50mm" H 11013 9075 50  0001 C CNN
 F 3 "~" H 10975 9225 50  0001 C CNN
 	1    10975 9225
 	1    0    0    -1  
@@ -1637,7 +1647,7 @@ Wire Wire Line
 Text GLabel 11525 9175 0    50   Input ~ 0
 SDA_PIN
 $Comp
-L power:+5V #PWR0166
+L nofilterbooth:+5V-power #PWR0166
 U 1 1 5E46581D
 P 10850 9075
 F 0 "#PWR0166" H 10850 8925 50  0001 C CNN
@@ -1650,7 +1660,7 @@ $EndComp
 Text GLabel 11525 9275 0    50   Input ~ 0
 SCL_PIN
 $Comp
-L power:+5V #PWR0135
+L nofilterbooth:+5V-power #PWR0135
 U 1 1 5E42DA48
 P 14175 2700
 F 0 "#PWR0135" H 14175 2550 50  0001 C CNN
@@ -1661,7 +1671,7 @@ F 3 "" H 14175 2700 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R_Small R_SW_PAPER1
+L nofilterbooth:R_Small-Device R_SW_PAPER1
 U 1 1 5E42D373
 P 14075 2700
 F 0 "R_SW_PAPER1" V 13879 2700 50  0000 C CNN
@@ -1675,7 +1685,7 @@ Wire Wire Line
 	13975 2900 13675 2900
 Connection ~ 13975 2900
 $Comp
-L Device:LED_Small LED_SW_PAPER1
+L nofilterbooth:LED_Small-Device LED_SW_PAPER1
 U 1 1 5E42A03F
 P 13975 2800
 F 0 "LED_SW_PAPER1" V 13975 3500 50  0000 R CNN
@@ -1690,7 +1700,7 @@ PAPER_SWITCH1_PIN
 Wire Wire Line
 	14475 2900 13975 2900
 $Comp
-L power:+5V #PWR0134
+L nofilterbooth:+5V-power #PWR0134
 U 1 1 5E4277AE
 P 14475 3000
 F 0 "#PWR0134" H 14475 2850 50  0001 C CNN
@@ -1701,7 +1711,7 @@ F 3 "" H 14475 3000 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L power:GND #PWR0133
+L nofilterbooth:GND-power #PWR0133
 U 1 1 5E426816
 P 14475 2800
 F 0 "#PWR0133" H 14475 2550 50  0001 C CNN
@@ -1712,7 +1722,7 @@ F 3 "" H 14475 2800 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x03 CONN_SW_PAP1
+L nofilterbooth:Conn_01x03-Connector_Generic CONN_SW_PAP1
 U 1 1 5E425FDC
 P 14675 2900
 F 0 "CONN_SW_PAP1" H 14755 2942 50  0000 L CNN
@@ -1723,7 +1733,7 @@ F 3 "~" H 14675 2900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x03 CONN_CEILING1
+L nofilterbooth:Conn_01x03-Connector_Generic CONN_CEILING1
 U 1 1 5E491B44
 P 9450 9250
 F 0 "CONN_CEILING1" H 9530 9292 50  0000 L CNN
@@ -1734,7 +1744,7 @@ F 3 "~" H 9450 9250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:+5V #PWR0167
+L nofilterbooth:+5V-power #PWR0167
 U 1 1 5E49813C
 P 8250 9150
 F 0 "#PWR0167" H 8250 9000 50  0001 C CNN
@@ -1745,7 +1755,7 @@ F 3 "" H 8250 9150 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L power:GND #PWR0168
+L nofilterbooth:GND-power #PWR0168
 U 1 1 5E49CA00
 P 8250 9350
 F 0 "#PWR0168" H 8250 9100 50  0001 C CNN
@@ -1774,7 +1784,7 @@ Wire Wire Line
 Wire Wire Line
 	8975 9400 8375 9400
 $Comp
-L Device:CP C_CEILING1
+L nofilterbooth:CP-Device C_CEILING1
 U 1 1 5E49E231
 P 8375 9250
 F 0 "C_CEILING1" H 7900 9275 50  0000 L CNN
@@ -1825,14 +1835,14 @@ PAPER_SWITCH3_PIN
 Text GLabel 5925 6675 2    50   Input ~ 0
 PAPER_SWITCH4_PIN
 $Comp
-L MEGA2560PRO-EMBED:MEGA2560PRO-EMBED MEGA_CAMERA1
+L nofilterbooth:MEGA2560PRO-EMBED MEGA_CAMERA1
 U 1 1 5E40372B
 P 5425 5075
 AR Path="/5E40372B" Ref="MEGA_CAMERA1"  Part="1" 
 AR Path="/5E3BF423/5E40372B" Ref="MEGA_CAMERA1"  Part="1" 
 F 0 "MEGA_CAMERA1" H 5425 7242 50  0000 C CNN
 F 1 "MEGA2560PRO-EMBED" H 5425 7151 50  0000 C CNN
-F 2 "MEGA2560PRO-EMBED:MEGA2560PRO-EMBED" V 5375 3675 50  0001 L BNN
+F 2 "footprints:MEGA2560PRO-EMBED" V 5375 3675 50  0001 L BNN
 F 3 "" H 5425 5075 50  0001 C CNN
 	1    5425 5075
 	1    0    0    -1  

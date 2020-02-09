@@ -1,7 +1,3 @@
 (sym_lib_table
-  (lib (name Converter_DCDC)(type Legacy)(uri D:/perso/photocabine/hardware/kicadlib/symbols/Converter_DCDC.lib)(options "")(descr ""))
-  (lib (name d24v90f5)(type Legacy)(uri D:/perso/photocabine/hardware/kicadlib/symbols/d24v90f5.lib)(options "")(descr ""))
-  (lib (name MEGA2560PRO-EMBED)(type Legacy)(uri D:/perso/photocabine/hardware/kicadlib/symbols/MEGA2560PRO-EMBED.lib)(options "")(descr ""))
-  (lib (name pololu_breakout_drv8825)(type Legacy)(uri D:/perso/photocabine/hardware/kicadlib/symbols/pololu_breakout_drv8825.lib)(options "")(descr ""))
-  (lib (name nofilterbooth-rescue)(type Legacy)(uri ${KIPRJMOD}/nofilterbooth-rescue.lib)(options "")(descr ""))
+  (lib (name nofilterbooth)(type Legacy)(uri ${KIPRJMOD}/nofilterbooth.lib)(options "")(descr ""))
 )
