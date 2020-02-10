@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name 1nofilterbooth)(type Legacy)(uri ${KIPRJMOD}/nofilterbooth.lib)(options "")(descr ""))
+  (lib (name nofilterbooth-rescue)(type Legacy)(uri ${KIPRJMOD}/nofilterbooth-rescue.lib)(options "")(descr ""))
+)

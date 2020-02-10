@@ -24,7 +24,7 @@ F4 "SERIAL_TX2" I R 3600 2625 50
 F5 "ORDER_INTERRUPT_PIN" I R 3600 2750 50 
 $EndSheet
 $Comp
-L nofilterbooth:Conn_01x02-Connector_Generic CONN_POWER_IN1
+L 1nofilterbooth:Conn_01x02-Connector_Generic CONN_POWER_IN1
 U 1 1 5E43D742
 P 4075 1075
 F 0 "CONN_POWER_IN1" V 4039 887 50  0000 R CNN
@@ -35,7 +35,7 @@ F 3 "~" H 4075 1075 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L nofilterbooth:+12V-power #PWR0123
+L 1nofilterbooth:+12V-power #PWR0123
 U 1 1 5E3BF560
 P 4075 1275
 F 0 "#PWR0123" H 4075 1125 50  0001 C CNN
@@ -46,7 +46,7 @@ F 3 "" H 4075 1275 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L nofilterbooth:GND-power #PWR0124
+L 1nofilterbooth:GND-power #PWR0124
 U 1 1 5E3C03FE
 P 4175 1275
 F 0 "#PWR0124" H 4175 1025 50  0001 C CNN
@@ -57,18 +57,18 @@ F 3 "" H 4175 1275 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L nofilterbooth:D24V90F5 U_STEP_DOWN_5V1
+L 1nofilterbooth:D24V90F5 U_STEP_DOWN_5V1
 U 1 1 5E3C0E82
 P 6000 1125
 F 0 "U_STEP_DOWN_5V1" H 5675 975 50  0000 C CNN
 F 1 "D24V90F5" H 5725 825 50  0000 C CNN
-F 2 "kicadlib:D24V90F5" H 6000 1125 50  0001 C CNN
+F 2 "1nofilterbooth:D24V90F5" H 6000 1125 50  0001 C CNN
 F 3 "" H 6000 1125 50  0001 C CNN
 	1    6000 1125
 	1    0    0    -1  
 $EndComp
 $Comp
-L nofilterbooth:+5V-power #PWR0128
+L 1nofilterbooth:+5V-power #PWR0128
 U 1 1 5E3C178D
 P 6200 1225
 F 0 "#PWR0128" H 6200 1075 50  0001 C CNN
@@ -79,7 +79,7 @@ F 3 "" H 6200 1225 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L nofilterbooth:GND-power #PWR0126
+L 1nofilterbooth:GND-power #PWR0126
 U 1 1 5E3C0BAF
 P 6200 1425
 F 0 "#PWR0126" H 6200 1175 50  0001 C CNN
@@ -90,7 +90,7 @@ F 3 "" H 6200 1425 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L nofilterbooth:GND-power #PWR0125
+L 1nofilterbooth:GND-power #PWR0125
 U 1 1 5E3BFE89
 P 5200 1425
 F 0 "#PWR0125" H 5200 1175 50  0001 C CNN
@@ -110,7 +110,7 @@ F3 "SERIAL_RX2" I L 6650 2625 50
 F4 "ORDER_INTERRUPT_PIN" I L 6650 2750 50 
 $EndSheet
 $Comp
-L nofilterbooth:+12V-power #PWR0127
+L 1nofilterbooth:+12V-power #PWR0127
 U 1 1 5E3DD7DE
 P 5200 1225
 F 0 "#PWR0127" H 5200 1075 50  0001 C CNN
