@@ -155,17 +155,33 @@ void sendAnswer(RF24 radio, char answer){
   radio.startListening();
 }
 
-#ifdef DEBUG_MODE
 void debug(String functionName, String varValue){
+  
+#ifdef DEBUG_MODE
   Serial.println(functionName + ":" + varValue);
+  #endif
 }
 void debug(String functionName, float varValue){
-  Serial.println(functionName + ":" + varValue);
+  
+#ifdef DEBUG_MODE
+  Serial.println(functionName + ":" + String(varValue, 1));
+  #endif
 }
 void debug(String functionName, char varValue){
+  
+#ifdef DEBUG_MODE
   Serial.println(functionName + ":" + varValue);
+  #endif
 }
 void debug(String functionName, int varValue){
+  
+#ifdef DEBUG_MODE
   Serial.println(functionName + ":" + varValue);
+  #endif
 }
-#endif
+
+void debug(String functionName, boolean varValue){
+  #ifdef DEBUG_MODE
+    Serial.println(functionName + ":" + (varValue? "true" : "false"));
+  #endif
+}

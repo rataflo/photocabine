@@ -6,6 +6,8 @@
 #include <MultiStepper.h>
 #include "constants.h"
 #include "shutter.h"
+#include "tests.h"
+
 
 void movePaperFirstShot();
 void initPaper();

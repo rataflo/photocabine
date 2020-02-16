@@ -30,6 +30,8 @@ volatile char order = NO_ORDER;
 float bathTemp = 10;
 float lux = 0;
 bool ceilingOn = false; // Ceiling ligth switched on or not.
+unsigned long lastCallTemp = 0;
+char statusSpider = ' ';
 
 Output<ORDER_INTERRUPT_PIN> orderPause;
 Adafruit_NeoPixel ceilingPixels = Adafruit_NeoPixel(CEILING_NBPIXEL, CEILING_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
@@ -60,7 +62,8 @@ void setup() {
   //tests
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
-  
+
+  // Activate radio.
   radio.begin();
   radio.openWritingPipe(RADIO_ADRESS_EMITTER); // 00002
   radio.openReadingPipe(1, RADIO_ADRESS_RECEIVER); // 00001
@@ -70,9 +73,7 @@ void setup() {
   radio.setRetries(250, 2);
   radio.maskIRQ(1,1,0);
   radio.startListening();
-
-  // Interrupt for radio message.
-  attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
+  
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
   
   // Check verif code, if not correct init eeprom.
@@ -89,24 +90,26 @@ void setup() {
   }
   parametres.mode = MODE_FREE; // TODO: remove after tests
   // If the photomaton was previously running we start in test mode to force pause and avoid any problem.
-  bool bTest = (parametres.isRunning || sendOrderAndWait(ORDER_GET_STATUS) == RESPONSE_STATUS_TEST) ? true : false;
+  sendOrderAndWait(ORDER_GET_STATUS);
+  bool bTest = (parametres.isRunning || statusSpider == RESPONSE_STATUS_TEST) ? true : false;
   if(bTest){
-    detachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT));
     testMode(radio);
     parametres.isRunning = false;
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
-    attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
   }
+  
+  attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
+  
   initPhotomaton(); // TODO: remove comment when test are over.
 }
 
 void loop() {
-  debug("loop-begin","");
   checkLuminosity();
-  
+  debug("loop", order);
   if(order == ENTER_TEST){
     detachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT));
     testMode(radio);
+    order = NO_ORDER;
     attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
   
   } else if(order == ORDER_SET_TANK_TIME){
@@ -116,9 +119,7 @@ void loop() {
     Serial2.flush();
     order = NO_ORDER;
   }
-
-  // Every minute we ask for bath temp.
-  sendOrderAndWait(ORDER_TEMP); 
+  
 
   // If coin acceptor OK and clic start button.
   if(stepTakeShot == 0 && manageCoinsAndStart(parametres.mode)) {
@@ -130,6 +131,13 @@ void loop() {
 
   if(stepTakeShot > 0) {
     manageStepsTakeShot(); 
+  } else{
+    // When nothing to do ask for temperature every 10 sec.
+    unsigned long currentMillis = millis();
+    if(currentMillis - lastCallTemp > 10000){
+      lastCallTemp = currentMillis;
+      sendOrderAndWait(ORDER_TEMP); 
+    }
   }
 
 }
@@ -171,7 +179,7 @@ void manageStepsTakeShot(){
       break;
       
     case 10: // cut paper and zou!
-      closeScissor();
+      //closeScissor(); TODO: remove me!
       sendOrderAndWait(ORDER_PAPER_READY);
       break;
       
@@ -203,20 +211,22 @@ boolean sendOrderAndWait(char sendOrder){
   
   while(!bOK){
     currentMillis = millis();
-    // if no response for 1 second we send the order again.
-    if(currentMillis - lastMillis > 1000){
+    // if no response for 1 second we send the order again after 10 seconds.
+    if(currentMillis - lastMillis > 10000){
+      debug("relance:", sendOrder);
       Serial2.print(sendOrder);
       Serial2.flush();
       lastMillis = currentMillis;
     }
     
     if (Serial2.available() > 0) {// if new response coming.
-      debug("response:", sendOrder);
+      
       switch(sendOrder){
         case ORDER_NEW_SLOT:{
           // Ready to send paper.
           char response = Serial2.read();
           bOK = response == ORDER_NEW_SLOT_READY;
+          debug("new_slot:", bOK);
           break;
         }
         case ORDER_NB_FREE_SLOT:{ // Get number of free slot.
@@ -228,6 +238,11 @@ boolean sendOrderAndWait(char sendOrder){
         case ORDER_SPIDER_READY:{ // Spider is ready ?
           char response = Serial2.read();
           bOK = response == RESPONSE_OK;
+          // In case spider is in test mode camera will follow into test
+          if(response == RESPONSE_STATUS_TEST){
+            order = ENTER_TEST;
+          }
+          debug("spider_ready:", response);
           break;
         }
         case ORDER_TEMP:{ // Bath temp?
@@ -239,11 +254,13 @@ boolean sendOrderAndWait(char sendOrder){
         case ORDER_PAPER_READY:{ // Do the paper process got the message that paper as been delivered?
           char response = Serial2.read();
           bOK = response == RESPONSE_OK;
+          debug("paper_ready:", bOK);
           break;
         }
         case ORDER_GET_STATUS:{ // get status from paper process.
-          char response = Serial2.read();
+          statusSpider = Serial2.read();
           bOK = true;
+          debug("status:", statusSpider);
           break;
         }
       }
@@ -286,7 +303,7 @@ void checkLuminosity(){
  *  INIT & STARTUP
  **************************/
 void initPhotomaton(){
-  debug("initPhotomaton-", "begin");
+  debug("initPhotomaton-", String("begin"));
     
   // Coin acceptor off 
   disableCoinAcceptor();
@@ -300,9 +317,6 @@ void initPhotomaton(){
   // 4 * 7 segment display for coin
   initCoinSegment();
   
-  // Led Matrix
-  initLedMatrix();
-  
   // Init steppers position.
   initScissor();
   
@@ -310,25 +324,25 @@ void initPhotomaton(){
   initShutter();
   
   // Paper
-  //initPaper();
+  initPaper();
     
   //Wait for paper process.
   sendOrderAndWait(ORDER_SPIDER_READY);
     
   enableCoinAcceptor(parametres.mode);
-  debug("initPhotomaton-", "end");
+  debug("initPhotomaton-", String("end"));
 }
 
 /*
  * Interrupt on incoming message from remote.
  */
 void check_radio(){
-  debug("check_radio-", "begin");
+  debug("check_radio-", String("begin"));
   if (radio.available()) {
       char tmp = NO_ORDER;
       radio.read(&tmp, sizeof(tmp));
       order = tmp;
-      debug("order:", "order");
+      debug("order:", order);
 
       // Respond to quick orders.
       switch(order){
@@ -374,7 +388,7 @@ void check_radio(){
           break;
 
         case ORDER_TEMP:
-          debug("bathTemp:", "bathTemp");
+          debug("bathTemp:", bathTemp);
           radio.stopListening();
           radio.write(&bathTemp, sizeof(bathTemp));
           radio.startListening();
@@ -389,11 +403,11 @@ void check_radio(){
           break;
 
         case ORDER_GET_STATUS:{
-          byte state = RESPONSE_STATUS_RUNNING;
+          byte state = statusSpider == RESPONSE_STATUS_TEST ? RESPONSE_STATUS_TEST : RESPONSE_STATUS_RUNNING;
           radio.stopListening();
           radio.write(&state, sizeof(state));
           radio.startListening();
-          order = NO_ORDER;
+          order = state == RESPONSE_STATUS_TEST ? ENTER_TEST : NO_ORDER;
           break;
         }
         case ORDER_SET_MODE:
@@ -455,6 +469,6 @@ void check_radio(){
           }
           break;
       }
-      
     }
+    debug("order", order);
 }

@@ -16,6 +16,13 @@ const uint8_t SEG_FREE[] = {
   SEG_A | SEG_F | SEG_G | SEG_E | SEG_D,           // E
   };
 
+const uint8_t SEG_BUSY[] = {
+  SEG_F | SEG_G | SEG_C | SEG_D | SEG_E,           // B
+  SEG_F | SEG_E | SEG_D | SEG_C | SEG_B,           // U
+  SEG_A | SEG_F | SEG_G | SEG_C | SEG_D,           // S
+  SEG_F | SEG_G | SEG_B | SEG_C,                   // Y
+  };
+
 TM1637Display coinSegment(COIN_SEGMENT_CLK_PIN, COIN_SEGMENT_DIO_PIN);
 
 // Coin acceptor
@@ -29,13 +36,13 @@ bool bStartLedOn = false;
 unsigned long oldInterruptMillis;// no need to be volatile, exclusively used by coin interrupt.
 
 boolean manageCoinsAndStart(byte mode){
+  debug("manageCoinsAndStart-mode", mode);
   boolean bStart = false;
   refreshCoinSegment(mode);
   
   switch(mode){
     case MODE_PAYING:
       if(cents >= PRICE_CTS){
-        disableCoinAcceptor();
         showArrowDown();
         startLedOn();
         bStart = !startBtn.read();
@@ -45,18 +52,19 @@ boolean manageCoinsAndStart(byte mode){
       if(cents >= FREE_PRICE_CTS){
         showArrowDown();
         startLedOn();
-        if(!startBtn.read()){
-          disableCoinAcceptor();
-          bStart = true;
-        }else{
-          refreshCoinSegment(mode);
-        }
+        bStart = !startBtn.read();
       }
       break;
     case MODE_FREE:
-      disableCoinAcceptor();
+      startLedOn();
       bStart = !startBtn.read();
       break;
+  }
+
+  if(bStart){
+    startLedOff();
+    disableCoinAcceptor();
+    coinSegment.setSegments(SEG_BUSY);
   }
 
   //bStart = false; // TODO : remove when tests finished.
@@ -132,7 +140,7 @@ void coinInterrupt(){
 void disableCoinAcceptor(){
   detachInterrupt(digitalPinToInterrupt(COIN_PIN));
   enableCoin.write(LOW);
-  setCoinDigit(0);
+  //setCoinDigit(0);
   bCoinEnabled = false;
   cents = 0;
 }

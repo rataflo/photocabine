@@ -27,6 +27,8 @@ void flashOff() {
 }
 
 void initShutter() {
+  initLedMatrix();
+  
   // stepper shutter
   enableShutter.write(LOW);
   shutter.setMaxSpeed(1000);
@@ -61,6 +63,7 @@ void initShutter() {
 }
 
 void takeShot() {
+  debug("takeShot", String("begin"));
   // TODO calculate duration of the shot.
   enableShutter.write(LOW);
   shutter.setMaxSpeed(1000);
@@ -73,6 +76,7 @@ void takeShot() {
     int currentShutterNbStep = shutter.currentPosition();
     if(currentShutterNbStep > 195){ // Digital read at the last time.
       bEndStop = !endstopShutter.read();
+      debug("bEndStop", bEndStop);
     }
 
     // Flash during rotation.
@@ -84,8 +88,8 @@ void takeShot() {
     
     if(bEndStop){
       shutter.stop();
-      shutter.run();
       shutter.setCurrentPosition(0);
+      shutter.run();
       enableShutter.write(HIGH);
       bCloseShutter = true;
       
@@ -93,13 +97,13 @@ void takeShot() {
       shutter.run();
     }
   }
+  debug("takeShot", String("end"));
 }
 
 /********************************
  *  LED MATRIX FOR COUNTDOWN
  ********************************/
 void initLedMatrix(){
-  Serial.println("initCoinSegment");
   ledMatrix.shutdown(0,false);  // Wake up displays
   ledMatrix.setIntensity(0,1);  // Set intensity levels at the minimum
   ledMatrix.clearDisplay(0);  // Clear Displays
@@ -115,6 +119,7 @@ void displayNumber(byte numero)
 
 void showCountdown()
 {
+  debug("showCountdown", String("begin"));
   countDown = 5;
   displayNumber(countDown);
   prevousMillisCountdown = millis();
@@ -125,7 +130,7 @@ void refreshCountdown()
   unsigned long currentMillis = millis();
   if(currentMillis - prevousMillisCountdown >= 1000){
     prevousMillisCountdown = currentMillis;
-    countDown--;
+    countDown = countDown > 0 ? countDown-1 : 0;
     displayNumber(countDown);
   }
 }

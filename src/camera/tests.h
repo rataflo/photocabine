@@ -14,10 +14,10 @@
 void testMode(RF24 radio);
 void sendAnswer(RF24 radio, boolean answer);
 void sendAnswer(RF24 radio, char answer);
-#ifdef DEBUG_MODE
-  void debug(String functionName, String varValue);
-  void debug(String functionName, float varValue);
-  void debug(String functionName, char varValue);
-  void debug(String functionName, int varValue);
-#endif
+
+void debug(String functionName, String varValue);
+void debug(String functionName, float varValue);
+void debug(String functionName, char varValue);
+void debug(String functionName, int varValue);
+void debug(String functionName, boolean varValue);
 #endif

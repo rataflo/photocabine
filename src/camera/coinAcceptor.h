@@ -6,6 +6,7 @@
 #include "TM1637Display.h"
 #include "constants.h"
 #include "shutter.h"
+#include "tests.h"
 
 boolean manageCoinsAndStart(byte mode);
 void setCoinDigit(int number);

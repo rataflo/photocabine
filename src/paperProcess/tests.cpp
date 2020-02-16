@@ -4,13 +4,15 @@ void testMode(){
   Serial.println("testMode - begin");
   unsigned long lastMillis = 0;
   unsigned long currentMillis = 0;
-  byte testOrder = NO_ORDER;
+  char testOrder = NO_ORDER;
   //Serial2.println(order);
   while (testOrder != EXIT_TEST){
     currentMillis = millis();
     
     if(Serial2.available() > 0){
       testOrder = Serial2.read();
+      Serial.println(testOrder);
+      serial2Clear();
     }
     
     switch(testOrder){
@@ -20,6 +22,11 @@ void testMode(){
         testOrder = EXIT_TEST;
         break;
       case ORDER_GET_STATUS: // get status.
+        Serial2.print(RESPONSE_STATUS_TEST);
+        Serial2.flush();
+        testOrder = NO_ORDER;
+        break;
+      case ORDER_SPIDER_READY: // get status.
         Serial2.print(RESPONSE_STATUS_TEST);
         Serial2.flush();
         testOrder = NO_ORDER;
@@ -93,3 +100,27 @@ void sendAnswer(boolean answer){
   Serial2.print(transco);
   Serial2.flush();
 }
+
+void debug(String functionName, String varValue){
+  #ifdef DEBUG_MODE
+    Serial.println(functionName + ":" + varValue);
+  #endif
+}
+
+void debug(String functionName, boolean varValue){
+  #ifdef DEBUG_MODE
+    Serial.println(functionName + ":" + (varValue ? "true": "false"));
+  #endif
+}
+
+void debug(String functionName, byte varValue){
+  #ifdef DEBUG_MODE
+    Serial.println(functionName + ":" + varValue);
+  #endif
+}
+
+void serial2Clear(){
+  while(Serial2.available() > 0) { 
+    char t = Serial2.read(); 
+  }
+} 

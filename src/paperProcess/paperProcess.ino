@@ -26,6 +26,7 @@ storage parametres;
 byte slots[14]; // State of each arm (closed, open, open with paper);
 char order = NO_ORDER; // 0 = no order.
 bool bWait = true; // true if we freeze movement to allow operation like waiting for paper from camera or we have nothing to do.
+bool bCloseArm = false; 
 float tempC = 0;
 
 // Temperature probe
@@ -73,12 +74,12 @@ void setup() {
 
   getTemperature();
   initSpider(slots);
-  runDelivery(slots);
+  //runDelivery(slots);
 }
 
 void loop() {
   getTemperature();
-  debug("temp", String(order));
+  debug("temp", String(tempC));
   checkOrder();
   process();
 }
@@ -86,6 +87,7 @@ void loop() {
 void checkOrder(){
   if (Serial2.available()) {
     order = Serial2.read();
+    serial2Clear();
     debug("checkOrder - begin", String(order));
   }
   
@@ -97,6 +99,7 @@ void checkOrder(){
 
     case ORDER_TEMP:
       respondToOrder(tempC);
+      order = NO_ORDER;
       break;
 
     case ORDER_NB_FREE_SLOT:{ // Get number of freee slot.
@@ -107,6 +110,7 @@ void checkOrder(){
         }
       }
       respondToOrder(nbFreeSlot);
+      order = NO_ORDER;
       break;
     }
     case ORDER_SET_TANK_TIME:
@@ -117,39 +121,50 @@ void checkOrder(){
       
     case ORDER_GET_STATUS:
       respondToOrder(RESPONSE_STATUS_RUNNING);
+      order = NO_ORDER;
       break;
   }
   
   // Order we process only when spider at the top
   if(isSpiderUp()){
     switch(order){
-      case ORDER_NEW_SLOT: // Need a place for paper.
+      case ORDER_NEW_SLOT:{ // Need a place for paper.
         // Arm ready on slot 0.
+        debug("slots[0]", String(slots[0]));
         if(slots[0] == SLOT_OPEN){
+          digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
           respondToOrder(ORDER_NEW_SLOT_READY);
           bWait = true;
           
-        } else if(slots[13] == SLOT_CLOSED){ // Arm on exit slot but closed.
+        } else if(slots[0] == SLOT_CLOSED){ // Arm not opened
           openArm();
-          slots[13] = SLOT_OPEN;
-          bWait = false;
+          slots[0] = SLOT_OPEN;
+          digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
+          respondToOrder(ORDER_NEW_SLOT_READY);
+          bWait = true;
           
-        } else if(slots[13] == SLOT_OPEN){ // Arm on exit slot and opened.
+        } else if(slots[0] == SLOT_NO_ARM){ // no arm
           bWait = false;
-        } 
+        }
+        order = NO_ORDER; 
         break;
-  
-      case ORDER_PAPER_READY: // Paper delivered.
+      }
+      case ORDER_PAPER_READY:{ // Paper delivered.
+        digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
         respondToOrder(RESPONSE_OK);
         slots[0] = SLOT_PAPER;
         bWait = false;
         parametres.isRunning = true;
-        // Calculate process time from temperature.
+        EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+        // TODO: calculate tank time from temperature.
+        order = NO_ORDER;
         break;
-
-      case ORDER_SPIDER_READY: // If we are here the init is ready
+      }
+      case ORDER_SPIDER_READY:{ // If we are here the init is ready
         respondToOrder(RESPONSE_OK);
+        order = NO_ORDER;
         break;
+      }
     }
   }
 }
@@ -163,6 +178,13 @@ void process(){
         bProcess = true;
         break;
       }
+    }
+
+    //If arm on slot 0 need to be closed.
+    if(slots[0] == SLOT_OPEN){
+      closeArm();
+    } else if(!bProcess && (slots[13] == SLOT_OPEN || slots[13] == SLOT_CLOSED)){ // Arm on exit and no other paper to process.
+      rotateSpider(slots);
     }
 
     if(bProcess){
@@ -184,7 +206,7 @@ void process(){
     //Last stage, delivery before rotate.
     if(slots[12] == SLOT_PAPER){
       runDelivery(slots);
-      slots[13] == SLOT_OPEN;
+      slots[13] = SLOT_OPEN;
     } else {
       rotateSpider(slots);
     }
@@ -198,7 +220,7 @@ void process(){
       }
     }
 
-    if(bWait){
+    if(!bWait){
       parametres.isRunning = false;
       EEPROM.updateBlock(EEPROM_ADRESS, parametres);
     }
@@ -215,7 +237,7 @@ void respondToOrder(char answer){
 }
 
 void respondToOrder(float answer){
-  Serial.print("respondToOrder - begin:"); Serial.println(answer);
+  debug("respondToOrder", String(answer, 1));
   /* UNCOMMENT Serial1.print(answer);
   Serial1.flush();*/
   Serial2.println(answer, 1);
@@ -224,8 +246,7 @@ void respondToOrder(float answer){
 }
 
 void respondToOrder(byte answer){
-  /* UNCOMMENT Serial1.print(answer);
-  Serial1.flush();*/
+  debug("respondToOrder", answer);
   Serial2.print(answer);
   Serial2.flush();
   order = NO_ORDER;
@@ -257,24 +278,18 @@ void calcTankTime(){
 
 void initSlots(){
   // Init the slots
-  slots[0] = SLOT_NO_ARM; 
-  slots[1] = SLOT_CLOSED; 
-  slots[2] = SLOT_NO_ARM; 
-  slots[3] = SLOT_CLOSED; 
-  slots[4] = SLOT_NO_ARM; 
-  slots[5] = SLOT_CLOSED; 
-  slots[6] = SLOT_NO_ARM; 
-  slots[7] = SLOT_CLOSED; 
-  slots[8] = SLOT_NO_ARM; 
-  slots[9] = SLOT_CLOSED; 
-  slots[10] = SLOT_NO_ARM; 
-  slots[11] = SLOT_CLOSED; 
-  slots[12] = SLOT_NO_ARM;
-  slots[13] = SLOT_CLOSED;
-}
-
-void debug(String functionName, String varValue){
-  #ifdef DEBUG_MODE
-    Serial.println(functionName + ":" + varValue);
-  #endif
+  slots[0] = SLOT_CLOSED; 
+  slots[1] = SLOT_NO_ARM; 
+  slots[2] = SLOT_CLOSED; 
+  slots[3] = SLOT_NO_ARM; 
+  slots[4] = SLOT_CLOSED; 
+  slots[5] = SLOT_NO_ARM; 
+  slots[6] = SLOT_CLOSED; 
+  slots[7] = SLOT_NO_ARM; 
+  slots[8] = SLOT_CLOSED; 
+  slots[9] = SLOT_NO_ARM; 
+  slots[10] = SLOT_CLOSED; 
+  slots[11] = SLOT_NO_ARM; 
+  slots[12] = SLOT_CLOSED;
+  slots[13] = SLOT_NO_ARM;
 }

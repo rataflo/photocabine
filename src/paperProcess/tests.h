@@ -12,4 +12,9 @@
 
 void testMode();
 void sendAnswer(boolean answer);
+
+void debug(String functionName, String varValue);
+void debug(String functionName, boolean varValue);
+void debug(String functionName, byte varValue);
+void serial2Clear();
 #endif

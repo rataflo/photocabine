@@ -10,6 +10,7 @@ Input<PAPER_SWITCH4_PIN> opto4(true);
 Output<PAPER_PIN_ENABLE> enablePaper;
 
 void movePaperFirstShot() {
+  debug("movePaperFirstShot", String("begin"));
   enablePaper.write(LOW);
   paper.setCurrentPosition(0);
   paper.setMaxSpeed(PAPER_SPEED);
@@ -40,6 +41,7 @@ void movePaperFirstShot() {
 
 
 void initPaper() {
+  debug("initPaper", String("begin"));
   enablePaper.write(LOW);
   paper.setCurrentPosition(0);
   paper.setMaxSpeed(PAPER_SPEED);
@@ -74,6 +76,7 @@ void initPaper() {
 }
 
 void movePaperNextShot(byte numShot) {
+  debug("movePaperNextShot", String("begin"));
   showCountdown();
   enablePaper.write(LOW);
   paper.setCurrentPosition(0);
@@ -135,6 +138,7 @@ void movePaperNextShot(byte numShot) {
 }
 
 void movePaperOut() {
+  debug("movePaperOut", String("begin"));
   enablePaper.write(LOW);
   paper.setCurrentPosition(0);
   paper.setMaxSpeed(200);

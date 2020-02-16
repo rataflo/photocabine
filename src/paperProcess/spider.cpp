@@ -341,7 +341,7 @@ void initRotate(byte *slots) {
 }
 
 boolean isSpiderUp(){
-  return digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
+  return !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
 }
 
 void lightStrip(byte *slots){
