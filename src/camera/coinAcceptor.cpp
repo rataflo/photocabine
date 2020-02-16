@@ -33,7 +33,8 @@ Input<START_BTN_PIN> startBtn(true);
 Output<LED_START_BTN_PIN> startLED;
 bool bCoinEnabled = false;
 bool bStartLedOn = false;
-unsigned long oldInterruptMillis;// no need to be volatile, exclusively used by coin interrupt.
+unsigned long oldInterruptMillis;
+bool bRefreshSeg = false;
 
 boolean manageCoinsAndStart(byte mode){
   debug("manageCoinsAndStart-mode", mode);
@@ -67,7 +68,6 @@ boolean manageCoinsAndStart(byte mode){
     coinSegment.setSegments(SEG_BUSY);
   }
 
-  //bStart = false; // TODO : remove when tests finished.
   return bStart;
 }
 
@@ -102,12 +102,15 @@ void coinSegmentFull(){
  * Refresh if needed according to cents the segment.
  */
 void refreshCoinSegment(byte mode){
-  if(mode == MODE_PAYING){
-    setCoinDigit(PRICE_CTS - cents);
-  } else if (mode == MODE_FREE_PRICE){
-    setCoinDigit(cents);
-  } else {
-    coinSegment.setSegments(SEG_FREE);
+  if(bRefreshSeg){
+    if(mode == MODE_PAYING){
+        setCoinDigit(PRICE_CTS - cents);
+      } else if (mode == MODE_FREE_PRICE){
+        setCoinDigit(cents);
+      } else {
+        coinSegment.setSegments(SEG_FREE);
+      }
+      bRefreshSeg = false;
   }
 }
 
@@ -135,6 +138,7 @@ void coinInterrupt(){
   if(difference < 135 && difference >125){
     cents += bCoinEnabled ? 10 : 0;
   }
+  bRefreshSeg = true;
 }
 
 void disableCoinAcceptor(){
@@ -149,6 +153,7 @@ void enableCoinAcceptor(byte mode){
   if(mode != MODE_FREE){
     pinMode(COIN_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, FALLING);
+    bRefreshSeg = true;
     refreshCoinSegment(mode);
     enableCoin.write(HIGH);
     bCoinEnabled = true;

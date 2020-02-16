@@ -16,10 +16,6 @@
 // Test orders
 #define ENTER_TEST 'F' // Enter test mode or pause the process.
 #define EXIT_TEST 'G'
-#define ORDER_SWUP 'H' // Test on upper switch of spider
-#define ORDER_SWDOWN 'I' // Test on bottom switch of spider
-#define ORDER_SWROTPAIR 'J' // Test on rotation opto switch 1
-#define ORDER_SWROTIMPAIR 'K' // Test on rotation opto switch 2
 #define ORDER_UPSPIDER 'L' // Spider to the top
 #define ORDER_DOWNSPIDER 'M' // Spider to the bottom
 #define ORDER_ROTATESPIDER 'N' // Rotate spider.
@@ -53,12 +49,6 @@
 #define ORDER_SHUTTER 'h'
 #define ORDER_SCISSOR 'i'
 #define ORDER_PAPER_FEEDER 'j'
-#define ORDER_SWSHUTTER 'l'
-#define ORDER_SWSCISSOR 'm'
-#define ORDER_SWPAPER2 'n'
-#define ORDER_SWPAPER3 'o'
-#define ORDER_SWPAPER4 'p'
-#define ORDER_SWSTART 'q'
 
 #define ORDER_FLASH 'r'
 #define ORDER_START_LIGHT 's'
@@ -69,7 +59,6 @@
 #define ORDER_GET_TANK_TIME 'w'
 
 #define ORDER_NEW_SLOT_READY 'x'  // When slot ready to accept paper
-#define ORDER_SWPAPER1 'y'
 #define ORDER_TRUE '1'
 #define ORDER_FALSE '2'
 #endif

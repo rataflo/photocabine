@@ -10,7 +10,6 @@ void testMode(RF24 radio){
   unsigned long lastMillis = 0;
   unsigned long currentMillis = 0;
   char testOrder = NO_ORDER;
-  byte answer;
   
   radio.startListening();
   while (testOrder != EXIT_TEST){
@@ -33,55 +32,6 @@ void testMode(RF24 radio){
         sendAnswer(radio, RESPONSE_STATUS_TEST);
         testOrder = NO_ORDER;
         break;
-      case ORDER_SWSHUTTER:{
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(radio, readSWShutter());
-          lastMillis = currentMillis;
-        }
-      }
-      break;
-      case ORDER_SWSCISSOR:{
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(radio, readSWScissor());
-          lastMillis = currentMillis;
-        }
-      }
-      break;
-      case ORDER_SWPAPER1:{
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(radio, readSWPaper1());
-          lastMillis = currentMillis;
-        }
-      }
-      break;
-      case ORDER_SWPAPER2:{
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(radio, readSWPaper2());
-          lastMillis = currentMillis;
-        }
-      }
-      break;
-      case ORDER_SWPAPER3:{
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(radio, readSWPaper3());
-          lastMillis = currentMillis;
-        }
-      }
-      break;
-      case ORDER_SWPAPER4:{
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(radio, readSWPaper4());
-          lastMillis = currentMillis;
-        }
-      }
-      break;
-      case ORDER_SWSTART:{
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(radio, readSWStart());
-          lastMillis = currentMillis;
-        }
-      }
-      break;
       case ORDER_SHUTTER:
         takeShot();
         testOrder = NO_ORDER;
@@ -113,29 +63,10 @@ void testMode(RF24 radio){
           startLedOff();
         }
         testOrder = NO_ORDER;
-        break;
-      case ORDER_SWUP :
-      case ORDER_SWDOWN :
-      case ORDER_SWROTPAIR :
-      case ORDER_SWROTIMPAIR : // Switch orders for paper process
-        if(currentMillis - lastMillis > 1000){
-          Serial2.print(testOrder);
-          Serial2.flush();
-          // check answer from paper process.
-          delay(250); // leave time to paper process to respond.
-          if(Serial2.available() > 0){
-            char transco = Serial2.read();
-            sendAnswer(radio, transco);
-          }
-          lastMillis = currentMillis;
-        }
-        break;
-        
+        break;  
     }
-    
-    
   }
-  Serial.println("testMode - end");
+ debug("testMode", String("end"));
 }
 
 void sendAnswer(RF24 radio, boolean answer){

@@ -166,14 +166,8 @@ void rotateSpider(byte *slots){
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   bImpair = !bImpair;
 
-  // switch slots states.
-  byte slot13 = slots[13];
-  for(byte i = 13; i > 0; i--){
-    slots[i] == slots[i - 1];
-  }
-  slots[0] = slot13;
-  
-  lightStrip(slots);
+  switchSlots(slots);
+
   Serial.println("rotateSpider-end");
 }
 
@@ -195,15 +189,20 @@ void blindRotate(byte *slots){
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   bImpair = !bImpair;
 
+  switchSlots(slots);
+  
+  Serial.println("blindRotate-end");
+}
+
+void switchSlots(byte *slots){
   // switch slots states.
   byte slot13 = slots[13];
   for(byte i = 13; i > 0; i--){
-    slots[i] == slots[i - 1];
+    slots[i] = slots[i - 1];
   }
   slots[0] = slot13;
-  
+
   lightStrip(slots);
-  Serial.println("blindRotate-end");
 }
 
 void agitate(){

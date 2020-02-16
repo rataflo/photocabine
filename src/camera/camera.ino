@@ -29,6 +29,7 @@ RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 volatile char order = NO_ORDER;
 float bathTemp = 10;
 float lux = 0;
+int tankTime = 18000;
 bool ceilingOn = false; // Ceiling ligth switched on or not.
 unsigned long lastCallTemp = 0;
 char statusSpider = ' ';
@@ -44,20 +45,21 @@ void setup() {
   #endif
   Serial2.begin(9600);
 
+  // Pin to create pause on paper process
+  orderPause.write(HIGH);
+
   ceilingPixels.begin(); 
 
   /* Lux sensor */
   if(!luxMeter.begin()){
     debug("setup", "No TSL2591!");
   }
+
   //Gain config
   luxMeter.setGain(TSL2591_GAIN_MED);
   //Timing config
   luxMeter.setTiming(TSL2591_INTEGRATIONTIME_400MS);
   checkLuminosity();
-
-  // Pin to create pause on paper process
-  orderPause.write(HIGH);
   
   //tests
   pinMode(LED_BUILTIN, OUTPUT);
@@ -85,11 +87,11 @@ void setup() {
     parametres.mode = MODE_PAYING;
     parametres.price_cts = 200;
     parametres.free_price_cts = 100;
-    parametres.tank_time = 18000;
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
   parametres.mode = MODE_FREE; // TODO: remove after tests
-  // If the photomaton was previously running we start in test mode to force pause and avoid any problem.
+
+  // If dev part was previously running we start in test mode to force pause and avoid any problem.
   sendOrderAndWait(ORDER_GET_STATUS);
   bool bTest = (parametres.isRunning || statusSpider == RESPONSE_STATUS_TEST) ? true : false;
   if(bTest){
@@ -98,9 +100,9 @@ void setup() {
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
   }
   
-  attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
+  attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), radioInterrupt, LOW);
   
-  initPhotomaton(); // TODO: remove comment when test are over.
+  initPhotomaton();
 }
 
 void loop() {
@@ -110,16 +112,8 @@ void loop() {
     detachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT));
     testMode(radio);
     order = NO_ORDER;
-    attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), check_radio, LOW);
-  
-  } else if(order == ORDER_SET_TANK_TIME){
-    Serial2.print(ORDER_SET_TANK_TIME);
-    Serial2.flush();
-    Serial2.print(parametres.tank_time);
-    Serial2.flush();
-    order = NO_ORDER;
-  }
-  
+    attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), radioInterrupt, LOW);
+  } 
 
   // If coin acceptor OK and clic start button.
   if(stepTakeShot == 0 && manageCoinsAndStart(parametres.mode)) {
@@ -132,11 +126,12 @@ void loop() {
   if(stepTakeShot > 0) {
     manageStepsTakeShot(); 
   } else{
-    // When nothing to do ask for temperature every 10 sec.
+    // When nothing to do ask for dev parameters every 10 sec.
     unsigned long currentMillis = millis();
     if(currentMillis - lastCallTemp > 10000){
       lastCallTemp = currentMillis;
-      sendOrderAndWait(ORDER_TEMP); 
+      sendOrderAndWait(ORDER_TEMP);
+      sendOrderAndWait(ORDER_GET_TANK_TIME);  
     }
   }
 
@@ -208,12 +203,11 @@ boolean sendOrderAndWait(char sendOrder){
   
   unsigned long lastMillis = 0;
   unsigned long currentMillis = 0;
-  
+
   while(!bOK){
     currentMillis = millis();
-    // if no response for 1 second we send the order again after 10 seconds.
-    if(currentMillis - lastMillis > 10000){
-      debug("relance:", sendOrder);
+    // Send order to dev part and if no response for 10 second we send it again.
+    if(lastMillis == 0 || currentMillis - lastMillis > 10000){
       Serial2.print(sendOrder);
       Serial2.flush();
       lastMillis = currentMillis;
@@ -261,6 +255,12 @@ boolean sendOrderAndWait(char sendOrder){
           statusSpider = Serial2.read();
           bOK = true;
           debug("status:", statusSpider);
+          break;
+        }
+        case ORDER_GET_TANK_TIME:{ // get tank time from paper process.
+          tankTime = Serial2.parseInt();
+          bOK = true;
+          debug("tankTime:", tankTime);
           break;
         }
       }
@@ -336,20 +336,19 @@ void initPhotomaton(){
 /*
  * Interrupt on incoming message from remote.
  */
-void check_radio(){
-  debug("check_radio-", String("begin"));
+void radioInterrupt(){
   if (radio.available()) {
       char tmp = NO_ORDER;
       radio.read(&tmp, sizeof(tmp));
       order = tmp;
-      debug("order:", order);
+      debug("radio order:", order);
 
       // Respond to quick orders.
       switch(order){
         case ORDER_PAUSE:
           digitalWrite(LED_BUILTIN, HIGH);
           orderPause.write(LOW);
-          // Emergency stop, endless loop. Inside interrupt, fuck yeah
+          // Emergency stop, endless loop. Inside interrupt, fuck yeah!
           while(order == ORDER_PAUSE){
             if (radio.available()) {
               char tmp = NO_ORDER;
@@ -431,7 +430,6 @@ void check_radio(){
           if (radio.available()) {
             int price = 200;
             radio.read(&price, sizeof(price));
-            debug("price:", "price");
             parametres.price_cts = price;
             EEPROM.updateBlock(EEPROM_ADRESS, parametres);
           }

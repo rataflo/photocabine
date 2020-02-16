@@ -26,7 +26,7 @@ storage parametres;
 byte slots[14]; // State of each arm (closed, open, open with paper);
 char order = NO_ORDER; // 0 = no order.
 bool bWait = true; // true if we freeze movement to allow operation like waiting for paper from camera or we have nothing to do.
-bool bCloseArm = false; 
+//bool bCloseArm = false; 
 float tempC = 0;
 
 // Temperature probe
@@ -41,8 +41,15 @@ void setup() {
   Serial2.begin(9600);
   
   // Interrupt for incoming order
-  //attachInterrupt(digitalPinToInterrupt(ORDER_INTERRUPT_PIN), emergencyStop, FALLING);
+  attachInterrupt(digitalPinToInterrupt(ORDER_INTERRUPT_PIN), emergencyStop, FALLING);
   
+  // Temperature
+  tempProbe.begin();
+  tempProbe.getAddress(tempProbAdress, 0);
+  tempProbe.setResolution(tempProbAdress, 9);
+
+  initSlots();
+
   // load params from eeprom
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
   memcpy(slots, parametres.slots, sizeof(parametres.slots));
@@ -52,15 +59,9 @@ void setup() {
     parametres.checkCode = 222;
     parametres.isRunning = false;
     parametres.tankTime = TANK_TIME;
-    initSlots();
     memcpy(parametres.slots, slots, sizeof(slots));
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
-  initSlots();// Remove if check made in spider::initSpider.
-  
-  tempProbe.begin();
-  tempProbe.getAddress(tempProbAdress, 0);
-  tempProbe.setResolution(tempProbAdress, 9);
   
   setupSpider();
   setupDelivery();
@@ -72,14 +73,11 @@ void setup() {
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
   }
 
-  getTemperature();
   initSpider(slots);
-  //runDelivery(slots);
 }
 
 void loop() {
   getTemperature();
-  debug("temp", String(tempC));
   checkOrder();
   process();
 }
@@ -269,7 +267,7 @@ void emergencyStop(){
 void getTemperature(){
   tempProbe.requestTemperatures(); // Send the command to get temperatures
   tempC = tempProbe.getTempC(tempProbAdress);
-  //debug("getTemperature:", String(tempC));
+  debug("temp", String(tempC));
 }
 
 void calcTankTime(){

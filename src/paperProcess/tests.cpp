@@ -31,30 +31,6 @@ void testMode(){
         Serial2.flush();
         testOrder = NO_ORDER;
         break;
-      case ORDER_SWUP: // test upper switch.
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP));
-          lastMillis = currentMillis;
-        }
-        break; 
-      case ORDER_SWDOWN: // Test switch bottom
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM));
-          lastMillis = currentMillis;
-        }
-        break;
-      case ORDER_SWROTPAIR: // Test switch 1 rotation
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(digitalRead(SPIDER_ROTATE_ENDSTOP1_PIN));
-          lastMillis = currentMillis;
-        }
-        break;
-      case ORDER_SWROTIMPAIR: // Test switch 2 rotation
-        if(currentMillis - lastMillis > 1000){
-          sendAnswer(digitalRead(SPIDER_ROTATE_ENDSTOP2_PIN));
-          lastMillis = currentMillis;
-        }
-        break;
       case ORDER_UPSPIDER: // Go spider to the top
         initSpiderUp();
         testOrder = NO_ORDER;

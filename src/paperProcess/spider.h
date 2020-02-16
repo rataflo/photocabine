@@ -17,6 +17,7 @@ void upSpider();
 void downToMiddleSpider();
 void rotateSpider(byte *slots);
 void blindRotate(byte *slots);
+void switchSlots(byte *slots);
 void agitate();
 void initSpiderBottom();
 void initSpiderUp();
