@@ -203,48 +203,8 @@ F 3 "~" H 1975 6575 50  0001 C CNN
 	1    1975 6575
 	1    0    0    -1  
 $EndComp
-$Comp
-L Mechanical:MountingHole H5
-U 1 1 5E50E3A3
-P 2775 5875
-F 0 "H5" H 2875 5921 50  0000 L CNN
-F 1 "MountingHole" H 2875 5830 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3" H 2775 5875 50  0001 C CNN
-F 3 "~" H 2775 5875 50  0001 C CNN
-	1    2775 5875
-	1    0    0    -1  
-$EndComp
-$Comp
-L Mechanical:MountingHole H6
-U 1 1 5E50E3A9
-P 2775 6125
-F 0 "H6" H 2875 6171 50  0000 L CNN
-F 1 "MountingHole" H 2875 6080 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3" H 2775 6125 50  0001 C CNN
-F 3 "~" H 2775 6125 50  0001 C CNN
-	1    2775 6125
-	1    0    0    -1  
-$EndComp
-$Comp
-L Mechanical:MountingHole H7
-U 1 1 5E50E3AF
-P 2775 6350
-F 0 "H7" H 2875 6396 50  0000 L CNN
-F 1 "MountingHole" H 2875 6305 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3" H 2775 6350 50  0001 C CNN
-F 3 "~" H 2775 6350 50  0001 C CNN
-	1    2775 6350
-	1    0    0    -1  
-$EndComp
-$Comp
-L Mechanical:MountingHole H8
-U 1 1 5E50E3B5
-P 2775 6600
-F 0 "H8" H 2875 6646 50  0000 L CNN
-F 1 "MountingHole" H 2875 6555 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3" H 2775 6600 50  0001 C CNN
-F 3 "~" H 2775 6600 50  0001 C CNN
-	1    2775 6600
-	1    0    0    -1  
-$EndComp
+Text Label 5550 3750 0    50   ~ 0
+AtoB
+Text Label 5550 3875 0    50   ~ 0
+BtoA
 $EndSCHEMATC

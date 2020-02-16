@@ -87,7 +87,7 @@ void setup() {
     parametres.tank_time = 18000;
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
-
+  parametres.mode = MODE_FREE; // TODO: remove after tests
   // If the photomaton was previously running we start in test mode to force pause and avoid any problem.
   bool bTest = (parametres.isRunning || sendOrderAndWait(ORDER_GET_STATUS) == RESPONSE_STATUS_TEST) ? true : false;
   if(bTest){

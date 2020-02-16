@@ -1,0 +1,111 @@
+
+(rules PCB nofilterbooth
+  (snap_angle 
+    fortyfive_degree
+  )
+  (autoroute_settings
+    (fanout off)
+    (autoroute on)
+    (postroute on)
+    (vias on)
+    (via_costs 50)
+    (plane_via_costs 5)
+    (start_ripup_costs 100)
+    (start_pass_no 1697)
+    (layer_rule F.Cu
+      (active on)
+      (preferred_direction horizontal)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 3.5)
+    )
+    (layer_rule B.Cu
+      (active on)
+      (preferred_direction vertical)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 1.4)
+    )
+  )
+  (rule
+    (width 250.0)
+    (clear 200.2)
+    (clear 125.0 (type smd_to_turn_gap))
+    (clear 400.2 (type default_2mm))
+    (clear 50.0 (type smd_smd))
+    (clear 400.2 (type smd_2mm))
+    (clear 400.2 (type "kicad_default"_2mm))
+    (clear 400.2 (type 2mm_2mm))
+  )
+  (padstack "Via[0-1]_800:400_um"
+    (shape
+      (circle F.Cu 800.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 800.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (via 
+    "Via[0-1]_800:400_um" "Via[0-1]_800:400_um" default
+  )
+  (via 
+    "Via[0-1]_800:400_um-kicad_default" "Via[0-1]_800:400_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_800:400_um-2mm" "Via[0-1]_800:400_um" 2mm
+  )
+  (via_rule
+    default "Via[0-1]_800:400_um"
+  )
+  (via_rule
+    "kicad_default" "Via[0-1]_800:400_um-kicad_default"
+  )
+  (via_rule
+    2mm "Via[0-1]_800:400_um-2mm"
+  )
+  (class default
+    (clearance_class default)
+    (via_rule default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "kicad_default"
+    GND +12V "Net-(CONN_STEP_PAPER1-Pad4)" "Net-(CONN_STEP_PAPER1-Pad3)" "Net-(CONN_STEP_PAPER1-Pad2)" "Net-(CONN_STEP_PAPER1-Pad1)" "Net-(CONN_STEP_SCISSOR1-Pad4)" "Net-(CONN_STEP_SCISSOR1-Pad3)"
+    "Net-(CONN_STEP_SCISSOR1-Pad2)" "Net-(CONN_STEP_SCISSOR1-Pad1)" "Net-(CONN_STEP_SHUTTER1-Pad4)" "Net-(CONN_STEP_SHUTTER1-Pad3)" "Net-(CONN_STEP_SHUTTER1-Pad2)" "Net-(CONN_STEP_SHUTTER1-Pad1)" +5V "Net-(LED_SW_PAPER1-Pad2)"
+    "Net-(LED_SW_PAPER2-Pad2)" "Net-(LED_SW_PAPER3-Pad2)" "Net-(LED_SW_PAPER4-Pad2)" "Net-(LED_SW_SCISSOR1-Pad2)" "Net-(LED_SW_SHUTTER1-Pad2)" "/Camera/ENABLE_5V" "Net-(MEGA_PAPER1-Pad3V3)" "Net-(CONN_AUX1-Pad2)"
+    "Net-(CONN_FLASH1-Pad2)" "Net-(Q_AUX1-Pad1)" "Net-(Q_FLASH1-Pad1)" "Net-(CONN_BATT1-Pad2)" "Net-(CONN_MARQUEE_WS2811-Pad2)" "Net-(R_MARQUEE1-Pad1)" "/Camera/ORDER_INTERRUPT_PIN" "Net-(CONN_START1-Pad4)"
+    "Net-(LED_SW_START1-Pad2)" "Net-(CONN_STEP_EXIT1-Pad4)" "Net-(CONN_STEP_EXIT1-Pad3)" "Net-(CONN_STEP_EXIT1-Pad2)" "Net-(CONN_STEP_EXIT1-Pad1)" "Net-(CONN_STEP_ROT1-Pad4)" "Net-(CONN_STEP_ROT1-Pad3)" "Net-(CONN_STEP_ROT1-Pad2)"
+    "Net-(CONN_STEP_ROT1-Pad1)" "LIGHT_PROCESS_PIN" "SERVO_ARM" "SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM" "SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE" "SPIDER_ROTATE_ENDSTOP1_PIN" "SPIDER_ROTATE_ENDSTOP2_PIN" "SPIDER_UPDOWN_PIN_ENDSTOP_UP"
+    "TEMP_PIN" "SPIDER_UPDOWN_PIN_PWM" "SPIDER_UPDOWN_PIN_DIR" "SPIDER_EXIT_PIN_DIR" "SPIDER_EXIT_PIN_STP" "EXIT_M0" "SPIDER_EXIT_PIN_ENABLE" "SPIDER_ROTATE_PIN_DIR"
+    "SPIDER_ROTATE_PIN_STP" "ROT_M0" "SPIDER_ROTATE_PIN_ENABLE" "Net-(LED_SW_BOTTOM1-Pad2)" "Net-(LED_SW_MIDDLE1-Pad2)" "Net-(LED_SW_ROT1-Pad2)" "Net-(LED_SW_ROT2-Pad2)" "Net-(LED_SW_UP1-Pad2)"
+    "Net-(CONN_DC1-Pad2)" "Net-(CONN_DC1-Pad1)" +5C +3V3 "/Camera/SCISSOR_M0" "/Camera/CEILING_PIXEL_PIN" "/Camera/ENABLE_COIN_PIN" "/Camera/COIN_PIN"
+    "/Camera/SCL_PIN" "/Camera/SDA_PIN" "/Camera/LED_MATRIX_SCL_PIN" "/Camera/LED_MATRIX_CS_PIN" "/Camera/LED_MATRIX_SDI_PIN" "/Camera/COIN_SEGMENT_DIO_PIN" "/Camera/COIN_SEGMENT_CLK_PIN" "/Camera/START_BTN_PIN"
+    "/Camera/PAPER_SWITCH1_PIN" "/Camera/PAPER_SWITCH2_PIN" "/Camera/PAPER_SWITCH3_PIN" "/Camera/PAPER_SWITCH4_PIN" "/Camera/SCISSOR_ENDSTOP_PIN" "/Camera/SHUTTER_ENDSTOP_PIN" "/Camera/PAPER_PIN_DIR" "/Camera/PAPER_PIN_STP"
+    "/Camera/PAPER_M0" "/Camera/PAPER_PIN_ENABLE" "/Camera/SCISSOR_PIN_DIR" "/Camera/SCISSOR_PIN_STP" "/Camera/SCISSOR_PIN_ENABLE" "/Camera/SHUTTER_PIN_DIR" "/Camera/SHUTTER_PIN_STP" "/Camera/SHUTTER_M0"
+    "/Camera/SHUTTER_PIN_ENABLE" "/Camera/RADIO_SCK" "/Camera/RADIO_MISO" "/Camera/RADIO_MOSI" "/Camera/RADIO_CSN" "/Camera/RADIO_CE" "/Camera/AUX_PIN" "/Camera/FLASH_PIN"
+    "/Camera/BATT_PROBE" "/Camera/LORA_M0" "/Camera/LORA_AUX" "/Camera/LORA_M1" "/Camera/LED_START_BTN_PIN" "/Camera/LORA_RXD" "/Camera/RADIO_INTERRUPT" "/Camera/LORA_TXD"
+    "/Camera/ENABLE_MARQUEE" "Net-(CONN_COUNT1-Pad2)" "Net-(CONN_FAN1-Pad2)" "/Camera/COUNT_PIN" "/Paper/FAN_PIN" "Net-(Q_AUX2-Pad1)" "Net-(Q_COUNT1-Pad2)" "Net-(Q_COUNT2-Pad2)"
+    "Net-(Q_COUNT2-Pad1)" /BtoA /AtoB
+    (clearance_class "kicad_default")
+    (via_rule kicad_default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class 2mm
+    (clearance_class 2mm)
+    (via_rule 2mm)
+    (rule
+      (width 1000.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+)

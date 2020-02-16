@@ -5,11 +5,10 @@
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include "constants.h"
+#include "spider.h"
 
 void setupDelivery();
-void initDelivery();
-void runDelivery();
-void stopDelivery();
+void runDelivery(byte *slots);
 bool isDeliveryRunning();
 
 #endif

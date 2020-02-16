@@ -74,13 +74,8 @@ void testMode(){
         testOrder = NO_ORDER;
         break;
       case ORDER_DELIVERYRUN: // Run the delivery indefinitely.
-        if(!isDeliveryRunning()){
-          initDelivery();
-          runDelivery();
-        }
-        else {
-          stopDelivery();
-        }
+        byte slotDelivery[14];
+        runDelivery(slotDelivery);
         testOrder = NO_ORDER;
         break;
       case ORDER_LEDSTRIP: // flash led strip.

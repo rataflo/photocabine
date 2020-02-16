@@ -17,7 +17,7 @@
 
 #define SCISSOR_PIN_STP 25
 #define SCISSOR_PIN_DIR 24
-#define SCISSOR_ENDSTOP_PIN 40 // TODO: Changer de 52 à 40
+#define SCISSOR_ENDSTOP_PIN 40
 #define SCISSOR_SPEED 200
 #define SCISSOR_ACCEL 200
 #define SCISSOR_STEP_OPENED 350 // Number of step to fully open the scissor.

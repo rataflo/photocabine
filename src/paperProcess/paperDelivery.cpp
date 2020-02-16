@@ -14,16 +14,23 @@ void initDelivery(){
   stepperExit.setAcceleration(SPIDER_ROTATE_ACCEL);
 }
 
-void runDelivery(){
-  //we only go backward for a period of time. The stepper is not mandatory and can be a dc motor. I got a spare stepper on hand...
+void runDelivery(byte *slots){
+  downToMiddleSpider();
+  blindRotate(slots);
+  unsigned long startMillis = millis();
+  unsigned long currentMillis = startMillis;
+  
   digitalWrite(SPIDER_EXIT_PIN_ENABLE, LOW);
-  stepperExit.setCurrentPosition(0);
-  stepperExit.moveTo(1);
-  stepperExit.run();
   deliveryRunning = true;
-}
-
-void stopDelivery(){
+  int runPos = 0;
+  while(currentMillis - startMillis < DELIVERY_TIME){
+    stepperExit.moveTo(runPos); 
+    stepperExit.run();
+    asyncSpiderUp();
+    currentMillis = millis();
+    runPos++;
+  }
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   stepperExit.stop();
   stepperExit.setCurrentPosition(0);
   stepperExit.run();
@@ -34,4 +41,3 @@ void stopDelivery(){
 bool isDeliveryRunning(){
   return deliveryRunning;
 }
-

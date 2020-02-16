@@ -14,7 +14,9 @@ void downSpider();
 void downABitSpider();
 void asyncSpiderUp();
 void upSpider();
+void downToMiddleSpider();
 void rotateSpider(byte *slots);
+void blindRotate(byte *slots);
 void agitate();
 void initSpiderBottom();
 void initSpiderUp();
@@ -28,5 +30,6 @@ void setServoArmWaitPos();
 void openArm();
 void closeArm();
 void lightFullStrip();
+boolean bSpiderImpair();
 
 #endif

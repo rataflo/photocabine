@@ -9,18 +9,18 @@ pinMode(3, OUTPUT);
 
 void loop() { //Loop runs forever//
 
-delay(5000);
+delay(3000);
 Serial.write("HIGH");// le HIGH monte
 digitalWrite(MOTOR_DIR, HIGH);
-analogWrite(MOTOR_PWM, 100);
-delay(1000);
+analogWrite(MOTOR_PWM, 95);
+delay(3000);
 analogWrite(MOTOR_PWM, 0);
 
-delay(5000);
+delay(000);
 Serial.write("LOW");
 digitalWrite(MOTOR_DIR, LOW);
-analogWrite(MOTOR_PWM, 60);
-delay(1000);
+analogWrite(MOTOR_PWM, 90);
+delay(3000);
 analogWrite(MOTOR_PWM, 0);
 
 }

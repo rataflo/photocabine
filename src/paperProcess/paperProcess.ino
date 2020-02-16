@@ -73,7 +73,7 @@ void setup() {
 
   getTemperature();
   initSpider(slots);
-  initDelivery();
+  runDelivery(slots);
 }
 
 void loop() {
@@ -181,29 +181,12 @@ void process(){
       upSpider();
     }
 
-    //In case paper go to last stage (delivery) we go down a little bit before rotating.
+    //Last stage, delivery before rotate.
     if(slots[12] == SLOT_PAPER){
-      downABitSpider();
-    }
-    
-    rotateSpider(slots);
-
-    // If paper need delivery
-    if(slots[13] == SLOT_PAPER){
-      
-      unsigned long startMillis = millis();
-      unsigned long currentMillis = startMillis;
-      while(currentMillis - startMillis < DELIVERY_TIME){
-        runDelivery();
-        initSpiderUp();
-      }
-      stopDelivery();
+      runDelivery(slots);
       slots[13] == SLOT_OPEN;
-      // if no order for a place we close the arm.
-      if(order != ORDER_NEW_SLOT){
-        closeArm();
-        slots[13] == SLOT_CLOSED;
-      }
+    } else {
+      rotateSpider(slots);
     }
 
     // If nothing to do we stop.
@@ -265,7 +248,7 @@ void emergencyStop(){
 void getTemperature(){
   tempProbe.requestTemperatures(); // Send the command to get temperatures
   tempC = tempProbe.getTempC(tempProbAdress);
-  debug("getTemperature:", String(tempC));
+  //debug("getTemperature:", String(tempC));
 }
 
 void calcTankTime(){
