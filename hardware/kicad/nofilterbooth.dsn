@@ -28,6 +28,8 @@
             274320 -119380))
     (plane +12V (polygon F.Cu 0  151130 -119380  110490 -119380  110490 -110490  151130 -110490
             151130 -119380))
+    (plane GND (polygon F.Cu 0  274320 -119380  15240 -119380  15240 -17780  274320 -17780
+            274320 -119380))
     (via "Via[0-1]_800:400_um")
     (rule
       (width 250)
@@ -37,40 +39,25 @@
     )
   )
   (placement
-    (component MountingHole:MountingHole_3.2mm_M3
-      (place H3 20320 -33020 front 0 (PN MountingHole))
-      (place H4 267970 -113030 front 0 (PN MountingHole))
-      (place H2 266700 -25400 front 0 (PN MountingHole))
+    (component Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical
+      (place J_AUX_CAM1 259715 -43180 front 90 (PN Conn_01x10))
     )
-    (component Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal
-      (place R_SW_PAPER5 199390 -38100 front 0 (PN "560ohm 1/2W"))
-      (place R_FLASH4 71120 -105410 front 0 (PN "2.2k 1/2W"))
-      (place R_FLASH3 259080 -41910 front 90 (PN "2.2k 1/2W"))
-      (place R_TXD_LORA1 182880 -88780 front 270 (PN "4.7k 1/2W"))
-      (place R_SW_UP1 55880 -39370 front 180 (PN "560ohm 1/2W"))
-      (place R_SW_START1 185420 -38100 front 0 (PN "560ohm 1/2W"))
-      (place R_SW_SHUTTER1 152400 -38100 front 0 (PN "560ohm 1/2W"))
-      (place R_SW_SCISSOR1 176530 -38100 front 180 (PN "560ohm 1/2W"))
-      (place R_SW_ROT2 41910 -39370 front 180 (PN "560ohm 1/2W"))
-      (place R_SW_ROT1 27940 -39370 front 180 (PN "560ohm 1/2W"))
-      (place R_SW_PAPER4 138430 -38100 front 0 (PN "560ohm 1/2W"))
-      (place R_SW_PAPER3 124460 -38100 front 0 (PN "560ohm 1/2W"))
-      (place R_SW_PAPER2 110490 -38100 front 0 (PN "560ohm 1/2W"))
-      (place R_SW_PAPER1 96520 -38100 front 0 (PN "560ohm 1/2W"))
-      (place R_SW_MIDDLE1 69850 -39370 front 180 (PN "560ohm 1/2W"))
-      (place R_SW_BOTTOM1 73660 -39370 front 0 (PN "560ohm 1/2W"))
-      (place R_START1 203200 -43180 front 180 (PN "2.2k 1/2W"))
-      (place R_RXD_LORA1 187350 -88780 front 270 (PN "4.7k 1/2W"))
-      (place R_MARQUEE1 100330 -90170 front 270 (PN "430ohm 1/2W"))
-      (place R_FLASH2 128270 -82550 front 90 (PN "2.2k 1/2W"))
-      (place R_FLASH1 111760 -82550 front 90 (PN "2.2k 1/2W"))
-      (place R_BATT2 168910 -83820 front 270 (PN "10k 1/2W"))
-      (place R_BATT1 165100 -93980 front 90 (PN 20k1/2W))
+    (component Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical
+      (place J_AUX_CAMERA1 18415 -38735 front 90 (PN Conn_01x10))
+    )
+    (component "1nofilterbooth:MEGA2560PRO-EMBED"
+      (place MEGA_PAPER1 51435 -60960 front 0 (PN "MEGA2560PRO-EMBED"))
+      (place MEGA_CAMERA1 238760 -68580 front 180 (PN "MEGA2560PRO-EMBED"))
+    )
+    (component MountingHole:MountingHole_3.2mm_M3
+      (place H3 20955 -23495 front 0 (PN MountingHole))
+      (place H4 267970 -113030 front 0 (PN MountingHole))
+      (place H2 266700 -24130 front 0 (PN MountingHole))
     )
     (component "Connector_JST:JST_XH_S3B-XH-A-1_1x03_P2.50mm_Horizontal"
       (place CONN_TEMP1 81200 -22590 front 180 (PN JST_XH3))
-      (place CONN_SW_ROT2 38020 -22590 front 180 (PN JST_XH3))
-      (place CONN_SW_ROT1 25320 -22590 front 180 (PN JST_XH3))
+      (place CONN_SW_ROT2 48180 -22590 front 180 (PN JST_XH3))
+      (place CONN_SW_ROT1 35480 -22590 front 180 (PN JST_XH3))
       (place CONN_SW_PAP4 144700 -22590 front 180 (PN JST_XH3))
       (place CONN_SW_PAP3 132000 -22590 front 180 (PN JST_XH3))
       (place CONN_SW_PAP2 119300 -22590 front 180 (PN JST_XH3))
@@ -95,7 +82,7 @@
       (place CONN_MATRIX1 241140 -22860 front 180 (PN JST_XH5))
     )
     (component Capacitor_THT:C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2
-      (place C_CAMERA_5V2 270510 -44450 front 180 (PN 100nF))
+      (place C_CAMERA_5V2 266700 -31750 front 270 (PN 100nF))
       (place C_SEGMENT1 255270 -30480 front 180 (PN 100nF))
       (place C_RTC1 215265 -62230 front 180 (PN 100nF))
       (place C_MEGA_PAPER1 17780 -83820 front 0 (PN 100nF))
@@ -109,8 +96,31 @@
       (place DRV_DC1 151130 -85090 front 180 (PN Cytron_MD10C))
     )
     (component "Package_TO_SOT_THT:TO-92L_HandSolder"
-      (place Q_COUNT2 209550 -41910 front 180 (PN BC327))
-      (place Q_COUNT1 265430 -40640 front 90 (PN BC327))
+      (place Q_START1 209550 -41910 front 180 (PN BC327))
+      (place Q_COUNT1 262255 -35560 front 90 (PN BC327))
+    )
+    (component Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal
+      (place R_FLASH4 71120 -105410 front 0 (PN "2.2k 1/2W"))
+      (place R_FLASH3 255270 -35560 front 180 (PN "2.2k 1/2W"))
+      (place R_TXD_LORA1 182880 -88780 front 270 (PN "4.7k 1/2W"))
+      (place R_SW_UP1 63500 -52070 front 180 (PN "560ohm 1/2W"))
+      (place R_SW_START1 185420 -38100 front 0 (PN "560ohm 1/2W"))
+      (place R_SW_SHUTTER1 152400 -38100 front 0 (PN "560ohm 1/2W"))
+      (place R_SW_SCISSOR1 176530 -38100 front 180 (PN "560ohm 1/2W"))
+      (place R_SW_ROT2 49530 -52070 front 180 (PN "560ohm 1/2W"))
+      (place R_SW_ROT1 35560 -52070 front 180 (PN "560ohm 1/2W"))
+      (place R_SW_PAPER4 138430 -38100 front 0 (PN "560ohm 1/2W"))
+      (place R_SW_PAPER3 124460 -38100 front 0 (PN "560ohm 1/2W"))
+      (place R_SW_PAPER2 110490 -38100 front 0 (PN "560ohm 1/2W"))
+      (place R_SW_PAPER1 96520 -38100 front 0 (PN "560ohm 1/2W"))
+      (place R_SW_BOTTOM1 73660 -39370 front 0 (PN "560ohm 1/2W"))
+      (place R_START1 203200 -43180 front 180 (PN "2.2k 1/2W"))
+      (place R_RXD_LORA1 187350 -88780 front 270 (PN "4.7k 1/2W"))
+      (place R_MARQUEE1 100330 -90170 front 270 (PN "430ohm 1/2W"))
+      (place R_FLASH2 128270 -82550 front 90 (PN "2.2k 1/2W"))
+      (place R_FLASH1 111760 -82550 front 90 (PN "2.2k 1/2W"))
+      (place R_BATT2 168910 -83820 front 270 (PN "10k 1/2W"))
+      (place R_BATT1 165100 -93980 front 90 (PN 20k1/2W))
     )
     (component "Package_TO_SOT_THT:TO-220-3_Vertical"
       (place Q_AUX2 72390 -101600 front 0 (PN TIP120))
@@ -118,10 +128,9 @@
       (place Q_AUX1 142240 -99060 front 90 (PN TIP120))
     )
     (component "Connector_JST:JST_XH_S2B-XH-A-1_1x02_P2.50mm_Horizontal"
-      (place CONN_SW_UP1 48220 -22590 front 180 (PN JST_XH2))
+      (place CONN_SW_UP1 58380 -22590 front 180 (PN JST_XH2))
       (place CONN_SW_SHUTTER1 154900 -22590 front 180 (PN JST_XH2))
       (place CONN_SW_SCISSOR1 165060 -22590 front 180 (PN JST_XH2))
-      (place CONN_SW_MIDDLE1 58380 -22590 front 180 (PN JST_XH2))
       (place CONN_SW_BOTTOM1 68540 -22590 front 180 (PN JST_XH2))
       (place CONN_FAN1 78740 -113760 front 0 (PN JST_XH2))
       (place CONN_BATT1 166370 -113760 front 0 (PN JST_XH2))
@@ -130,7 +139,7 @@
       (place CONN_DC1 157520 -113760 front 0 (PN JST_XH2))
     )
     (component Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical
-      (place CONN_COUNT1 270510 -40640 front 180 (PN WIRE))
+      (place CONN_COUNT1 271145 -33020 front 0 (PN WIRE))
     )
     (component Capacitor_THT:CP_Radial_D8.0mm_P3.50mm
       (place C_MARQUEE1 107950 -102870 front 180 (PN 680uF))
@@ -159,10 +168,9 @@
       (place U_RADIO_LORA1 193930 -82780 front 270 (PN SX17278_LORA))
     )
     (component LED_THT:LED_D3.0mm
-      (place LED_SW_UP1 46990 -33020 front 0 (PN "LED 3mm"))
-      (place LED_SW_ROT2 36830 -33020 front 0 (PN "LED 3mm"))
-      (place LED_SW_ROT1 26670 -33020 front 0 (PN "LED 3mm"))
-      (place LED_SW_MIDDLE1 58420 -33020 front 0 (PN "LED 3mm"))
+      (place LED_SW_UP1 57785 -31750 front 0 (PN "LED 3mm"))
+      (place LED_SW_ROT2 47625 -31750 front 0 (PN "LED 3mm"))
+      (place LED_SW_ROT1 34290 -31750 front 0 (PN "LED 3mm"))
       (place LED_SW_BOTTOM1 68580 -33020 front 0 (PN "LED 3mm"))
       (place LED_SW_START1 193040 -33020 front 0 (PN "LED 3mm"))
       (place LED_SW_SHUTTER1 153670 -33020 front 0 (PN "LED 3mm"))
@@ -182,10 +190,6 @@
     (component 1nofilterbooth:D24V90F5
       (place U_STEP_DOWN_5V1 161290 -74930 front 90 (PN D24V90F5))
     )
-    (component "1nofilterbooth:MEGA2560PRO-EMBED"
-      (place MEGA_PAPER1 51435 -60960 front 0 (PN "MEGA2560PRO-EMBED"))
-      (place MEGA_CAMERA1 238760 -68580 front 180 (PN "MEGA2560PRO-EMBED"))
-    )
     (component "Package_DIP:DIP-8_W7.62mm"
       (place U_MARQUEE1 87630 -96520 front 90 (PN "ATtiny85-20PU"))
     )
@@ -199,6 +203,161 @@
     )
   )
   (library
+    (image Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical
+      (outline (path signal 50  1800 1800  -1800 1800))
+      (outline (path signal 50  1800 -11950  1800 1800))
+      (outline (path signal 50  -1800 -11950  1800 -11950))
+      (outline (path signal 50  -1800 1800  -1800 -11950))
+      (outline (path signal 120  -1330 1330  0 1330))
+      (outline (path signal 120  -1330 0  -1330 1330))
+      (outline (path signal 120  -1330 -1270  1330 -1270))
+      (outline (path signal 120  1330 -1270  1330 -11490))
+      (outline (path signal 120  -1330 -1270  -1330 -11490))
+      (outline (path signal 120  -1330 -11490  1330 -11490))
+      (outline (path signal 100  -1270 635  -635 1270))
+      (outline (path signal 100  -1270 -11430  -1270 635))
+      (outline (path signal 100  1270 -11430  -1270 -11430))
+      (outline (path signal 100  1270 1270  1270 -11430))
+      (outline (path signal 100  -635 1270  1270 1270))
+      (pin Oval[A]Pad_1700x1700_um 5 0 -10160)
+      (pin Oval[A]Pad_1700x1700_um 4 0 -7620)
+      (pin Oval[A]Pad_1700x1700_um 3 0 -5080)
+      (pin Oval[A]Pad_1700x1700_um 2 0 -2540)
+      (pin Rect[A]Pad_1700x1700_um 1 0 0)
+    )
+    (image Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical
+      (outline (path signal 50  1800 1800  -1800 1800))
+      (outline (path signal 50  1800 -24650  1800 1800))
+      (outline (path signal 50  -1800 -24650  1800 -24650))
+      (outline (path signal 50  -1800 1800  -1800 -24650))
+      (outline (path signal 120  -1330 1330  0 1330))
+      (outline (path signal 120  -1330 0  -1330 1330))
+      (outline (path signal 120  -1330 -1270  1330 -1270))
+      (outline (path signal 120  1330 -1270  1330 -24190))
+      (outline (path signal 120  -1330 -1270  -1330 -24190))
+      (outline (path signal 120  -1330 -24190  1330 -24190))
+      (outline (path signal 100  -1270 635  -635 1270))
+      (outline (path signal 100  -1270 -24130  -1270 635))
+      (outline (path signal 100  1270 -24130  -1270 -24130))
+      (outline (path signal 100  1270 1270  1270 -24130))
+      (outline (path signal 100  -635 1270  1270 1270))
+      (pin Oval[A]Pad_1700x1700_um 10 0 -22860)
+      (pin Oval[A]Pad_1700x1700_um 9 0 -20320)
+      (pin Oval[A]Pad_1700x1700_um 8 0 -17780)
+      (pin Oval[A]Pad_1700x1700_um 7 0 -15240)
+      (pin Oval[A]Pad_1700x1700_um 6 0 -12700)
+      (pin Oval[A]Pad_1700x1700_um 5 0 -10160)
+      (pin Oval[A]Pad_1700x1700_um 4 0 -7620)
+      (pin Oval[A]Pad_1700x1700_um 3 0 -5080)
+      (pin Oval[A]Pad_1700x1700_um 2 0 -2540)
+      (pin Rect[A]Pad_1700x1700_um 1 0 0)
+    )
+    (image "1nofilterbooth:MEGA2560PRO-EMBED"
+      (outline (path signal 127  -27940 8128  -34798 8128))
+      (outline (path signal 127  -27940 0  -27940 8128))
+      (outline (path signal 127  -34798 0  -27940 0))
+      (outline (path signal 127  -34798 8128  -34798 0))
+      (outline (path signal 127  -15519.4 -9448.8  -15392.4 -9448.8))
+      (outline (path signal 127  14732 -508  14478 -508))
+      (outline (path signal 127  14732 -127  14732 -508))
+      (outline (path signal 127  14351 -508  14732 -127))
+      (outline (path signal 127  14478 -508  14351 -508))
+      (outline (path signal 127  14605 -508  14478 -508))
+      (outline (path signal 127  -34798 -20320  19202.4 -20320))
+      (outline (path signal 127  -34798 -20320  -34798 -584.2))
+      (outline (path signal 127  -34798 -584.2  -33299.4 -584.2))
+      (outline (path signal 127  -33299.4 -584.2  -33299.4 8686.8))
+      (outline (path signal 127  -34798 8686.8  -33299.4 8686.8))
+      (outline (path signal 127  -34798 8686.8  -34798 17678.4))
+      (outline (path signal 127  -34798 17678.4  19202.4 17678.4))
+      (outline (path signal 127  19202.4 -20320  19202.4 17678.4))
+      (pin Round[A]Pad_1676.4_um MOSI 17780 -3810)
+      (pin Round[A]Pad_1676.4_um VCC 17780 -1270)
+      (pin Round[A]Pad_1676.4_um MISO 15240 -1270)
+      (pin Round[A]Pad_1676.4_um SCK 15240 -3810)
+      (pin Round[A]Pad_1676.4_um GND@3 17780 -6350)
+      (pin Round[A]Pad_1676.4_um RESET 15240 -6350)
+      (pin Round[A]Pad_1676.4_um D53 15240 6350)
+      (pin Round[A]Pad_1676.4_um D52 17780 6350)
+      (pin Round[A]Pad_1676.4_um D50 17780 8890)
+      (pin Round[A]Pad_1676.4_um D51 15240 8890)
+      (pin Round[A]Pad_1676.4_um D49 15240 11430)
+      (pin Round[A]Pad_1676.4_um D48 17780 11430)
+      (pin Round[A]Pad_1676.4_um D47 17780 13970)
+      (pin Round[A]Pad_1676.4_um D46 17780 16510)
+      (pin Round[A]Pad_1676.4_um D45 15240 13970)
+      (pin Round[A]Pad_1676.4_um D44 15240 16510)
+      (pin Round[A]Pad_1676.4_um D43 12700 13970)
+      (pin Round[A]Pad_1676.4_um D42 12700 16510)
+      (pin Round[A]Pad_1676.4_um D41 10160 13970)
+      (pin Round[A]Pad_1676.4_um D40 10160 16510)
+      (pin Round[A]Pad_1676.4_um D39 7620 13970)
+      (pin Round[A]Pad_1676.4_um D38 7620 16510)
+      (pin Round[A]Pad_1676.4_um D37 5080 13970)
+      (pin Round[A]Pad_1676.4_um D36 5080 16510)
+      (pin Round[A]Pad_1676.4_um D35 2540 13970)
+      (pin Round[A]Pad_1676.4_um D34 2540 16510)
+      (pin Round[A]Pad_1676.4_um D33 0 13970)
+      (pin Round[A]Pad_1676.4_um D32 0 16510)
+      (pin Round[A]Pad_1676.4_um A15 -2540 13970)
+      (pin Round[A]Pad_1676.4_um A14 -2540 16510)
+      (pin Round[A]Pad_1676.4_um A13 -5080 13970)
+      (pin Round[A]Pad_1676.4_um A12 -5080 16510)
+      (pin Round[A]Pad_1676.4_um A11 -7620 13970)
+      (pin Round[A]Pad_1676.4_um A10 -7620 16510)
+      (pin Round[A]Pad_1676.4_um A9 -10160 13970)
+      (pin Round[A]Pad_1676.4_um A8 -10160 16510)
+      (pin Round[A]Pad_1676.4_um A7 -12700 13970)
+      (pin Round[A]Pad_1676.4_um A6 -12700 16510)
+      (pin Round[A]Pad_1676.4_um A4 -15240 16510)
+      (pin Round[A]Pad_1676.4_um A5 -15240 13970)
+      (pin Round[A]Pad_1676.4_um A3 -17780 13970)
+      (pin Round[A]Pad_1676.4_um A2 -17780 16510)
+      (pin Round[A]Pad_1676.4_um A0 -20320 16510)
+      (pin Round[A]Pad_1676.4_um A1 -20320 13970)
+      (pin Round[A]Pad_1676.4_um D22 7620 -16510)
+      (pin Round[A]Pad_1676.4_um D24 10160 -16510)
+      (pin Round[A]Pad_1676.4_um D26 12700 -16510)
+      (pin Round[A]Pad_1676.4_um D28 15240 -16510)
+      (pin Round[A]Pad_1676.4_um D30 17780 -16510)
+      (pin Round[A]Pad_1676.4_um D31 17780 -19050)
+      (pin Round[A]Pad_1676.4_um D29 15240 -19050)
+      (pin Round[A]Pad_1676.4_um D27 12700 -19050)
+      (pin Round[A]Pad_1676.4_um D25 10160 -19050)
+      (pin Round[A]Pad_1676.4_um D23 7620 -19050)
+      (pin Round[A]Pad_1676.4_um D20 5080 -16510)
+      (pin Round[A]Pad_1676.4_um D18 2540 -16510)
+      (pin Round[A]Pad_1676.4_um D16 0 -16510)
+      (pin Round[A]Pad_1676.4_um D14 -2540 -16510)
+      (pin Round[A]Pad_1676.4_um D12 -5080 -16510)
+      (pin Round[A]Pad_1676.4_um D10 -7620 -16510)
+      (pin Round[A]Pad_1676.4_um D8 -10160 -16510)
+      (pin Round[A]Pad_1676.4_um D6 -12700 -16510)
+      (pin Round[A]Pad_1676.4_um D4 -15240 -16510)
+      (pin Round[A]Pad_1676.4_um D2 -17780 -16510)
+      (pin Round[A]Pad_1676.4_um D21 5080 -19050)
+      (pin Round[A]Pad_1676.4_um D19 2540 -19050)
+      (pin Round[A]Pad_1676.4_um D17 0 -19050)
+      (pin Round[A]Pad_1676.4_um D15 -2540 -19050)
+      (pin Round[A]Pad_1676.4_um D13 -5080 -19050)
+      (pin Round[A]Pad_1676.4_um D11 -7620 -19050)
+      (pin Round[A]Pad_1676.4_um D9 -10160 -19050)
+      (pin Round[A]Pad_1676.4_um D7 -12700 -19050)
+      (pin Round[A]Pad_1676.4_um D5 -15240 -19050)
+      (pin Round[A]Pad_1676.4_um D3 -17780 -19050)
+      (pin Round[A]Pad_1676.4_um TX -20320 -19050)
+      (pin Round[A]Pad_1676.4_um RX -20320 -16510)
+      (pin Round[A]Pad_1676.4_um AREF -22860 -16510)
+      (pin Round[A]Pad_1676.4_um RST -22860 -19050)
+      (pin Round[A]Pad_1676.4_um 3V3 -25400 -19050)
+      (pin Round[A]Pad_1676.4_um 3V3@1 -25400 -16510)
+      (pin Round[A]Pad_1676.4_um 5V@2 -27940 -16510)
+      (pin Round[A]Pad_1676.4_um 5V -27940 -19050)
+      (pin Round[A]Pad_1676.4_um GND -30480 -19050)
+      (pin Round[A]Pad_1676.4_um GND@1 -30480 -16510)
+      (pin Round[A]Pad_1676.4_um VIN -33020 -19050)
+      (pin Round[A]Pad_1676.4_um VIN@1 -33020 -16510)
+    )
     (image MountingHole:MountingHole_3.2mm_M3
       (outline (path signal 50  3450 0  3369.34 -741.648  3131.14 -1448.62  2746.52 -2087.85
             2233.48 -2629.46  1616.01 -3048.12  922.973 -3324.25  186.779 -3444.94
@@ -217,26 +376,6 @@
             2501.86 1995.17  2883.1 1388.43  3119.77 712.067  3200 0))
       (keepout "" (circle F.Cu 3200))
       (keepout "" (circle B.Cu 3200))
-    )
-    (image Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal
-      (outline (path signal 50  11210 1500  -1050 1500))
-      (outline (path signal 50  11210 -1500  11210 1500))
-      (outline (path signal 50  -1050 -1500  11210 -1500))
-      (outline (path signal 50  -1050 1500  -1050 -1500))
-      (outline (path signal 120  9120 0  8350 0))
-      (outline (path signal 120  1040 0  1810 0))
-      (outline (path signal 120  8350 1370  1810 1370))
-      (outline (path signal 120  8350 -1370  8350 1370))
-      (outline (path signal 120  1810 -1370  8350 -1370))
-      (outline (path signal 120  1810 1370  1810 -1370))
-      (outline (path signal 100  10160 0  8230 0))
-      (outline (path signal 100  0 0  1930 0))
-      (outline (path signal 100  8230 1250  1930 1250))
-      (outline (path signal 100  8230 -1250  8230 1250))
-      (outline (path signal 100  1930 -1250  8230 -1250))
-      (outline (path signal 100  1930 1250  1930 -1250))
-      (pin Oval[A]Pad_1600x1600_um 2 10160 0)
-      (pin Round[A]Pad_1600_um 1 0 0)
     )
     (image "Connector_JST:JST_XH_S3B-XH-A-1_1x03_P2.50mm_Horizontal"
       (outline (path signal 100  0 400  625 -600))
@@ -432,6 +571,26 @@
       (pin "Rect[A][0,-400]Pad_1100x1800_um" 1 0 0)
       (pin "RoundRect[A][0,-400]Pad_1100x1800_276.046_um" 3 2540 0)
       (pin RoundRect[A][0,400]Pad_1100x1800_276.046_um 2 1270 1270)
+    )
+    (image Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal
+      (outline (path signal 50  11210 1500  -1050 1500))
+      (outline (path signal 50  11210 -1500  11210 1500))
+      (outline (path signal 50  -1050 -1500  11210 -1500))
+      (outline (path signal 50  -1050 1500  -1050 -1500))
+      (outline (path signal 120  9120 0  8350 0))
+      (outline (path signal 120  1040 0  1810 0))
+      (outline (path signal 120  8350 1370  1810 1370))
+      (outline (path signal 120  8350 -1370  8350 1370))
+      (outline (path signal 120  1810 -1370  8350 -1370))
+      (outline (path signal 120  1810 1370  1810 -1370))
+      (outline (path signal 100  10160 0  8230 0))
+      (outline (path signal 100  0 0  1930 0))
+      (outline (path signal 100  8230 1250  1930 1250))
+      (outline (path signal 100  8230 -1250  8230 1250))
+      (outline (path signal 100  1930 -1250  8230 -1250))
+      (outline (path signal 100  1930 1250  1930 -1250))
+      (pin Oval[A]Pad_1600x1600_um 2 10160 0)
+      (pin Round[A]Pad_1600_um 1 0 0)
     )
     (image "Package_TO_SOT_THT:TO-220-3_Vertical"
       (outline (path signal 50  7790 3400  -2710 3400))
@@ -1025,112 +1184,6 @@
       (pin Round[A]Pad_1524_um VIN 8890 -5080)
       (pin Round[A]Pad_1524_um VIN@1 6350 -5080)
     )
-    (image "1nofilterbooth:MEGA2560PRO-EMBED"
-      (outline (path signal 127  -27940 8128  -34798 8128))
-      (outline (path signal 127  -27940 0  -27940 8128))
-      (outline (path signal 127  -34798 0  -27940 0))
-      (outline (path signal 127  -34798 8128  -34798 0))
-      (outline (path signal 127  -15519.4 -9448.8  -15392.4 -9448.8))
-      (outline (path signal 127  14732 -508  14478 -508))
-      (outline (path signal 127  14732 -127  14732 -508))
-      (outline (path signal 127  14351 -508  14732 -127))
-      (outline (path signal 127  14478 -508  14351 -508))
-      (outline (path signal 127  14605 -508  14478 -508))
-      (outline (path signal 127  -34798 -20320  19202.4 -20320))
-      (outline (path signal 127  -34798 -20320  -34798 -584.2))
-      (outline (path signal 127  -34798 -584.2  -33299.4 -584.2))
-      (outline (path signal 127  -33299.4 -584.2  -33299.4 8686.8))
-      (outline (path signal 127  -34798 8686.8  -33299.4 8686.8))
-      (outline (path signal 127  -34798 8686.8  -34798 17678.4))
-      (outline (path signal 127  -34798 17678.4  19202.4 17678.4))
-      (outline (path signal 127  19202.4 -20320  19202.4 17678.4))
-      (pin Round[A]Pad_1676.4_um MOSI 17780 -3810)
-      (pin Round[A]Pad_1676.4_um VCC 17780 -1270)
-      (pin Round[A]Pad_1676.4_um MISO 15240 -1270)
-      (pin Round[A]Pad_1676.4_um SCK 15240 -3810)
-      (pin Round[A]Pad_1676.4_um GND@3 17780 -6350)
-      (pin Round[A]Pad_1676.4_um RESET 15240 -6350)
-      (pin Round[A]Pad_1676.4_um D53 15240 6350)
-      (pin Round[A]Pad_1676.4_um D52 17780 6350)
-      (pin Round[A]Pad_1676.4_um D50 17780 8890)
-      (pin Round[A]Pad_1676.4_um D51 15240 8890)
-      (pin Round[A]Pad_1676.4_um D49 15240 11430)
-      (pin Round[A]Pad_1676.4_um D48 17780 11430)
-      (pin Round[A]Pad_1676.4_um D47 17780 13970)
-      (pin Round[A]Pad_1676.4_um D46 17780 16510)
-      (pin Round[A]Pad_1676.4_um D45 15240 13970)
-      (pin Round[A]Pad_1676.4_um D44 15240 16510)
-      (pin Round[A]Pad_1676.4_um D43 12700 13970)
-      (pin Round[A]Pad_1676.4_um D42 12700 16510)
-      (pin Round[A]Pad_1676.4_um D41 10160 13970)
-      (pin Round[A]Pad_1676.4_um D40 10160 16510)
-      (pin Round[A]Pad_1676.4_um D39 7620 13970)
-      (pin Round[A]Pad_1676.4_um D38 7620 16510)
-      (pin Round[A]Pad_1676.4_um D37 5080 13970)
-      (pin Round[A]Pad_1676.4_um D36 5080 16510)
-      (pin Round[A]Pad_1676.4_um D35 2540 13970)
-      (pin Round[A]Pad_1676.4_um D34 2540 16510)
-      (pin Round[A]Pad_1676.4_um D33 0 13970)
-      (pin Round[A]Pad_1676.4_um D32 0 16510)
-      (pin Round[A]Pad_1676.4_um A15 -2540 13970)
-      (pin Round[A]Pad_1676.4_um A14 -2540 16510)
-      (pin Round[A]Pad_1676.4_um A13 -5080 13970)
-      (pin Round[A]Pad_1676.4_um A12 -5080 16510)
-      (pin Round[A]Pad_1676.4_um A11 -7620 13970)
-      (pin Round[A]Pad_1676.4_um A10 -7620 16510)
-      (pin Round[A]Pad_1676.4_um A9 -10160 13970)
-      (pin Round[A]Pad_1676.4_um A8 -10160 16510)
-      (pin Round[A]Pad_1676.4_um A7 -12700 13970)
-      (pin Round[A]Pad_1676.4_um A6 -12700 16510)
-      (pin Round[A]Pad_1676.4_um A4 -15240 16510)
-      (pin Round[A]Pad_1676.4_um A5 -15240 13970)
-      (pin Round[A]Pad_1676.4_um A3 -17780 13970)
-      (pin Round[A]Pad_1676.4_um A2 -17780 16510)
-      (pin Round[A]Pad_1676.4_um A0 -20320 16510)
-      (pin Round[A]Pad_1676.4_um A1 -20320 13970)
-      (pin Round[A]Pad_1676.4_um D22 7620 -16510)
-      (pin Round[A]Pad_1676.4_um D24 10160 -16510)
-      (pin Round[A]Pad_1676.4_um D26 12700 -16510)
-      (pin Round[A]Pad_1676.4_um D28 15240 -16510)
-      (pin Round[A]Pad_1676.4_um D30 17780 -16510)
-      (pin Round[A]Pad_1676.4_um D31 17780 -19050)
-      (pin Round[A]Pad_1676.4_um D29 15240 -19050)
-      (pin Round[A]Pad_1676.4_um D27 12700 -19050)
-      (pin Round[A]Pad_1676.4_um D25 10160 -19050)
-      (pin Round[A]Pad_1676.4_um D23 7620 -19050)
-      (pin Round[A]Pad_1676.4_um D20 5080 -16510)
-      (pin Round[A]Pad_1676.4_um D18 2540 -16510)
-      (pin Round[A]Pad_1676.4_um D16 0 -16510)
-      (pin Round[A]Pad_1676.4_um D14 -2540 -16510)
-      (pin Round[A]Pad_1676.4_um D12 -5080 -16510)
-      (pin Round[A]Pad_1676.4_um D10 -7620 -16510)
-      (pin Round[A]Pad_1676.4_um D8 -10160 -16510)
-      (pin Round[A]Pad_1676.4_um D6 -12700 -16510)
-      (pin Round[A]Pad_1676.4_um D4 -15240 -16510)
-      (pin Round[A]Pad_1676.4_um D2 -17780 -16510)
-      (pin Round[A]Pad_1676.4_um D21 5080 -19050)
-      (pin Round[A]Pad_1676.4_um D19 2540 -19050)
-      (pin Round[A]Pad_1676.4_um D17 0 -19050)
-      (pin Round[A]Pad_1676.4_um D15 -2540 -19050)
-      (pin Round[A]Pad_1676.4_um D13 -5080 -19050)
-      (pin Round[A]Pad_1676.4_um D11 -7620 -19050)
-      (pin Round[A]Pad_1676.4_um D9 -10160 -19050)
-      (pin Round[A]Pad_1676.4_um D7 -12700 -19050)
-      (pin Round[A]Pad_1676.4_um D5 -15240 -19050)
-      (pin Round[A]Pad_1676.4_um D3 -17780 -19050)
-      (pin Round[A]Pad_1676.4_um TX -20320 -19050)
-      (pin Round[A]Pad_1676.4_um RX -20320 -16510)
-      (pin Round[A]Pad_1676.4_um AREF -22860 -16510)
-      (pin Round[A]Pad_1676.4_um RST -22860 -19050)
-      (pin Round[A]Pad_1676.4_um 3V3 -25400 -19050)
-      (pin Round[A]Pad_1676.4_um 3V3@1 -25400 -16510)
-      (pin Round[A]Pad_1676.4_um 5V@2 -27940 -16510)
-      (pin Round[A]Pad_1676.4_um 5V -27940 -19050)
-      (pin Round[A]Pad_1676.4_um GND -30480 -19050)
-      (pin Round[A]Pad_1676.4_um GND@1 -30480 -16510)
-      (pin Round[A]Pad_1676.4_um VIN -33020 -19050)
-      (pin Round[A]Pad_1676.4_um VIN@1 -33020 -16510)
-    )
     (image "Package_DIP:DIP-8_W7.62mm"
       (outline (path signal 50  8700 1550  -1100 1550))
       (outline (path signal 50  8700 -9150  8700 1550))
@@ -1434,30 +1487,30 @@
   )
   (network
     (net GND
-      (pins CONN_TEMP1-1 CONN_SW_ROT2-1 CONN_SW_ROT1-1 CONN_SW_PAP4-1 CONN_SW_PAP3-1
-        CONN_SW_PAP2-1 CONN_SW_PAP1-1 CONN_START1-3 CONN_SERVO_ARM1-1 CONN_SEGMENT1-4
-        CONN_MATRIX1-5 CONN_MARQUEE_WS2811-1 CONN_LUXSENSOR1-4 CONN_LGHT_PROCESS1-1
-        CONN_COIN1-4 CONN_CEILING1-3 C_CAMERA_5V2-2 DRV_DC1-GND DRV_DC1-GND@1 Q_COUNT2-3
-        Q_COUNT1-3 Q_AUX2-3 CONN_SW_UP1-2 CONN_SW_SHUTTER1-2 CONN_SW_SCISSOR1-2 CONN_SW_MIDDLE1-2
-        CONN_SW_BOTTOM1-2 CONN_BATT1-1 C_MARQUEE1-2 C_FLASH1-2 C_AUX3-1 C_AUX1-2 C_LIGHT_PROCESS1-2
-        C_STEP1-2 C_SERVO_ARM1-2 C_ROT1-2 C_LORA1-2 C_DRV_SHUTTER1-2 C_DRV_SCISSOR1-2
-        C_DRV_PAPER1-2 C_CEILING1-2 R_BATT2-2 C_SEGMENT1-2 C_RTC1-2 C_MEGA_PAPER1-2
-        C_MATRIX1-2 C_LUXSENSOR1-2 C_COIN1-2 C_CAMERA_5V1-2 C_ATTINY1-2 URTC1-GND
-        U_RADIO_LORA1-GND DRV_EXIT1-7 DRV_EXIT1-12 DRV_EXIT1-11 DRV_EXIT1-1 U_STEP_DOWN_5V1-GND
-        U_STEP_DOWN_5V1-GND@1 U_STEP_DOWN_5V1-GND@2 U_STEP_DOWN_5V1-GND@3 MEGA_PAPER1-GND
-        MEGA_PAPER1-GND@1 MEGA_CAMERA1-GND MEGA_CAMERA1-GND@1 DRV_ROT1-7 DRV_ROT1-12
+      (pins MEGA_PAPER1-GND MEGA_PAPER1-GND@1 CONN_TEMP1-1 CONN_SW_ROT2-1 CONN_SW_ROT1-1
+        CONN_SW_PAP4-1 CONN_SW_PAP3-1 CONN_SW_PAP2-1 CONN_SW_PAP1-1 CONN_START1-3
+        CONN_SERVO_ARM1-1 CONN_SEGMENT1-4 CONN_MATRIX1-5 CONN_MARQUEE_WS2811-1 CONN_LUXSENSOR1-4
+        CONN_LGHT_PROCESS1-1 CONN_COIN1-4 CONN_CEILING1-3 C_CAMERA_5V2-2 DRV_DC1-GND
+        DRV_DC1-GND@1 Q_START1-3 Q_COUNT1-3 Q_AUX2-3 CONN_SW_UP1-2 CONN_SW_SHUTTER1-2
+        CONN_SW_SCISSOR1-2 CONN_SW_BOTTOM1-2 CONN_BATT1-1 C_MARQUEE1-2 C_FLASH1-2
+        C_AUX3-1 C_AUX1-2 C_LIGHT_PROCESS1-2 C_STEP1-2 C_SERVO_ARM1-2 C_ROT1-2 C_LORA1-2
+        C_DRV_SHUTTER1-2 C_DRV_SCISSOR1-2 C_DRV_PAPER1-2 C_CEILING1-2 R_BATT2-2 C_SEGMENT1-2
+        C_RTC1-2 C_MEGA_PAPER1-2 C_MATRIX1-2 C_LUXSENSOR1-2 C_COIN1-2 C_CAMERA_5V1-2
+        C_ATTINY1-2 URTC1-GND U_RADIO_LORA1-GND DRV_EXIT1-7 DRV_EXIT1-12 DRV_EXIT1-11
+        DRV_EXIT1-1 U_STEP_DOWN_5V1-GND U_STEP_DOWN_5V1-GND@1 U_STEP_DOWN_5V1-GND@2
+        U_STEP_DOWN_5V1-GND@3 MEGA_CAMERA1-GND MEGA_CAMERA1-GND@1 DRV_ROT1-7 DRV_ROT1-12
         DRV_ROT1-11 DRV_ROT1-1 U_MARQUEE1-4 U_RADIO1-1 Q_FLASH1-3 Q_AUX1-3 DRV_SHUTTER1-7
         DRV_SHUTTER1-12 DRV_SHUTTER1-11 DRV_SHUTTER1-1 DRV_SCISSOR1-7 DRV_SCISSOR1-12
         DRV_SCISSOR1-11 DRV_SCISSOR1-1 DRV_PAPER1-7 DRV_PAPER1-12 DRV_PAPER1-11 DRV_PAPER1-1
         CONN_POWER_IN1-2)
     )
     (net +12V
-      (pins CONN_START1-1 CONN_MARQUEE_WS2811-3 CONN_COIN1-1 C_CAMERA_5V2-1 DRV_DC1-+12V
-        CONN_FAN1-1 CONN_COUNT1-1 C_MARQUEE1-1 C_FLASH1-1 C_AUX3-2 C_AUX1-1 C_STEP1-1
-        C_ROT1-1 C_DRV_SHUTTER1-1 C_DRV_SCISSOR1-1 C_DRV_PAPER1-1 C_MEGA_PAPER1-1
-        C_COIN1-1 C_CAMERA_5V1-1 DRV_EXIT1-8 U_STEP_DOWN_5V1-VIN U_STEP_DOWN_5V1-VIN@1
-        MEGA_PAPER1-VIN MEGA_PAPER1-VIN@1 MEGA_CAMERA1-VIN MEGA_CAMERA1-VIN@1 DRV_ROT1-8
-        CONN_FLASH1-1 CONN_AUX1-1 DRV_SHUTTER1-8 DRV_SCISSOR1-8 DRV_PAPER1-8 CONN_POWER_IN1-1)
+      (pins MEGA_PAPER1-VIN MEGA_PAPER1-VIN@1 CONN_START1-1 CONN_MARQUEE_WS2811-3
+        CONN_COIN1-1 C_CAMERA_5V2-1 DRV_DC1-+12V CONN_FAN1-1 CONN_COUNT1-1 C_MARQUEE1-1
+        C_FLASH1-1 C_AUX3-2 C_AUX1-1 C_STEP1-1 C_ROT1-1 C_DRV_SHUTTER1-1 C_DRV_SCISSOR1-1
+        C_DRV_PAPER1-1 C_MEGA_PAPER1-1 C_COIN1-1 C_CAMERA_5V1-1 DRV_EXIT1-8 U_STEP_DOWN_5V1-VIN
+        U_STEP_DOWN_5V1-VIN@1 MEGA_CAMERA1-VIN MEGA_CAMERA1-VIN@1 DRV_ROT1-8 CONN_FLASH1-1
+        CONN_AUX1-1 DRV_SHUTTER1-8 DRV_SCISSOR1-8 DRV_PAPER1-8 CONN_POWER_IN1-1)
     )
     (net "Net-(CONN_STEP_PAPER1-Pad4)"
       (pins CONN_STEP_PAPER1-4 DRV_PAPER1-6)
@@ -1501,8 +1554,8 @@
         CONN_LUXSENSOR1-1 CONN_LGHT_PROCESS1-3 CONN_CEILING1-1 C_LIGHT_PROCESS1-1
         C_SERVO_ARM1-1 C_LORA1-1 C_CEILING1-1 R_TXD_LORA1-2 R_SW_UP1-1 R_SW_START1-1
         R_SW_SHUTTER1-1 R_SW_SCISSOR1-1 R_SW_ROT2-1 R_SW_ROT1-1 R_SW_PAPER4-1 R_SW_PAPER3-1
-        R_SW_PAPER2-1 R_SW_PAPER1-1 R_SW_MIDDLE1-1 R_SW_BOTTOM1-1 R_RXD_LORA1-2 C_SEGMENT1-1
-        C_MATRIX1-1 C_LUXSENSOR1-1 U_RADIO_LORA1-VCC DRV_EXIT1-14 DRV_EXIT1-13 U_STEP_DOWN_5V1-VOUT
+        R_SW_PAPER2-1 R_SW_PAPER1-1 R_SW_BOTTOM1-1 R_RXD_LORA1-2 C_SEGMENT1-1 C_MATRIX1-1
+        C_LUXSENSOR1-1 U_RADIO_LORA1-VCC DRV_EXIT1-14 DRV_EXIT1-13 U_STEP_DOWN_5V1-VOUT
         U_STEP_DOWN_5V1-VOUT@1 U_STEP_DOWN_5V1-VOUT@2 DRV_ROT1-14 DRV_ROT1-13 DRV_SHUTTER1-14
         DRV_SHUTTER1-13 DRV_SCISSOR1-14 DRV_SCISSOR1-13 DRV_PAPER1-14 DRV_PAPER1-13)
     )
@@ -1555,7 +1608,7 @@
       (pins MEGA_PAPER1-D2 MEGA_CAMERA1-D23)
     )
     (net "Net-(CONN_START1-Pad4)"
-      (pins R_SW_PAPER5-1 CONN_START1-4)
+      (pins CONN_START1-4 Q_START1-1)
     )
     (net "Net-(LED_SW_START1-Pad2)"
       (pins R_SW_START1-2 LED_SW_START1-2)
@@ -1585,46 +1638,43 @@
       (pins CONN_STEP_ROT1-1 DRV_ROT1-3)
     )
     (net LIGHT_PROCESS_PIN
-      (pins CONN_LGHT_PROCESS1-2 MEGA_PAPER1-D44)
+      (pins MEGA_PAPER1-D44 CONN_LGHT_PROCESS1-2)
     )
     (net SERVO_ARM
-      (pins CONN_SERVO_ARM1-2 MEGA_PAPER1-D45)
+      (pins MEGA_PAPER1-D45 CONN_SERVO_ARM1-2)
     )
     (net SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM
-      (pins CONN_SW_BOTTOM1-1 LED_SW_BOTTOM1-1 MEGA_PAPER1-D36)
-    )
-    (net SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE
-      (pins CONN_SW_MIDDLE1-1 LED_SW_MIDDLE1-1 MEGA_PAPER1-D35)
+      (pins MEGA_PAPER1-D36 CONN_SW_BOTTOM1-1 LED_SW_BOTTOM1-1)
     )
     (net SPIDER_ROTATE_ENDSTOP1_PIN
-      (pins CONN_SW_ROT1-2 LED_SW_ROT1-1 MEGA_PAPER1-D32)
+      (pins MEGA_PAPER1-D32 CONN_SW_ROT1-2 LED_SW_ROT1-1)
     )
     (net SPIDER_ROTATE_ENDSTOP2_PIN
-      (pins CONN_SW_ROT2-2 LED_SW_ROT2-1 MEGA_PAPER1-D33)
+      (pins MEGA_PAPER1-D33 CONN_SW_ROT2-2 LED_SW_ROT2-1)
     )
     (net SPIDER_UPDOWN_PIN_ENDSTOP_UP
-      (pins CONN_SW_UP1-1 LED_SW_UP1-1 MEGA_PAPER1-D34)
+      (pins MEGA_PAPER1-D34 CONN_SW_UP1-1 LED_SW_UP1-1)
     )
     (net TEMP_PIN
-      (pins CONN_TEMP1-2 MEGA_PAPER1-D46 MEGA_PAPER1-D37)
+      (pins MEGA_PAPER1-D46 MEGA_PAPER1-D37 CONN_TEMP1-2)
     )
     (net SPIDER_UPDOWN_PIN_PWM
-      (pins DRV_DC1-PWM MEGA_PAPER1-D4)
+      (pins MEGA_PAPER1-D4 DRV_DC1-PWM)
     )
     (net SPIDER_UPDOWN_PIN_DIR
-      (pins DRV_DC1-DIR MEGA_PAPER1-D5)
+      (pins MEGA_PAPER1-D5 DRV_DC1-DIR)
     )
     (net SPIDER_EXIT_PIN_DIR
-      (pins DRV_EXIT1-16 MEGA_PAPER1-D12)
+      (pins MEGA_PAPER1-D12 DRV_EXIT1-16)
     )
     (net SPIDER_EXIT_PIN_STP
-      (pins DRV_EXIT1-15 MEGA_PAPER1-D13)
+      (pins MEGA_PAPER1-D13 DRV_EXIT1-15)
     )
     (net EXIT_M0
-      (pins DRV_EXIT1-10 MEGA_PAPER1-D10)
+      (pins MEGA_PAPER1-D10 DRV_EXIT1-10)
     )
     (net SPIDER_EXIT_PIN_ENABLE
-      (pins DRV_EXIT1-9 MEGA_PAPER1-D11)
+      (pins MEGA_PAPER1-D11 DRV_EXIT1-9)
     )
     (net SPIDER_ROTATE_PIN_DIR
       (pins MEGA_PAPER1-D8 DRV_ROT1-16)
@@ -1640,9 +1690,6 @@
     )
     (net "Net-(LED_SW_BOTTOM1-Pad2)"
       (pins R_SW_BOTTOM1-2 LED_SW_BOTTOM1-2)
-    )
-    (net "Net-(LED_SW_MIDDLE1-Pad2)"
-      (pins R_SW_MIDDLE1-2 LED_SW_MIDDLE1-2)
     )
     (net "Net-(LED_SW_ROT1-Pad2)"
       (pins R_SW_ROT1-2 LED_SW_ROT1-2)
@@ -1810,7 +1857,7 @@
       (pins R_FLASH3-2 MEGA_CAMERA1-D8)
     )
     (net /Paper/FAN_PIN
-      (pins R_FLASH4-2 MEGA_PAPER1-D39)
+      (pins MEGA_PAPER1-D39 R_FLASH4-2)
     )
     (net "Net-(Q_AUX2-Pad1)"
       (pins R_FLASH4-1 Q_AUX2-1)
@@ -1818,21 +1865,64 @@
     (net "Net-(Q_COUNT1-Pad2)"
       (pins R_FLASH3-1 Q_COUNT1-2)
     )
-    (net "Net-(Q_COUNT2-Pad2)"
-      (pins Q_COUNT2-2 R_START1-1)
-    )
-    (net "Net-(Q_COUNT2-Pad1)"
-      (pins R_SW_PAPER5-2 Q_COUNT2-1)
-    )
     (net /BtoA
       (pins MEGA_PAPER1-D15 MEGA_CAMERA1-D16)
     )
     (net /AtoB
       (pins MEGA_PAPER1-D14 MEGA_CAMERA1-D17)
     )
-    (class kicad_default "" +12V +3V3 +5C +5V /AtoB /BtoA /Camera/AUX_PIN
-      /Camera/BATT_PROBE /Camera/CEILING_PIXEL_PIN /Camera/COIN_PIN /Camera/COIN_SEGMENT_CLK_PIN
-      /Camera/COIN_SEGMENT_DIO_PIN /Camera/COUNT_PIN /Camera/ENABLE_5V /Camera/ENABLE_COIN_PIN
+    (net /Paper/D49
+      (pins J_AUX_CAMERA1-10 MEGA_PAPER1-D49)
+    )
+    (net /Paper/D48
+      (pins J_AUX_CAMERA1-9 MEGA_PAPER1-D48)
+    )
+    (net /Paper/D47
+      (pins J_AUX_CAMERA1-8 MEGA_PAPER1-D47)
+    )
+    (net /Paper/D43
+      (pins J_AUX_CAMERA1-7 MEGA_PAPER1-D43)
+    )
+    (net /Paper/D42
+      (pins J_AUX_CAMERA1-6 MEGA_PAPER1-D42)
+    )
+    (net /Paper/D41
+      (pins J_AUX_CAMERA1-5 MEGA_PAPER1-D41)
+    )
+    (net /Paper/D40
+      (pins J_AUX_CAMERA1-4 MEGA_PAPER1-D40)
+    )
+    (net /Paper/D38
+      (pins J_AUX_CAMERA1-3 MEGA_PAPER1-D38)
+    )
+    (net /Paper/A5
+      (pins J_AUX_CAMERA1-2 MEGA_PAPER1-A5)
+    )
+    (net /Paper/A4
+      (pins J_AUX_CAMERA1-1 MEGA_PAPER1-A4)
+    )
+    (net /Camera/A13
+      (pins J_AUX_CAM1-5 MEGA_CAMERA1-A13)
+    )
+    (net /Camera/A14
+      (pins J_AUX_CAM1-4 MEGA_CAMERA1-A14)
+    )
+    (net /Camera/D47
+      (pins J_AUX_CAM1-3 MEGA_CAMERA1-D47)
+    )
+    (net /Camera/D53
+      (pins J_AUX_CAM1-2 MEGA_CAMERA1-D53)
+    )
+    (net /Camera/D7
+      (pins J_AUX_CAM1-1 MEGA_CAMERA1-D7)
+    )
+    (net "Net-(Q_START1-Pad2)"
+      (pins Q_START1-2 R_START1-1)
+    )
+    (class kicad_default "" +12V +3V3 +5C +5V /AtoB /BtoA /Camera/A13 /Camera/A14
+      /Camera/AUX_PIN /Camera/BATT_PROBE /Camera/CEILING_PIXEL_PIN /Camera/COIN_PIN
+      /Camera/COIN_SEGMENT_CLK_PIN /Camera/COIN_SEGMENT_DIO_PIN /Camera/COUNT_PIN
+      /Camera/D47 /Camera/D53 /Camera/D7 /Camera/ENABLE_5V /Camera/ENABLE_COIN_PIN
       /Camera/ENABLE_MARQUEE /Camera/FLASH_PIN /Camera/LED_MATRIX_CS_PIN /Camera/LED_MATRIX_SCL_PIN
       /Camera/LED_MATRIX_SDI_PIN /Camera/LED_START_BTN_PIN /Camera/LORA_AUX
       /Camera/LORA_M0 /Camera/LORA_M1 /Camera/LORA_RXD /Camera/LORA_TXD /Camera/ORDER_INTERRUPT_PIN
@@ -1841,10 +1931,11 @@
       /Camera/PAPER_SWITCH4_PIN /Camera/RADIO_CE /Camera/RADIO_CSN /Camera/RADIO_INTERRUPT
       /Camera/RADIO_MISO /Camera/RADIO_MOSI /Camera/RADIO_SCK /Camera/SCISSOR_ENDSTOP_PIN
       /Camera/SCISSOR_M0 /Camera/SCISSOR_PIN_DIR /Camera/SCISSOR_PIN_ENABLE
-      /Camera/SCISSOR_PIN_STP /Camera/SCL_PIN /Camera/SDA_PIN /Camera/SERIAL_RX2
-      /Camera/SHUTTER_ENDSTOP_PIN /Camera/SHUTTER_M0 /Camera/SHUTTER_PIN_DIR
-      /Camera/SHUTTER_PIN_ENABLE /Camera/SHUTTER_PIN_STP /Camera/START_BTN_PIN
-      /Paper/FAN_PIN /Paper/SERIAL_RX2 EXIT_M0 GND LIGHT_PROCESS_PIN "Net-(CONN_AUX1-Pad2)"
+      /Camera/SCISSOR_PIN_STP /Camera/SCL_PIN /Camera/SDA_PIN /Camera/SHUTTER_ENDSTOP_PIN
+      /Camera/SHUTTER_M0 /Camera/SHUTTER_PIN_DIR /Camera/SHUTTER_PIN_ENABLE
+      /Camera/SHUTTER_PIN_STP /Camera/START_BTN_PIN /Paper/A4 /Paper/A5 /Paper/D38
+      /Paper/D40 /Paper/D41 /Paper/D42 /Paper/D43 /Paper/D47 /Paper/D48 /Paper/D49
+      /Paper/FAN_PIN EXIT_M0 GND LIGHT_PROCESS_PIN "Net-(CONN_AUX1-Pad2)"
       "Net-(CONN_BATT1-Pad2)" "Net-(CONN_COUNT1-Pad2)" "Net-(CONN_DC1-Pad1)"
       "Net-(CONN_DC1-Pad2)" "Net-(CONN_FAN1-Pad2)" "Net-(CONN_FLASH1-Pad2)"
       "Net-(CONN_MARQUEE_WS2811-Pad2)" "Net-(CONN_START1-Pad4)" "Net-(CONN_STEP_EXIT1-Pad1)"
@@ -1856,47 +1947,42 @@
       "Net-(CONN_STEP_SHUTTER1-Pad1)" "Net-(CONN_STEP_SHUTTER1-Pad2)" "Net-(CONN_STEP_SHUTTER1-Pad3)"
       "Net-(CONN_STEP_SHUTTER1-Pad4)" "Net-(DRV_EXIT1-Pad2)" "Net-(DRV_PAPER1-Pad2)"
       "Net-(DRV_ROT1-Pad2)" "Net-(DRV_SCISSOR1-Pad2)" "Net-(DRV_SHUTTER1-Pad2)"
-      "Net-(LED_SW_BOTTOM1-Pad2)" "Net-(LED_SW_MIDDLE1-Pad2)" "Net-(LED_SW_PAPER1-Pad2)"
-      "Net-(LED_SW_PAPER2-Pad2)" "Net-(LED_SW_PAPER3-Pad2)" "Net-(LED_SW_PAPER4-Pad2)"
-      "Net-(LED_SW_ROT1-Pad2)" "Net-(LED_SW_ROT2-Pad2)" "Net-(LED_SW_SCISSOR1-Pad2)"
-      "Net-(LED_SW_SHUTTER1-Pad2)" "Net-(LED_SW_START1-Pad2)" "Net-(LED_SW_UP1-Pad2)"
-      "Net-(MEGA_CAMERA1-PadA0)" "Net-(MEGA_CAMERA1-PadA1)" "Net-(MEGA_CAMERA1-PadA10)"
-      "Net-(MEGA_CAMERA1-PadA11)" "Net-(MEGA_CAMERA1-PadA12)" "Net-(MEGA_CAMERA1-PadA13)"
-      "Net-(MEGA_CAMERA1-PadA14)" "Net-(MEGA_CAMERA1-PadA2)" "Net-(MEGA_CAMERA1-PadA3)"
+      "Net-(LED_SW_BOTTOM1-Pad2)" "Net-(LED_SW_PAPER1-Pad2)" "Net-(LED_SW_PAPER2-Pad2)"
+      "Net-(LED_SW_PAPER3-Pad2)" "Net-(LED_SW_PAPER4-Pad2)" "Net-(LED_SW_ROT1-Pad2)"
+      "Net-(LED_SW_ROT2-Pad2)" "Net-(LED_SW_SCISSOR1-Pad2)" "Net-(LED_SW_SHUTTER1-Pad2)"
+      "Net-(LED_SW_START1-Pad2)" "Net-(LED_SW_UP1-Pad2)" "Net-(MEGA_CAMERA1-PadA0)"
+      "Net-(MEGA_CAMERA1-PadA1)" "Net-(MEGA_CAMERA1-PadA10)" "Net-(MEGA_CAMERA1-PadA11)"
+      "Net-(MEGA_CAMERA1-PadA12)" "Net-(MEGA_CAMERA1-PadA2)" "Net-(MEGA_CAMERA1-PadA3)"
       "Net-(MEGA_CAMERA1-PadA4)" "Net-(MEGA_CAMERA1-PadA5)" "Net-(MEGA_CAMERA1-PadA6)"
       "Net-(MEGA_CAMERA1-PadA7)" "Net-(MEGA_CAMERA1-PadA8)" "Net-(MEGA_CAMERA1-PadA9)"
-      "Net-(MEGA_CAMERA1-PadAREF)" "Net-(MEGA_CAMERA1-PadD47)" "Net-(MEGA_CAMERA1-PadD53)"
-      "Net-(MEGA_CAMERA1-PadD7)" "Net-(MEGA_CAMERA1-PadMISO)" "Net-(MEGA_CAMERA1-PadMOSI)"
+      "Net-(MEGA_CAMERA1-PadAREF)" "Net-(MEGA_CAMERA1-PadMISO)" "Net-(MEGA_CAMERA1-PadMOSI)"
       "Net-(MEGA_CAMERA1-PadRESET)" "Net-(MEGA_CAMERA1-PadRST)" "Net-(MEGA_CAMERA1-PadRX)"
       "Net-(MEGA_CAMERA1-PadSCK)" "Net-(MEGA_CAMERA1-PadTX)" "Net-(MEGA_CAMERA1-PadVCC)"
       "Net-(MEGA_PAPER1-Pad3V3)" "Net-(MEGA_PAPER1-Pad5V)" "Net-(MEGA_PAPER1-PadA0)"
       "Net-(MEGA_PAPER1-PadA1)" "Net-(MEGA_PAPER1-PadA10)" "Net-(MEGA_PAPER1-PadA11)"
       "Net-(MEGA_PAPER1-PadA12)" "Net-(MEGA_PAPER1-PadA13)" "Net-(MEGA_PAPER1-PadA14)"
       "Net-(MEGA_PAPER1-PadA15)" "Net-(MEGA_PAPER1-PadA2)" "Net-(MEGA_PAPER1-PadA3)"
-      "Net-(MEGA_PAPER1-PadA4)" "Net-(MEGA_PAPER1-PadA5)" "Net-(MEGA_PAPER1-PadA6)"
-      "Net-(MEGA_PAPER1-PadA7)" "Net-(MEGA_PAPER1-PadA8)" "Net-(MEGA_PAPER1-PadA9)"
-      "Net-(MEGA_PAPER1-PadAREF)" "Net-(MEGA_PAPER1-PadD16)" "Net-(MEGA_PAPER1-PadD17)"
-      "Net-(MEGA_PAPER1-PadD18)" "Net-(MEGA_PAPER1-PadD19)" "Net-(MEGA_PAPER1-PadD20)"
-      "Net-(MEGA_PAPER1-PadD21)" "Net-(MEGA_PAPER1-PadD22)" "Net-(MEGA_PAPER1-PadD23)"
-      "Net-(MEGA_PAPER1-PadD24)" "Net-(MEGA_PAPER1-PadD25)" "Net-(MEGA_PAPER1-PadD26)"
-      "Net-(MEGA_PAPER1-PadD27)" "Net-(MEGA_PAPER1-PadD28)" "Net-(MEGA_PAPER1-PadD29)"
-      "Net-(MEGA_PAPER1-PadD3)" "Net-(MEGA_PAPER1-PadD30)" "Net-(MEGA_PAPER1-PadD31)"
-      "Net-(MEGA_PAPER1-PadD38)" "Net-(MEGA_PAPER1-PadD40)" "Net-(MEGA_PAPER1-PadD41)"
-      "Net-(MEGA_PAPER1-PadD42)" "Net-(MEGA_PAPER1-PadD43)" "Net-(MEGA_PAPER1-PadD47)"
-      "Net-(MEGA_PAPER1-PadD48)" "Net-(MEGA_PAPER1-PadD49)" "Net-(MEGA_PAPER1-PadD50)"
-      "Net-(MEGA_PAPER1-PadD51)" "Net-(MEGA_PAPER1-PadD52)" "Net-(MEGA_PAPER1-PadD53)"
-      "Net-(MEGA_PAPER1-PadMISO)" "Net-(MEGA_PAPER1-PadMOSI)" "Net-(MEGA_PAPER1-PadRESET)"
-      "Net-(MEGA_PAPER1-PadRST)" "Net-(MEGA_PAPER1-PadRX)" "Net-(MEGA_PAPER1-PadSCK)"
-      "Net-(MEGA_PAPER1-PadTX)" "Net-(MEGA_PAPER1-PadVCC)" "Net-(Q_AUX1-Pad1)"
-      "Net-(Q_AUX2-Pad1)" "Net-(Q_COUNT1-Pad2)" "Net-(Q_COUNT2-Pad1)" "Net-(Q_COUNT2-Pad2)"
-      "Net-(Q_FLASH1-Pad1)" "Net-(Q_START1-Pad1)" "Net-(R_MARQUEE1-Pad1)"
-      "Net-(URTC1-PadND)" "Net-(U_MARQUEE1-Pad1)" "Net-(U_MARQUEE1-Pad3)"
-      "Net-(U_MARQUEE1-Pad5)" "Net-(U_MARQUEE1-Pad7)" "Net-(U_STEP_DOWN_5V1-PadFB)"
-      "Net-(U_STEP_DOWN_5V1-PadPG)" ROT_M0 SERVO_ARM SPIDER_EXIT_PIN_DIR SPIDER_EXIT_PIN_ENABLE
-      SPIDER_EXIT_PIN_STP SPIDER_ROTATE_ENDSTOP1_PIN SPIDER_ROTATE_ENDSTOP2_PIN
-      SPIDER_ROTATE_PIN_DIR SPIDER_ROTATE_PIN_ENABLE SPIDER_ROTATE_PIN_STP
-      SPIDER_UPDOWN_PIN_DIR SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE
-      SPIDER_UPDOWN_PIN_ENDSTOP_UP SPIDER_UPDOWN_PIN_PWM TEMP_PIN
+      "Net-(MEGA_PAPER1-PadA6)" "Net-(MEGA_PAPER1-PadA7)" "Net-(MEGA_PAPER1-PadA8)"
+      "Net-(MEGA_PAPER1-PadA9)" "Net-(MEGA_PAPER1-PadAREF)" "Net-(MEGA_PAPER1-PadD16)"
+      "Net-(MEGA_PAPER1-PadD17)" "Net-(MEGA_PAPER1-PadD18)" "Net-(MEGA_PAPER1-PadD19)"
+      "Net-(MEGA_PAPER1-PadD20)" "Net-(MEGA_PAPER1-PadD21)" "Net-(MEGA_PAPER1-PadD22)"
+      "Net-(MEGA_PAPER1-PadD23)" "Net-(MEGA_PAPER1-PadD24)" "Net-(MEGA_PAPER1-PadD25)"
+      "Net-(MEGA_PAPER1-PadD26)" "Net-(MEGA_PAPER1-PadD27)" "Net-(MEGA_PAPER1-PadD28)"
+      "Net-(MEGA_PAPER1-PadD29)" "Net-(MEGA_PAPER1-PadD3)" "Net-(MEGA_PAPER1-PadD30)"
+      "Net-(MEGA_PAPER1-PadD31)" "Net-(MEGA_PAPER1-PadD50)" "Net-(MEGA_PAPER1-PadD51)"
+      "Net-(MEGA_PAPER1-PadD52)" "Net-(MEGA_PAPER1-PadD53)" "Net-(MEGA_PAPER1-PadMISO)"
+      "Net-(MEGA_PAPER1-PadMOSI)" "Net-(MEGA_PAPER1-PadRESET)" "Net-(MEGA_PAPER1-PadRST)"
+      "Net-(MEGA_PAPER1-PadRX)" "Net-(MEGA_PAPER1-PadSCK)" "Net-(MEGA_PAPER1-PadTX)"
+      "Net-(MEGA_PAPER1-PadVCC)" "Net-(Q_AUX1-Pad1)" "Net-(Q_AUX2-Pad1)" "Net-(Q_COUNT1-Pad2)"
+      "Net-(Q_COUNT2-Pad1)" "Net-(Q_COUNT2-Pad2)" "Net-(Q_FLASH1-Pad1)" "Net-(Q_START1-Pad2)"
+      "Net-(R_MARQUEE1-Pad1)" "Net-(URTC1-PadND)" "Net-(U_MARQUEE1-Pad1)"
+      "Net-(U_MARQUEE1-Pad3)" "Net-(U_MARQUEE1-Pad5)" "Net-(U_MARQUEE1-Pad7)"
+      "Net-(U_STEP_DOWN_5V1-PadFB)" "Net-(U_STEP_DOWN_5V1-PadPG)" ROT_M0 SERVO_ARM
+      SPIDER_EXIT_PIN_DIR SPIDER_EXIT_PIN_ENABLE SPIDER_EXIT_PIN_STP SPIDER_ROTATE_ENDSTOP1_PIN
+      SPIDER_ROTATE_ENDSTOP2_PIN SPIDER_ROTATE_PIN_DIR SPIDER_ROTATE_PIN_ENABLE
+      SPIDER_ROTATE_PIN_STP SPIDER_UPDOWN_PIN_DIR SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM
+      SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE SPIDER_UPDOWN_PIN_ENDSTOP_UP SPIDER_UPDOWN_PIN_PWM
+      TEMP_PIN
       (circuit
         (use_via Via[0-1]_800:400_um)
       )
@@ -1916,392 +2002,514 @@
     )
   )
   (wiring
-    (wire (path F.Cu 3000  156050 -106030  147780 -114300)(net +12V)(type protect))
-    (wire (path F.Cu 3000  156050 -71755  156050 -106030)(net +12V)(type protect))
+    (wire (path F.Cu 2000  215900 -109220  215900 -116840)(net +12V)(type protect))
+    (wire (path F.Cu 2000  217170 -102870  217170 -107950  215900 -109220)(net +12V)(type protect))
+    (wire (path F.Cu 2000  107950 -102870  106600 -104220  106600 -113760)(net +12V)(type protect))
+    (wire (path F.Cu 2000  116205 -114300  115570 -114300  110490 -109220  110490 -104140
+            109220 -102870  107950 -102870)(net +12V)(type protect))
+    (wire (path B.Cu 1000  266700 -31750  269875 -31750  271145 -33020)(net +12V)(type protect))
+    (wire (path F.Cu 2000  144780 -114300  144780 -117300  145635 -118155  214585 -118155
+            215900 -116840  217170 -118110  236220 -118110  238125 -116205
+            240030 -118110  258445 -118110  263525 -113030  263525 -110490)(net +12V)(type protect))
+    (wire (path F.Cu 3000  156050 -71755  156050 -106030  148980 -113100)(net +12V)(type protect))
     (wire (path B.Cu 2000  166370 -66040  166370 -68580)(net +12V)(type protect))
-    (wire (path B.Cu 2000  166370 -69850  166370 -68580)(net +12V)(type protect))
-    (wire (path B.Cu 2000  156050 -71755  164465 -71755  166370 -69850)(net +12V)(type protect))
-    (wire (path F.Cu 2000  106600 -104220  106600 -113760)(net +12V)(type protect))
-    (wire (path F.Cu 2000  107950 -102870  106600 -104220)(net +12V)(type protect))
-    (wire (path F.Cu 2000  109220 -102870  107950 -102870)(net +12V)(type protect))
-    (wire (path F.Cu 2000  110490 -104140  109220 -102870)(net +12V)(type protect))
-    (wire (path F.Cu 2000  110490 -109220  110490 -104140)(net +12V)(type protect))
-    (wire (path F.Cu 2000  116205 -114300  115570 -114300  110490 -109220)(net +12V)(type protect))
-    (wire (path F.Cu 2000  147780 -114300  144780 -114300)(net +12V)(type protect))
-    (wire (path F.Cu 2000  148980 -113100  147780 -114300)(net +12V)(type protect))
-    (wire (path F.Cu 2000  148980 -102250  148980 -113100)(net +12V)(type protect))
-    (wire (path F.Cu 2000  147320 -100590  148980 -102250)(net +12V)(type protect))
-    (wire (path F.Cu 2000  147320 -97790  147320 -100590)(net +12V)(type protect))
-    (wire (path F.Cu 2000  133810 -114300  130810 -114300)(net +12V)(type protect))
-    (wire (path F.Cu 2000  135010 -103260  135010 -113100  133810 -114300)(net +12V)(type protect))
-    (wire (path F.Cu 2000  129540 -97790  135010 -103260)(net +12V)(type protect))
-    (wire (path F.Cu 2000  67310 -110490  67310 -113290  67310 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  44450 -114300  44450 -110490)(net +12V)(type protect))
-    (wire (path F.Cu 2000  67310 -116840  46990 -116840  44450 -114300)(net +12V)(type protect))
-    (wire (path F.Cu 2000  116205 -114300  113205 -114300  110665 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  243840 -104140  238760 -109220)(net +12V)(type protect))
-    (wire (path F.Cu 2000  243840 -102870  243840 -104140)(net +12V)(type protect))
-    (wire (path F.Cu 2000  238760 -109220  238260 -109720)(net +12V)(type protect))
-    (wire (path F.Cu 2000  238260 -116340  238760 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  238260 -109720  238260 -116340)(net +12V)(type protect))
-    (wire (path F.Cu 2000  150320 -116840  183506 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  147780 -114300  150320 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  184408 -117742  191372 -117742)(net +12V)(type protect))
-    (wire (path F.Cu 2000  183506 -116840  184408 -117742)(net +12V)(type protect))
-    (wire (path F.Cu 2000  191372 -117742  192274 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  215900 -112020  215900 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  215900 -109220  215900 -112020)(net +12V)(type protect))
-    (wire (path F.Cu 2000  192274 -116840  215900 -116840  238760 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  217170 -107950  215900 -109220)(net +12V)(type protect))
-    (wire (path F.Cu 2000  217170 -102870  217170 -107950)(net +12V)(type protect))
-    (wire (path F.Cu 2000  41910 -101600  44450 -104140)(net +12V)(type protect))
-    (wire (path F.Cu 2000  67310 -104140  67310 -110490)(net +12V)(type protect))
-    (wire (path F.Cu 2000  64770 -101600  67310 -104140)(net +12V)(type protect))
+    (wire (path B.Cu 2000  156050 -71755  164465 -71755  166370 -69850  166370 -68580)(net +12V)(type protect))
+    (wire (path F.Cu 2000  129540 -97790  135010 -103260  135010 -113100  133810 -114300
+            130810 -114300)(net +12V)(type protect))
+    (wire (path F.Cu 2000  67310 -110490  67310 -116840)(net +12V)(type protect))
+    (wire (path F.Cu 2000  46990 -116840  44450 -114300  44450 -110490)(net +12V)(type protect))
+    (wire (path F.Cu 2000  243840 -102870  243840 -104140  238760 -109220  238260 -109720
+            238125 -116205)(net +12V)(type protect))
+    (wire (path F.Cu 2000  64770 -101600  67310 -104140  67310 -110490)(net +12V)(type protect))
     (wire (path F.Cu 2000  78740 -113760  78740 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  110665 -116840  78740 -116840  67310 -116840)(net +12V)(type protect))
-    (wire (path F.Cu 2000  73970 -92400  64770 -101600)(net +12V)(type protect))
-    (wire (path F.Cu 2000  73970 -90170  73970 -92400)(net +12V)(type protect))
-    (wire (path F.Cu 1000  270510 -102870  272618 -100762)(net +12V)(type protect))
+    (wire (path F.Cu 2000  73970 -90170  73970 -92400  64770 -101600)(net +12V)(type protect))
     (wire (path F.Cu 1000  271780 -49530  271780 -52070)(net +12V)(type protect))
-    (wire (path F.Cu 1000  272618 -67741.8  272618 -65608.2)(net +12V)(type protect))
-    (wire (path F.Cu 1000  272618 -100762  272618 -67741.8)(net +12V)(type protect))
-    (wire (path F.Cu 1000  270510 -63500  270510 -57150)(net +12V)(type protect))
-    (wire (path F.Cu 1000  272618 -65608.2  270510 -63500)(net +12V)(type protect))
-    (wire (path F.Cu 1000  270510 -57150  270510 -55880)(net +12V)(type protect))
-    (wire (path F.Cu 1000  271780 -54610  271780 -52070)(net +12V)(type protect))
-    (wire (path F.Cu 1000  270510 -55880  271780 -54610)(net +12V)(type protect))
-    (wire (path F.Cu 2000  44450 -107950  44450 -110490)(net +12V)(type protect))
-    (wire (path F.Cu 2000  44450 -104140  44450 -107950)(net +12V)(type protect))
+    (wire (path F.Cu 1000  270510 -102870  272618 -100762  272618 -65608.2  270510 -63500
+            270510 -57150  270510 -55880  271780 -54610  271780 -52070)(net +12V)(type protect))
+    (wire (path F.Cu 2000  41910 -101600  44450 -104140  44450 -110490)(net +12V)(type protect))
     (wire (path F.Cu 1000  18415 -77470  18415 -80010)(net +12V)(type protect))
-    (wire (path F.Cu 1000  17780 -81915  18415 -81280)(net +12V)(type protect))
-    (wire (path F.Cu 1000  17780 -83820  17780 -81915)(net +12V)(type protect))
-    (wire (path F.Cu 1000  18415 -81280  18415 -80010)(net +12V)(type protect))
-    (wire (path F.Cu 1000  271780 -49530  271780 -46990)(net +12V)(type protect))
-    (wire (path F.Cu 1000  270510 -45720  270510 -44450)(net +12V)(type protect))
-    (wire (path F.Cu 1000  271780 -46990  270510 -45720)(net +12V)(type protect))
-    (wire (path F.Cu 1000  270510 -40640  270510 -44450)(net +12V)(type protect))
-    (wire (path F.Cu 1000  171450 -48260  179070 -40640)(net +12V)(type protect))
-    (wire (path F.Cu 1000  171450 -62230  171450 -48260)(net +12V)(type protect))
-    (wire (path F.Cu 1000  166370 -66040  167640 -66040)(net +12V)(type protect))
-    (wire (path F.Cu 1000  179070 -40640  179070 -30480)(net +12V)(type protect))
-    (wire (path F.Cu 1000  167640 -66040  171450 -62230)(net +12V)(type protect))
-    (wire (path F.Cu 1000  179070 -30480  179070 -26670)(net +12V)(type protect))
-    (wire (path F.Cu 1000  180220 -25520  180220 -22590)(net +12V)(type protect))
-    (wire (path F.Cu 1000  179070 -26670  180220 -25520)(net +12V)(type protect))
-    (wire (path B.Cu 1000  180220 -21615  181515 -20320)(net +12V)(type protect))
-    (wire (path B.Cu 1000  180220 -22590  180220 -21615)(net +12V)(type protect))
-    (wire (path B.Cu 1000  181515 -20320  194310 -20320)(net +12V)(type protect))
-    (wire (path B.Cu 1000  195460 -21470  195460 -22590)(net +12V)(type protect))
-    (wire (path B.Cu 1000  194310 -20320  195460 -21470)(net +12V)(type protect))
-    (wire (path F.Cu 1000  46990 -116840  17780 -116840  16510 -115570)(net +12V)(type protect))
-    (wire (path F.Cu 1000  16510 -101600  17780 -100330)(net +12V)(type protect))
-    (wire (path F.Cu 1000  16510 -115570  16510 -101600)(net +12V)(type protect))
-    (wire (path F.Cu 1000  17780 -100330  17780 -83820)(net +12V)(type protect))
-    (wire (path F.Cu 2000  270510 -104001  270510 -102870)(net +12V)(type protect))
-    (wire (path F.Cu 2000  264021 -110490  270510 -104001)(net +12V)(type protect))
-    (wire (path F.Cu 2000  263525 -110490  264021 -110490)(net +12V)(type protect))
-    (wire (path F.Cu 2000  263525 -113030  263525 -110490)(net +12V)(type protect))
-    (wire (path F.Cu 2000  238760 -116840  259715 -116840  263525 -113030)(net +12V)(type protect))
-    (wire (path F.Cu 1000  212090 -102870  212090 -106680)(net "Net-(CONN_STEP_PAPER1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  206890 -111785  206890 -113760)(net "Net-(CONN_STEP_PAPER1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  211995 -106680  206890 -111785)(net "Net-(CONN_STEP_PAPER1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  212090 -106680  211995 -106680)(net "Net-(CONN_STEP_PAPER1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  204390 -111785  204470 -111705)(net "Net-(CONN_STEP_PAPER1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  204390 -113760  204390 -111785)(net "Net-(CONN_STEP_PAPER1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  204470 -111705  204525 -111705)(net "Net-(CONN_STEP_PAPER1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  209550 -106680  209550 -102870)(net "Net-(CONN_STEP_PAPER1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  204525 -111705  209550 -106680)(net "Net-(CONN_STEP_PAPER1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  201890 -111785  201915 -111760)(net "Net-(CONN_STEP_PAPER1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  201890 -113760  201890 -111785)(net "Net-(CONN_STEP_PAPER1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  201915 -111760  201930 -111760)(net "Net-(CONN_STEP_PAPER1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  207010 -106680  207010 -102870)(net "Net-(CONN_STEP_PAPER1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  201930 -111760  207010 -106680)(net "Net-(CONN_STEP_PAPER1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  204470 -106680  204470 -102870)(net "Net-(CONN_STEP_PAPER1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  199390 -113760  199390 -111760  204470 -106680)(net "Net-(CONN_STEP_PAPER1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  264630 -103670  265430 -102870)(net "Net-(CONN_STEP_SCISSOR1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  257810 -110490  264630 -103670)(net "Net-(CONN_STEP_SCISSOR1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  255905 -110490  257810 -110490)(net "Net-(CONN_STEP_SCISSOR1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  252610 -113760  252635 -113760  255905 -110490)(net "Net-(CONN_STEP_SCISSOR1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  262090 -103670  262890 -102870)(net "Net-(CONN_STEP_SCISSOR1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  257175 -108585  262090 -103670)(net "Net-(CONN_STEP_SCISSOR1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  254608 -108585  257175 -108585)(net "Net-(CONN_STEP_SCISSOR1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  250110 -113760  250110 -113082  254608 -108585)(net "Net-(CONN_STEP_SCISSOR1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  247610 -113070  247610 -113760)(net "Net-(CONN_STEP_SCISSOR1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  253365 -107315  247610 -113070)(net "Net-(CONN_STEP_SCISSOR1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  260350 -102870  255905 -107315  253365 -107315)(net "Net-(CONN_STEP_SCISSOR1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  245110 -112785  245110 -113760)(net "Net-(CONN_STEP_SCISSOR1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  251850 -106045  245110 -112785)(net "Net-(CONN_STEP_SCISSOR1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  257810 -102870  254635 -106045  251850 -106045)(net "Net-(CONN_STEP_SCISSOR1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  229750 -111785  231045 -110490)(net "Net-(CONN_STEP_SHUTTER1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  229750 -113760  229750 -111785)(net "Net-(CONN_STEP_SHUTTER1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  231140 -110490  238760 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  231045 -110490  231140 -110490)(net "Net-(CONN_STEP_SHUTTER1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  236165 -102870  236220 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  227250 -111785  236165 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  227250 -113760  227250 -111785)(net "Net-(CONN_STEP_SHUTTER1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  233665 -102870  233680 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  224750 -111785  233665 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  224750 -113760  224750 -111785)(net "Net-(CONN_STEP_SHUTTER1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  222250 -113760  222250 -111760)(net "Net-(CONN_STEP_SHUTTER1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  230340 -103670  231140 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  222250 -111760  230340 -103670)(net "Net-(CONN_STEP_SHUTTER1-Pad1)")(type protect))
+    (wire (path F.Cu 1000  17780 -83820  17780 -81915  18415 -81280  18415 -80010)(net +12V)(type protect))
+    (wire (path F.Cu 1000  166370 -66040  167640 -66040  171450 -62230  171450 -48260
+            179070 -40640  179070 -30480  179070 -26670  180220 -25520  180220 -22590)(net +12V)(type protect))
+    (wire (path B.Cu 1000  180220 -22590  180220 -21615  181515 -20320  194310 -20320
+            195460 -21470  195460 -22590)(net +12V)(type protect))
+    (wire (path F.Cu 1000  46990 -116840  17780 -116840  16510 -115570  16510 -101600
+            17780 -100330  17780 -83820)(net +12V)(type protect))
+    (wire (path F.Cu 2000  263525 -110490  264021 -110490  270510 -104001  270510 -102870)(net +12V)(type protect))
+    (wire (path F.Cu 2000  67310 -116840  46990 -116840)(net +12V)(type protect))
+    (wire (path F.Cu 2000  116205 -114300  113205 -114300  110665 -116840  78740 -116840
+            67310 -116840)(net +12V)(type protect))
+    (wire (path F.Cu 2000  147320 -97790  147320 -100590  148980 -102250  148980 -113100)(net +12V)(type protect))
+    (wire (path B.Cu 1000  268605 -33655  266700 -31750)(net +12V)(type protect))
+    (wire (path B.Cu 1000  271780 -48344.6  272415 -47709.6  272415 -40640)(net +12V)(type protect))
+    (wire (path B.Cu 1000  268605 -36830  268605 -33655)(net +12V)(type protect))
+    (wire (path B.Cu 1000  271780 -49530  271780 -48344.6)(net +12V)(type protect))
+    (wire (path B.Cu 1000  272415 -40640  268605 -36830)(net +12V)(type protect))
+    (wire (path F.Cu 1000  212090 -102870  212090 -106680  211995 -106680  206890 -111785
+            206890 -113760)(net "Net-(CONN_STEP_PAPER1-Pad4)")(type protect))
+    (wire (path F.Cu 1000  204390 -113760  204390 -111785  204470 -111705  204525 -111705
+            209550 -106680  209550 -102870)(net "Net-(CONN_STEP_PAPER1-Pad3)")(type protect))
+    (wire (path F.Cu 1000  201890 -113760  201890 -111785  201915 -111760  201930 -111760
+            207010 -106680  207010 -102870)(net "Net-(CONN_STEP_PAPER1-Pad2)")(type protect))
+    (wire (path F.Cu 1000  199390 -113760  199390 -111760  204470 -106680  204470 -102870)(net "Net-(CONN_STEP_PAPER1-Pad1)")(type protect))
+    (wire (path F.Cu 1000  252610 -113760  252635 -113760  255905 -110490  257810 -110490
+            265430 -102870)(net "Net-(CONN_STEP_SCISSOR1-Pad4)")(type protect))
+    (wire (path F.Cu 1000  250110 -113760  250110 -113082  254608 -108585  257175 -108585
+            262890 -102870)(net "Net-(CONN_STEP_SCISSOR1-Pad3)")(type protect))
+    (wire (path F.Cu 1000  260350 -102870  255905 -107315  253365 -107315  247610 -113070
+            247610 -113760)(net "Net-(CONN_STEP_SCISSOR1-Pad2)")(type protect))
+    (wire (path F.Cu 1000  257810 -102870  254635 -106045  251850 -106045  245110 -112785
+            245110 -113760)(net "Net-(CONN_STEP_SCISSOR1-Pad1)")(type protect))
+    (wire (path F.Cu 1000  229750 -113760  229750 -111785  231045 -110490  231140 -110490
+            238760 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad4)")(type protect))
+    (wire (path F.Cu 1000  227250 -113760  227250 -111785  236165 -102870  236220 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad3)")(type protect))
+    (wire (path F.Cu 1000  224750 -113760  224750 -111785  233665 -102870  233680 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad2)")(type protect))
+    (wire (path F.Cu 1000  222250 -113760  222250 -111760  231140 -102870)(net "Net-(CONN_STEP_SHUTTER1-Pad1)")(type protect))
+    (wire (path F.Cu 250  35560 -52070  35004.4 -51514.4)(net +5V)(type protect))
+    (wire (path F.Cu 1000  76200 -22590  76200 -36830  73660 -39370)(net +5V)(type protect))
+    (wire (path B.Cu 1000  48287.6 -56126  37465 -55880  36830 -55245  36830 -53340
+            35560 -52070)(net +5V)(type protect))
+    (wire (path B.Cu 1000  65405 -56515  48287.6 -56126)(net +5V)(type protect))
+    (wire (path B.Cu 1000  50936.8 -53476.8  53340 -55880)(net +5V)(type protect))
+    (wire (path B.Cu 1000  49530 -52070  50936.8 -53476.8)(net +5V)(type protect))
+    (wire (path B.Cu 1000  73660 -39370  73660 -52705  69850 -56515  65405 -56515
+            63500 -54610  63500 -52070)(net +5V)(type protect))
     (wire (path B.Cu 1000  196810 -66040  202565 -66040)(net +5V)(type protect))
-    (wire (path F.Cu 1000  201700 -38330  208750 -31280  209550 -30480)(net +5V)(type protect))
-    (wire (path F.Cu 1000  201700 -65175  201700 -38330)(net +5V)(type protect))
-    (wire (path F.Cu 1000  202565 -66040  201700 -65175)(net +5V)(type protect))
-    (wire (path F.Cu 1000  196810 -66040  196810 -68580  196810 -75525)(net +5V)(type protect))
-    (wire (path F.Cu 1000  204470 -83185  204470 -90170)(net +5V)(type protect))
-    (wire (path F.Cu 1000  196810 -75525  204470 -83185)(net +5V)(type protect))
     (wire (path F.Cu 1000  207010 -90170  204470 -90170)(net +5V)(type protect))
-    (wire (path B.Cu 1000  207010 -90170  207010 -91301.4  207010 -92710  208915 -94615)(net +5V)(type protect))
     (wire (path F.Cu 1000  231140 -90170  233680 -90170)(net +5V)(type protect))
     (wire (path F.Cu 1000  231140 -90170  231140 -94615)(net +5V)(type protect))
-    (wire (path B.Cu 1000  208915 -94615  231140 -94615)(net +5V)(type protect))
+    (wire (path B.Cu 1000  207010 -90170  207010 -92710  208915 -94615  231140 -94615)(net +5V)(type protect))
     (wire (path F.Cu 1000  257810 -90170  260350 -90170)(net +5V)(type protect))
-    (wire (path B.Cu 1000  256540 -94615  231140 -94615)(net +5V)(type protect))
-    (wire (path B.Cu 1000  257810 -93345  256540 -94615)(net +5V)(type protect))
+    (wire (path B.Cu 1000  257810 -93345  256540 -94615  231140 -94615)(net +5V)(type protect))
     (wire (path F.Cu 1000  257810 -90170  257810 -93345)(net +5V)(type protect))
-    (wire (path F.Cu 1000  209550 -30480  209550 -27305)(net +5V)(type protect))
-    (wire (path F.Cu 1000  210700 -26155  210700 -22590)(net +5V)(type protect))
-    (wire (path F.Cu 1000  209550 -27305  210700 -26155)(net +5V)(type protect))
-    (wire (path F.Cu 1000  257810 -93345  257810 -93345)(net +5V)(type protect))
-    (wire (path F.Cu 1000  231140 -94615  231140 -94615)(net +5V)(type protect))
-    (wire (path B.Cu 1000  209550 -30480  209550 -31750  215900 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  240030 -37360  240030 -35560)(net +5V)(type protect))
-    (wire (path B.Cu 1000  239290 -38100  240030 -37360)(net +5V)(type protect))
-    (wire (path B.Cu 1000  241161 -30480  243066 -32385)(net +5V)(type protect))
-    (wire (path B.Cu 1000  240030 -30480  241161 -30480)(net +5V)(type protect))
-    (wire (path B.Cu 1000  253365 -32385  255270 -30480)(net +5V)(type protect))
-    (wire (path B.Cu 1000  243066 -32385  253365 -32385)(net +5V)(type protect))
+    (wire (path F.Cu 1000  209550 -30480  209550 -27305  210700 -26155  210700 -22590)(net +5V)(type protect))
+    (wire (path B.Cu 1000  240030 -30480  241161 -30480  243066 -32385  253365 -32385
+            255270 -30480)(net +5V)(type protect))
     (wire (path F.Cu 1000  240030 -35560  240030 -30480)(net +5V)(type protect))
-    (wire (path F.Cu 1000  241140 -29370  240030 -30480)(net +5V)(type protect))
-    (wire (path F.Cu 1000  241140 -22860  241140 -29370)(net +5V)(type protect))
-    (wire (path F.Cu 1000  256460 -29290  255270 -30480)(net +5V)(type protect))
-    (wire (path F.Cu 1000  256460 -22860  256460 -29290)(net +5V)(type protect))
-    (wire (path F.Cu 1000  223440 -38020  223520 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  215900 -38100  223520 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  223440 -22860  223440 -38020)(net +5V)(type protect))
-    (wire (path B.Cu 1000  223520 -38100  239290 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  154940 -40640  152400 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  154940 -50165  154940 -40640)(net +5V)(type protect))
-    (wire (path B.Cu 1000  139230 -38900  138430 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  139930 -39600  139230 -38900)(net +5V)(type protect))
-    (wire (path B.Cu 1000  149769 -39600  139930 -39600)(net +5V)(type protect))
-    (wire (path B.Cu 1000  151269 -38100  149769 -39600)(net +5V)(type protect))
-    (wire (path B.Cu 1000  152400 -38100  151269 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  138430 -38100  135890 -40640)(net +5V)(type protect))
-    (wire (path B.Cu 1000  127000 -40640  124460 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  135890 -40640  127000 -40640)(net +5V)(type protect))
-    (wire (path B.Cu 1000  124460 -38100  122555 -40005)(net +5V)(type protect))
-    (wire (path B.Cu 1000  112395 -40005  110490 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  122555 -40005  112395 -40005)(net +5V)(type protect))
-    (wire (path B.Cu 1000  97320 -38900  96520 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  107400 -39600  98020 -39600)(net +5V)(type protect))
-    (wire (path B.Cu 1000  108900 -38100  107400 -39600)(net +5V)(type protect))
-    (wire (path B.Cu 1000  98020 -39600  97320 -38900)(net +5V)(type protect))
-    (wire (path B.Cu 1000  110490 -38100  108900 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  75160 -37870  74460 -38570)(net +5V)(type protect))
-    (wire (path B.Cu 1000  84540 -37870  75160 -37870)(net +5V)(type protect))
-    (wire (path B.Cu 1000  84770 -38100  84540 -37870)(net +5V)(type protect))
-    (wire (path B.Cu 1000  74460 -38570  73660 -39370)(net +5V)(type protect))
-    (wire (path B.Cu 1000  96520 -38100  84770 -38100)(net +5V)(type protect))
-    (wire (path B.Cu 1000  73660 -39370  69850 -39370)(net +5V)(type protect))
-    (wire (path B.Cu 1000  56680 -40170  55880 -39370)(net +5V)(type protect))
-    (wire (path B.Cu 1000  57380 -40870  56680 -40170)(net +5V)(type protect))
-    (wire (path B.Cu 1000  68350 -40870  57380 -40870)(net +5V)(type protect))
-    (wire (path B.Cu 1000  69850 -39370  68350 -40870)(net +5V)(type protect))
-    (wire (path B.Cu 1000  42710 -40170  41910 -39370)(net +5V)(type protect))
-    (wire (path B.Cu 1000  54380 -40870  43410 -40870  42710 -40170)(net +5V)(type protect))
-    (wire (path B.Cu 1000  55880 -39370  54380 -40870)(net +5V)(type protect))
-    (wire (path B.Cu 1000  29440 -40870  28740 -40170)(net +5V)(type protect))
-    (wire (path B.Cu 1000  39278.6 -40870  29440 -40870)(net +5V)(type protect))
-    (wire (path B.Cu 1000  28740 -40170  27940 -39370)(net +5V)(type protect))
-    (wire (path B.Cu 1000  40778.6 -39370  39278.6 -40870)(net +5V)(type protect))
-    (wire (path B.Cu 1000  41910 -39370  40778.6 -39370)(net +5V)(type protect))
-    (wire (path F.Cu 1000  27940 -37350  27940 -38238.6  27940 -39370)(net +5V)(type protect))
-    (wire (path F.Cu 1000  20320 -29730  27940 -37350)(net +5V)(type protect))
-    (wire (path F.Cu 1000  20320 -22590  20320 -29730)(net +5V)(type protect))
-    (wire (path F.Cu 1000  40120 -39370  40778.6 -39370  41910 -39370)(net +5V)(type protect))
-    (wire (path F.Cu 1000  33020 -32270  40120 -39370)(net +5V)(type protect))
-    (wire (path F.Cu 1000  33020 -22590  33020 -32270)(net +5V)(type protect))
-    (wire (path F.Cu 1000  76200 -36830  73660 -39370)(net +5V)(type protect))
-    (wire (path F.Cu 1000  76200 -22590  76200 -36830)(net +5V)(type protect))
-    (wire (path F.Cu 1000  88900 -31750  90170 -33020)(net +5V)(type protect))
-    (wire (path F.Cu 1000  88900 -22590  88900 -31750)(net +5V)(type protect))
-    (wire (path F.Cu 1000  95250 -38100  96520 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  90170 -33020  95250 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  101680 -32940  96520 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  101680 -22590  101680 -32940)(net +5V)(type protect))
-    (wire (path F.Cu 1000  114300 -34290  110490 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  114300 -22590  114300 -34290)(net +5V)(type protect))
-    (wire (path F.Cu 1000  127000 -35560  124460 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  127000 -22590  127000 -35560)(net +5V)(type protect))
-    (wire (path F.Cu 1000  139700 -36830  138430 -38100)(net +5V)(type protect))
-    (wire (path F.Cu 1000  139700 -22590  139700 -36830)(net +5V)(type protect))
-    (wire (path F.Cu 1000  196810 -66040  194310 -66040)(net +5V)(type protect))
-    (wire (path F.Cu 1000  184170 -55900  181610 -55900)(net +5V)(type protect))
-    (wire (path F.Cu 1000  194310 -66040  184170 -55900)(net +5V)(type protect))
-    (wire (path B.Cu 1000  175875 -50165  161290 -50165)(net +5V)(type protect))
-    (wire (path B.Cu 1000  181610 -55900  175875 -50165)(net +5V)(type protect))
-    (wire (path B.Cu 1000  161290 -50165  154940 -50165)(net +5V)(type protect))
-    (wire (path F.Cu 1000  106680 -88900  92710 -102870)(net +5V)(type protect))
-    (wire (path F.Cu 1000  93980 -113680  93900 -113760)(net +5V)(type protect))
-    (wire (path F.Cu 1000  92710 -102870  93980 -104140  93980 -113680)(net +5V)(type protect))
-    (wire (path B.Cu 1000  64135 -98425  55410 -89700)(net +5V)(type protect))
-    (wire (path B.Cu 1000  92710 -102870  88265 -98425)(net +5V)(type protect))
-    (wire (path B.Cu 1000  55410 -89700  54610 -88900)(net +5V)(type protect))
-    (wire (path B.Cu 1000  88265 -98425  64135 -98425)(net +5V)(type protect))
-    (wire (path B.Cu 1000  54610 -88900  52070 -88900)(net +5V)(type protect))
-    (wire (path B.Cu 1000  52070 -90031.4  50026.4 -92075)(net +5V)(type protect))
-    (wire (path B.Cu 1000  52070 -88900  52070 -90031.4)(net +5V)(type protect))
-    (wire (path B.Cu 1000  50026.4 -92075  33655 -92075)(net +5V)(type protect))
-    (wire (path B.Cu 1000  31750 -90170  31750 -88900)(net +5V)(type protect))
-    (wire (path B.Cu 1000  33655 -92075  31750 -90170)(net +5V)(type protect))
+    (wire (path F.Cu 1000  241140 -22860  241140 -29370  240030 -30480)(net +5V)(type protect))
+    (wire (path F.Cu 1000  256460 -22860  256460 -29290  255270 -30480)(net +5V)(type protect))
+    (wire (path B.Cu 1000  209550 -30480  209550 -31750  215900 -38100  223520 -38100)(net +5V)(type protect))
+    (wire (path F.Cu 1000  223440 -22860  223440 -38020  223520 -38100)(net +5V)(type protect))
+    (wire (path B.Cu 1000  223520 -38100  239290 -38100  240030 -37360  240030 -35560)(net +5V)(type protect))
+    (wire (path F.Cu 1000  154940 -50165  154940 -40640  152400 -38100)(net +5V)(type protect))
+    (wire (path B.Cu 1000  152400 -38100  151269 -38100  149769 -39600  139930 -39600
+            138430 -38100  135890 -40640  127000 -40640  124460 -38100  122555 -40005
+            112395 -40005  110490 -38100  108900 -38100  107400 -39600  98020 -39600
+            96520 -38100  84770 -38100  84540 -37870  75160 -37870  73660 -39370)(net +5V)(type protect))
+    (wire (path F.Cu 1000  88900 -22590  88900 -31750  90170 -33020  95250 -38100
+            96520 -38100)(net +5V)(type protect))
+    (wire (path F.Cu 1000  101680 -22590  101680 -32940  96520 -38100)(net +5V)(type protect))
+    (wire (path F.Cu 1000  114300 -22590  114300 -34290  110490 -38100)(net +5V)(type protect))
+    (wire (path F.Cu 1000  127000 -22590  127000 -35560  124460 -38100)(net +5V)(type protect))
+    (wire (path F.Cu 1000  139700 -22590  139700 -36830  138430 -38100)(net +5V)(type protect))
+    (wire (path F.Cu 1000  196810 -66040  194310 -66040  184170 -55900  181610 -55900)(net +5V)(type protect))
+    (wire (path F.Cu 1000  106680 -88900  92710 -102870  93980 -104140  93980 -113680
+            93900 -113760)(net +5V)(type protect))
+    (wire (path B.Cu 1000  92710 -102870  88265 -98425  64135 -98425  54610 -88900
+            52070 -88900  52070 -90031.4  50026.4 -92075  33655 -92075  31750 -90170
+            31750 -88900)(net +5V)(type protect))
     (wire (path B.Cu 1000  29210 -88900  31750 -88900)(net +5V)(type protect))
-    (wire (path B.Cu 1000  188065 -68580  179070 -77575  179070 -79375)(net +5V)(type protect))
-    (wire (path B.Cu 1000  196810 -68580  188065 -68580)(net +5V)(type protect))
-    (wire (path B.Cu 1000  179070 -79375  179070 -81280)(net +5V)(type protect))
-    (wire (path B.Cu 1000  178350 -82000  178350 -84280)(net +5V)(type protect))
-    (wire (path B.Cu 1000  179070 -81280  178350 -82000)(net +5V)(type protect))
-    (wire (path B.Cu 1000  179070 -77575  178965 -77470)(net +5V)(type protect))
-    (wire (path B.Cu 1000  158750 -77470  147320 -88900)(net +5V)(type protect))
-    (wire (path B.Cu 1000  178965 -77470  158750 -77470)(net +5V)(type protect))
-    (wire (path B.Cu 1000  147320 -88900  106680 -88900)(net +5V)(type protect))
-    (wire (path F.Cu 2000  144780 -97487.5  144780 -104140)(net "Net-(CONN_AUX1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  143813 -96520  144780 -97487.5)(net "Net-(CONN_AUX1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  142240 -96520  143813 -96520)(net "Net-(CONN_AUX1-Pad2)")(type protect))
+    (wire (path B.Cu 1000  196810 -68580  188065 -68580  179070 -77575)(net +5V)(type protect))
+    (wire (path B.Cu 1000  179070 -79375  179070 -81280  178350 -82000  178350 -84280)(net +5V)(type protect))
+    (wire (path B.Cu 1000  179070 -77575  178965 -77470  158750 -77470  147320 -88900
+            106680 -88900)(net +5V)(type protect))
+    (wire (path B.Cu 1000  179070 -77575  179070 -79375)(net +5V)(type protect))
+    (wire (path F.Cu 1000  196810 -66040  196810 -68580  196810 -75525  204470 -83185
+            204470 -90170)(net +5V)(type protect))
+    (wire (path F.Cu 250  187350 -98940  182880 -98940)(net +5V)(type protect))
+    (wire (path B.Cu 250  176530 -38100  185420 -38100)(net +5V)(type protect))
+    (wire (path B.Cu 1000  181610 -55900  175875 -50165  154940 -50165)(net +5V)(type protect))
+    (wire (path B.Cu 250  182880 -98940  182880 -97814.7  178350 -93284.7  178350 -84280)(net +5V)(type protect))
+    (wire (path F.Cu 1000  202565 -66040  201700 -65175  201700 -44783.5  201700 -38330
+            209550 -30480)(net +5V)(type protect))
+    (wire (path F.Cu 250  201700 -44783.5  192104 -44783.5  185420 -38100)(net +5V)(type protect))
+    (wire (path B.Cu 1000  33020 -19685  30480 -22225  30480 -22590)(net +5V)(type protect))
+    (wire (path B.Cu 1000  43180 -22590  40275 -19685  33020 -19685)(net +5V)(type protect))
+    (wire (path B.Cu 1000  46085 -19685  43180 -22590)(net +5V)(type protect))
+    (wire (path B.Cu 1000  76200 -22590  76200 -21365)(net +5V)(type protect))
+    (wire (path B.Cu 1000  74520 -19685  46085 -19685)(net +5V)(type protect))
+    (wire (path B.Cu 1000  76200 -21365  74520 -19685)(net +5V)(type protect))
+    (wire (path B.Cu 250  109220 -33020  109220 -34434.7  106680 -36974.7  106680 -38100)(net "Net-(LED_SW_PAPER1-Pad2)")(type protect))
+    (wire (path B.Cu 250  120650 -33020  120650 -38100)(net "Net-(LED_SW_PAPER2-Pad2)")(type protect))
+    (wire (path B.Cu 250  134620 -33020  134620 -38100)(net "Net-(LED_SW_PAPER3-Pad2)")(type protect))
+    (wire (path F.Cu 250  146050 -33020  146050 -34434.7  148590 -36974.7  148590 -38100)(net "Net-(LED_SW_PAPER4-Pad2)")(type protect))
+    (wire (path B.Cu 250  166370 -33020  166370 -38100)(net "Net-(LED_SW_SCISSOR1-Pad2)")(type protect))
+    (wire (path B.Cu 250  156210 -33020  156355 -33020  161435 -38100  162560 -38100)(net "Net-(LED_SW_SHUTTER1-Pad2)")(type protect))
+    (wire (path F.Cu 250  223520 -85090  222250 -83820  218458 -83820  199895 -65256.6
+            199895 -65034  197091 -62230  193686 -62230  186268 -54812.6
+            175077 -54812.6  173990 -55900)(net /Camera/ENABLE_5V)(type protect))
+    (wire (path B.Cu 250  26035 -77470  26035 -80010)(net "Net-(MEGA_PAPER1-Pad3V3)")(type protect))
+    (wire (path F.Cu 2000  142240 -96520  143813 -96520  144780 -97487.5  144780 -97790
+            144780 -104140)(net "Net-(CONN_AUX1-Pad2)")(type protect))
     (wire (path F.Cu 2000  144780 -97790  144780 -104140  144780 -107100)(net "Net-(CONN_AUX1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  130810 -102567  130810 -102857  130810 -107100)(net "Net-(CONN_FLASH1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  124763 -96520  130810 -102567)(net "Net-(CONN_FLASH1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  123190 -96520  124763 -96520)(net "Net-(CONN_FLASH1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  59690 -102731  59690 -101600)(net "Net-(CONN_STEP_EXIT1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  58300 -113760  58300 -109928)(net "Net-(CONN_STEP_EXIT1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  59690 -108538  59690 -102731)(net "Net-(CONN_STEP_EXIT1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  58300 -109928  59690 -108538)(net "Net-(CONN_STEP_EXIT1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  57150 -107950  57150 -101600)(net "Net-(CONN_STEP_EXIT1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  55800 -113760  55800 -109300  57150 -107950)(net "Net-(CONN_STEP_EXIT1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  53300 -113760  53300 -109260)(net "Net-(CONN_STEP_EXIT1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  54610 -107950  54610 -101600)(net "Net-(CONN_STEP_EXIT1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  53300 -109260  54610 -107950)(net "Net-(CONN_STEP_EXIT1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  52070 -107950  52070 -101600)(net "Net-(CONN_STEP_EXIT1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  50800 -113760  50800 -109220  52070 -107950)(net "Net-(CONN_STEP_EXIT1-Pad1)")(type protect))
-    (wire (path F.Cu 1000  36830 -107950  36830 -101600)(net "Net-(CONN_STEP_ROT1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  35560 -113760  35560 -109220  36830 -107950)(net "Net-(CONN_STEP_ROT1-Pad4)")(type protect))
-    (wire (path F.Cu 1000  33060 -113760  33060 -109180)(net "Net-(CONN_STEP_ROT1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  34290 -107950  34290 -101600)(net "Net-(CONN_STEP_ROT1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  33060 -109180  34290 -107950)(net "Net-(CONN_STEP_ROT1-Pad3)")(type protect))
-    (wire (path F.Cu 1000  31750 -101600  31750 -107950)(net "Net-(CONN_STEP_ROT1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  30560 -109140  30560 -113760)(net "Net-(CONN_STEP_ROT1-Pad2)")(type protect))
-    (wire (path F.Cu 1000  31750 -107950  30560 -109140)(net "Net-(CONN_STEP_ROT1-Pad2)")(type protect))
+    (wire (path F.Cu 2000  123190 -96520  124763 -96520  130810 -102567  130810 -107100)(net "Net-(CONN_FLASH1-Pad2)")(type protect))
+    (wire (path F.Cu 250  142240 -99060  128270 -85090  128270 -82550)(net "Net-(Q_AUX1-Pad1)")(type protect))
+    (wire (path F.Cu 250  123190 -99060  111760 -87630  111760 -82550)(net "Net-(Q_FLASH1-Pad1)")(type protect))
+    (wire (path B.Cu 250  168870 -113760  168870 -97750  165100 -93980)(net "Net-(CONN_BATT1-Pad2)")(type protect))
+    (wire (path B.Cu 250  104100 -113760  102925 -113760  102925 -104050  100330 -101455
+            100330 -100330)(net "Net-(CONN_MARQUEE_WS2811-Pad2)")(type protect))
+    (wire (path F.Cu 250  92710 -88900  93835.3 -88900  93835.3 -89181.3  94824 -90170
+            100330 -90170)(net "Net-(R_MARQUEE1-Pad1)")(type protect))
+    (wire (path B.Cu 250  231140 -49530  229870 -50800  228213 -50800  227330 -51683.4
+            227330 -52498.6  225617 -54211.9  208529 -54211.9  205273 -57467.5
+            52826.9 -57467.5  52604.4 -57245  50227.8 -57245  33655 -73817.8
+            33655 -77470)(net /Camera/ORDER_INTERRUPT_PIN)(type protect))
+    (wire (path B.Cu 250  209550 -38100  209550 -41910)(net "Net-(CONN_START1-Pad4)")(type protect))
+    (wire (path B.Cu 250  203200 -38100  209550 -38100)(net "Net-(CONN_START1-Pad4)")(type protect))
+    (wire (path B.Cu 250  189135 -22590  189135 -23765.3)(net "Net-(CONN_START1-Pad4)")(type protect))
+    (wire (path B.Cu 250  187960 -22590  189135 -22590)(net "Net-(CONN_START1-Pad4)")(type protect))
+    (wire (path B.Cu 250  189135 -23765.3  199390 -34020  199390 -34290  203200 -38100)(net "Net-(CONN_START1-Pad4)")(type protect))
+    (wire (path F.Cu 250  195580 -33020  195580 -38100)(net "Net-(LED_SW_START1-Pad2)")(type protect))
+    (wire (path F.Cu 1000  58300 -113760  58300 -109928  59690 -108538  59690 -101600)(net "Net-(CONN_STEP_EXIT1-Pad4)")(type protect))
+    (wire (path F.Cu 1000  55800 -113760  55800 -109300  57150 -107950  57150 -101600)(net "Net-(CONN_STEP_EXIT1-Pad3)")(type protect))
+    (wire (path F.Cu 1000  53300 -113760  53300 -109260  54610 -107950  54610 -101600)(net "Net-(CONN_STEP_EXIT1-Pad2)")(type protect))
+    (wire (path F.Cu 1000  50800 -113760  50800 -109220  52070 -107950  52070 -101600)(net "Net-(CONN_STEP_EXIT1-Pad1)")(type protect))
+    (wire (path F.Cu 1000  35560 -113760  35560 -109220  36830 -107950  36830 -101600)(net "Net-(CONN_STEP_ROT1-Pad4)")(type protect))
+    (wire (path F.Cu 1000  33060 -113760  33060 -109180  34290 -107950  34290 -101600)(net "Net-(CONN_STEP_ROT1-Pad3)")(type protect))
+    (wire (path F.Cu 1000  31750 -101600  31750 -107950  30560 -109140  30560 -113760)(net "Net-(CONN_STEP_ROT1-Pad2)")(type protect))
     (wire (path F.Cu 1000  28060 -113760  28060 -109340  29210 -108190  29210 -101600)(net "Net-(CONN_STEP_ROT1-Pad1)")(type protect))
-    (wire (path F.Cu 250  68540 -32980  68580 -33020)(net SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM)(type protect))
-    (wire (path F.Cu 250  68540 -22590  68540 -32980)(net SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM)(type protect))
-    (wire (path F.Cu 250  58380 -32980  58420 -33020)(net SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE)(type protect))
-    (wire (path F.Cu 250  58380 -22590  58380 -32980)(net SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE)(type protect))
-    (wire (path F.Cu 250  22820 -25995  22820 -22590)(net SPIDER_ROTATE_ENDSTOP1_PIN)(type protect))
-    (wire (path F.Cu 250  26670 -33020  26670 -29845  22820 -25995)(net SPIDER_ROTATE_ENDSTOP1_PIN)(type protect))
-    (wire (path F.Cu 250  36830 -29210  35560 -27940)(net SPIDER_ROTATE_ENDSTOP2_PIN)(type protect))
-    (wire (path F.Cu 250  36830 -33020  36830 -29210)(net SPIDER_ROTATE_ENDSTOP2_PIN)(type protect))
-    (wire (path F.Cu 250  35520 -22590  35560 -27940)(net SPIDER_ROTATE_ENDSTOP2_PIN)(type protect))
-    (wire (path F.Cu 250  46990 -33020  46990 -29845)(net SPIDER_UPDOWN_PIN_ENDSTOP_UP)(type protect))
-    (wire (path F.Cu 250  48220 -28615  48220 -22590)(net SPIDER_UPDOWN_PIN_ENDSTOP_UP)(type protect))
-    (wire (path F.Cu 250  46990 -29845  48220 -28615)(net SPIDER_UPDOWN_PIN_ENDSTOP_UP)(type protect))
-    (wire (path F.Cu 2000  160020 -111760  160020 -113760)(net "Net-(CONN_DC1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  162870 -108910  160020 -111760)(net "Net-(CONN_DC1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  156050 -54610  162870 -61430  162870 -108910)(net "Net-(CONN_DC1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  157850 -62125  156050 -60325)(net "Net-(CONN_DC1-Pad1)")(type protect))
-    (wire (path F.Cu 2000  160020 -64295  157850 -62125)(net "Net-(CONN_DC1-Pad1)")(type protect))
-    (wire (path F.Cu 2000  157520 -113760  157520 -110450)(net "Net-(CONN_DC1-Pad1)")(type protect))
-    (wire (path F.Cu 2000  160020 -107950  160020 -64295)(net "Net-(CONN_DC1-Pad1)")(type protect))
-    (wire (path F.Cu 2000  157520 -110450  160020 -107950)(net "Net-(CONN_DC1-Pad1)")(type protect))
-    (wire (path F.Cu 250  232410 -50800  233680 -49530)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  231140 -55245  231140 -55245)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  232410 -53975  232410 -50800)(net /Camera/SCL_PIN)(type protect))
+    (wire (path F.Cu 250  66675 -44450  69215 -41910  83820 -41910  86996.1 -38733.9
+            86996.1 -22637.2  88380.1 -21253.2  89402.1 -21253.2  90224.7 -22075.8
+            90224.7 -22590  91400 -22590)(net LIGHT_PROCESS_PIN)(type protect))
+    (wire (path F.Cu 250  66675 -46990  68051.4 -48366.4  68051.4 -50065.4  68786 -50800
+            69681.8 -50800  86340.3 -67458.5  86340.3 -108700  90224.7 -112585
+            90224.7 -113760  91400 -113760)(net SERVO_ARM)(type protect))
+    (wire (path F.Cu 250  56515 -44450  56515 -43378.3  58618.3 -41275  61595 -41275
+            63500 -39370  63500 -35560  66040 -33020  68580 -33020)(net SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM)(type protect))
+    (wire (path F.Cu 250  68540 -22590  68540 -32980  68580 -33020)(net SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM)(type protect))
+    (wire (path B.Cu 250  34290 -31750  35515.3 -31750  35515.3 -32209.6  36281 -32975.3
+            40224.9 -32975.3  51435 -44185.4  51435 -44450)(net SPIDER_ROTATE_ENDSTOP1_PIN)(type protect))
+    (wire (path F.Cu 250  34290 -31750  34290 -26670  32980 -25360  32980 -22590)(net SPIDER_ROTATE_ENDSTOP1_PIN)(type protect))
+    (wire (path B.Cu 250  47625 -31750  47625 -32975.3  52625.6 -37975.9  52625.6 -45799.4
+            51435 -46990)(net SPIDER_ROTATE_ENDSTOP2_PIN)(type protect))
+    (wire (path F.Cu 250  47625 -31750  47625 -27305  45680 -25360  45680 -22590)(net SPIDER_ROTATE_ENDSTOP2_PIN)(type protect))
+    (wire (path B.Cu 250  57785 -31750  57785 -40640  53975 -44450)(net SPIDER_UPDOWN_PIN_ENDSTOP_UP)(type protect))
+    (wire (path F.Cu 250  57785 -31750  57785 -23185  58380 -22590)(net SPIDER_UPDOWN_PIN_ENDSTOP_UP)(type protect))
+    (wire (path F.Cu 250  65486.9 -45640.6  65486.9 -40558.1  67945 -38100  67945 -36195)(net TEMP_PIN)(type protect))
+    (wire (path B.Cu 250  78740 -34925  77470 -36195  67945 -36195)(net TEMP_PIN)(type protect))
+    (wire (path F.Cu 250  78700 -22590  78700 -34885  78740 -34925)(net TEMP_PIN)(type protect))
+    (wire (path F.Cu 250  56515 -46990  57864.4 -45640.6  65486.9 -45640.6  68024.4 -45640.6
+            69215 -44450)(net TEMP_PIN)(type protect))
+    (wire (path B.Cu 250  36195 -77470  44450 -69215  72480 -69215)(net SPIDER_UPDOWN_PIN_PWM)(type protect))
+    (wire (path B.Cu 250  72480 -72390  42168 -72390  37465 -77093  37465 -78740  36195 -80010)(net SPIDER_UPDOWN_PIN_DIR)(type protect))
+    (wire (path B.Cu 250  46355 -77470  45164.4 -78660.6  45164.4 -85949.1  46990 -87774.7
+            46990 -88900)(net SPIDER_EXIT_PIN_DIR)(type protect))
+    (wire (path B.Cu 250  46355 -80010  46355 -84599.7  49530 -87774.7  49530 -88900)(net SPIDER_EXIT_PIN_STP)(type protect))
+    (wire (path B.Cu 250  43815 -77470  45026.1 -76258.9  46862.7 -76258.9  47625 -77021.2
+            47625 -80395.1  55004.6 -87774.7  60260.8 -87774.7  61104.7 -88618.6
+            61104.7 -88900  62230 -88900)(net EXIT_M0)(type protect))
+    (wire (path F.Cu 250  43815 -80010  51579.7 -87774.7  62800.8 -87774.7  63644.7 -88618.6
+            63644.7 -88900  64770 -88900)(net SPIDER_EXIT_PIN_ENABLE)(type protect))
+    (wire (path F.Cu 250  41275 -77470  40005 -78740  40005 -80419.6  35334.6 -85090
+            27940 -85090  24130 -88900)(net SPIDER_ROTATE_PIN_DIR)(type protect))
+    (wire (path F.Cu 250  26670 -88900  26670 -87021.1  27966.1 -85725  35560 -85725
+            41275 -80010)(net SPIDER_ROTATE_PIN_STP)(type protect))
+    (wire (path B.Cu 250  38735 -77470  39909 -78644  39909 -87235.7  39370 -87774.7
+            39370 -88900)(net ROT_M0)(type protect))
+    (wire (path B.Cu 250  38735 -80010  38196.6 -80548.4  38196.6 -89325.9  38896 -90025.3
+            39940.8 -90025.3  40784.7 -89181.4  40784.7 -88900  41910 -88900)(net SPIDER_ROTATE_PIN_ENABLE)(type protect))
+    (wire (path F.Cu 250  71120 -33020  71120 -38424.6  73190.7 -40495.3  81569.4 -40495.3
+            82694.7 -39370  83820 -39370)(net "Net-(LED_SW_BOTTOM1-Pad2)")(type protect))
+    (wire (path F.Cu 250  25400 -52070  25400 -46189  32480 -39109  32480 -36100  36830 -31750)(net "Net-(LED_SW_ROT1-Pad2)")(type protect))
+    (wire (path F.Cu 250  39370 -52070  39370 -50938.6  42651.8 -47656.8  42651.8 -43708.2
+            50165 -36195  50165 -31750)(net "Net-(LED_SW_ROT2-Pad2)")(type protect))
+    (wire (path F.Cu 250  53340 -52070  55138.2 -50271.8  55138.2 -36936.8  60325 -31750)(net "Net-(LED_SW_UP1-Pad2)")(type protect))
+    (wire (path F.Cu 2000  156050 -54610  162870 -61430  162870 -108910  160020 -111760
+            160020 -113760)(net "Net-(CONN_DC1-Pad2)")(type protect))
+    (wire (path F.Cu 2000  157520 -113760  157520 -110450  160020 -107950  160020 -64295
+            156050 -60325)(net "Net-(CONN_DC1-Pad1)")(type protect))
+    (wire (path B.Cu 250  87630 -88900  87630 -91440  83820 -95250)(net +5C)(type protect))
+    (wire (path B.Cu 250  87630 -88900  88755.3 -88900  88755.3 -88618.7  101417 -75957.2
+            179168 -75957.2  190458 -64667.2  218282 -64667.2  219378 -63571.4
+            251764 -63571.4  262996 -52339.2  262996 -51534.6  263731 -50800
+            265430 -50800  266700 -49530)(net +5C)(type protect))
+    (wire (path B.Cu 250  215900 -66040  250190 -66040  264160 -52070)(net +3V3)(type protect))
+    (wire (path B.Cu 250  178270 -109780  184700 -103350  184700 -74593.2  187942 -71351.3
+            210589 -71351.3  215900 -66040)(net +3V3)(type protect))
+    (wire (path F.Cu 250  215900 -66040  215900 -62865  215265 -62230)(net +3V3)(type protect))
+    (wire (path F.Cu 250  264160 -49530  264160 -52070)(net +3V3)(type protect))
+    (wire (path B.Cu 250  226060 -82550  228151 -80459  245940 -80459  247756 -82275.6
+            247756 -83047.9  248528 -83820  260776 -83820  266845 -89888.7
+            266845 -90170  267970 -90170)(net /Camera/SCISSOR_M0)(type protect))
+    (wire (path F.Cu 250  220940 -22860  220940 -22735  222124 -21551.3  224273 -21551.3
+            225425 -22703.2  225425 -26257.6  235025 -35857.2  235025 -35938.2
+            243840 -44753.6  243840 -49530)(net /Camera/CEILING_PIXEL_PIN)(type protect))
+    (wire (path F.Cu 250  254000 -52070  255376 -50693.6  257047 -50693.6  257704 -50037.3
+            257704 -49004.9  252886 -44187.6  244548 -44187.6  236084 -35724.3
+            236084 -34869  226510 -25294.5  226510 -22459.9  224370 -20320
+            176265 -20320  175220 -21365  175220 -22590)(net /Camera/ENABLE_COIN_PIN)(type protect))
+    (wire (path F.Cu 250  177720 -22590  177720 -21365  178130 -20955  224314 -20955
+            226060 -22701.3  226060 -25699.8  235475 -35114.7  235475 -35751.6
+            244520 -44796.9  251807 -44796.9  256540 -49530)(net /Camera/COIN_PIN)(type protect))
     (wire (path B.Cu 250  218439 -55245  218440 -55245)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  231140 -55245  232410 -53975)(net /Camera/SCL_PIN)(type protect))
+    (wire (path F.Cu 250  231140 -55245  232410 -53975  232410 -50800  233680 -49530)(net /Camera/SCL_PIN)(type protect))
     (wire (path B.Cu 250  218440 -55245  231140 -55245)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  216535 -55245  218439 -55245)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  212090 -59690  216535 -55245)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  210820 -66040  210820 -64770)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  212090 -63500  212090 -59690)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  210820 -64770  212090 -63500)(net /Camera/SCL_PIN)(type protect))
-    (wire (path B.Cu 250  205700 -26630  205700 -22590)(net /Camera/SCL_PIN)(type protect))
-    (wire (path B.Cu 250  207645 -28575  205700 -26630)(net /Camera/SCL_PIN)(type protect))
-    (wire (path B.Cu 250  229235 -34925  222885 -28575  207645 -28575)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  232410 -38100  229235 -34925)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  232410 -46990  232410 -38100)(net /Camera/SCL_PIN)(type protect))
-    (wire (path F.Cu 250  233680 -49530  233680 -48260  232410 -46990)(net /Camera/SCL_PIN)(type protect))
+    (wire (path F.Cu 250  210820 -66040  210820 -64770  212090 -63500  212090 -59690
+            216535 -55245  218440 -55245)(net /Camera/SCL_PIN)(type protect))
+    (wire (path B.Cu 250  229235 -34925  222885 -28575  207645 -28575  205700 -26630
+            205700 -22590)(net /Camera/SCL_PIN)(type protect))
+    (wire (path F.Cu 250  233680 -49530  233680 -48260  232410 -46990  232410 -38100
+            229235 -34925)(net /Camera/SCL_PIN)(type protect))
     (wire (path B.Cu 250  208200 -22590  208200 -24685  209550 -26035  224155 -26035
             232410 -34290)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  232410 -34290  234950 -36830)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  234950 -50800  233680 -52070)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  234950 -36830  234950 -50800)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  217405 -58185  217805 -57785)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  213360 -62230  217405 -58185)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  213360 -66040  213360 -62230)(net /Camera/SDA_PIN)(type protect))
-    (wire (path B.Cu 250  231140 -57785  232410 -56515)(net /Camera/SDA_PIN)(type protect))
-    (wire (path B.Cu 250  217805 -57785  231140 -57785)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  233680 -55245  232410 -56515)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  233680 -52070  233680 -55245)(net /Camera/SDA_PIN)(type protect))
-    (wire (path F.Cu 250  193040 -22670  192960 -22590)(net /Camera/START_BTN_PIN)(type protect))
-    (wire (path F.Cu 250  193040 -33020  193040 -22670)(net /Camera/START_BTN_PIN)(type protect))
-    (wire (path F.Cu 250  104180 -22590  104180 -28615)(net /Camera/PAPER_SWITCH1_PIN)(type protect))
-    (wire (path F.Cu 250  106680 -31115  106680 -33020)(net /Camera/PAPER_SWITCH1_PIN)(type protect))
-    (wire (path F.Cu 250  104180 -28615  106680 -31115)(net /Camera/PAPER_SWITCH1_PIN)(type protect))
-    (wire (path F.Cu 250  118110 -33020  118110 -30480)(net /Camera/PAPER_SWITCH2_PIN)(type protect))
-    (wire (path F.Cu 250  116800 -29170  116800 -22590)(net /Camera/PAPER_SWITCH2_PIN)(type protect))
-    (wire (path F.Cu 250  118110 -30480  116800 -29170)(net /Camera/PAPER_SWITCH2_PIN)(type protect))
-    (wire (path F.Cu 250  129500 -29290  129500 -22590)(net /Camera/PAPER_SWITCH3_PIN)(type protect))
-    (wire (path F.Cu 250  132080 -33020  132080 -31870  129500 -29290)(net /Camera/PAPER_SWITCH3_PIN)(type protect))
-    (wire (path F.Cu 250  143510 -33020  143510 -29845)(net /Camera/PAPER_SWITCH4_PIN)(type protect))
-    (wire (path F.Cu 250  142200 -28535  142200 -22590)(net /Camera/PAPER_SWITCH4_PIN)(type protect))
-    (wire (path F.Cu 250  143510 -29845  142200 -28535)(net /Camera/PAPER_SWITCH4_PIN)(type protect))
-    (wire (path F.Cu 250  163830 -33020  163830 -29210)(net /Camera/SCISSOR_ENDSTOP_PIN)(type protect))
-    (wire (path F.Cu 250  165060 -27980  165060 -22590)(net /Camera/SCISSOR_ENDSTOP_PIN)(type protect))
-    (wire (path F.Cu 250  163830 -29210  165060 -27980)(net /Camera/SCISSOR_ENDSTOP_PIN)(type protect))
-    (wire (path F.Cu 250  153670 -33020  153670 -29845)(net /Camera/SHUTTER_ENDSTOP_PIN)(type protect))
-    (wire (path F.Cu 250  154900 -28615  154900 -22590)(net /Camera/SHUTTER_ENDSTOP_PIN)(type protect))
-    (wire (path F.Cu 250  153670 -29845  154900 -28615)(net /Camera/SHUTTER_ENDSTOP_PIN)(type protect))
-    (wire (path F.Cu 250  185970 -83202.4  186690 -82482.4)(net /Camera/LORA_RXD)(type protect))
-    (wire (path F.Cu 250  185970 -84280  185970 -83202.4)(net /Camera/LORA_RXD)(type protect))
-    (wire (path F.Cu 250  186690 -82482.4  186690 -76835  189865 -73660)(net /Camera/LORA_RXD)(type protect))
-    (wire (path B.Cu 250  189865 -73660  235585 -73660  240030 -69215)(net /Camera/LORA_RXD)(type protect))
-    (wire (path F.Cu 250  241300 -67945  241300 -52070)(net /Camera/LORA_RXD)(type protect))
-    (wire (path F.Cu 250  240030 -69215  241300 -67945)(net /Camera/LORA_RXD)(type protect))
-    (wire (path F.Cu 250  241300 -49530  240665 -50165  240030 -50800  240030 -67945
-            238760 -69215)(net /Camera/LORA_TXD)(type protect))
-    (wire (path B.Cu 250  238760 -69215  235585 -72390  189865 -72390  187960 -72390)(net /Camera/LORA_TXD)(type protect))
-    (wire (path F.Cu 250  183430 -76920  183430 -84280)(net /Camera/LORA_TXD)(type protect))
-    (wire (path F.Cu 250  187960 -72390  183430 -76920)(net /Camera/LORA_TXD)(type protect))
-    (wire (path F.Cu 250  267970 -40640  270510 -38100)(net "Net-(CONN_COUNT1-Pad2)")(type protect))
-    (wire (path F.Cu 250  265430 -40640  267970 -40640)(net "Net-(CONN_COUNT1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  81240 -110760  81240 -113760)(net "Net-(CONN_FAN1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  77165 -106835  74930 -104600  74930 -101600)(net "Net-(CONN_FAN1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  77315 -106835  77165 -106835)(net "Net-(CONN_FAN1-Pad2)")(type protect))
-    (wire (path F.Cu 2000  77315 -106835  81240 -110760)(net "Net-(CONN_FAN1-Pad2)")(type protect))
-    (wire (path F.Cu 250  261620 -39370  259080 -41910)(net "Net-(Q_COUNT1-Pad2)")(type protect))
-    (wire (path F.Cu 250  264160 -39370  261620 -39370)(net "Net-(Q_COUNT1-Pad2)")(type protect))
-    (wire (path F.Cu 250  48895 -80010  50165 -78740  50165 -60325)(net /BtoA)(type protect))
-    (wire (path B.Cu 250  85088.6 -60325  92708.6 -67945)(net /BtoA)(type protect))
-    (wire (path B.Cu 250  50165 -60325  85088.6 -60325)(net /BtoA)(type protect))
-    (wire (path B.Cu 250  137159 -67945  144144 -74930)(net /BtoA)(type protect))
-    (wire (path B.Cu 250  92708.6 -67945  137159 -67945)(net /BtoA)(type protect))
-    (wire (path B.Cu 250  144144 -74930  165100 -74930  180340 -59690)(net /BtoA)(type protect))
-    (wire (path B.Cu 250  180430 -59600  233787 -59600  233967 -59780)(net /BtoA)(type protect))
-    (wire (path B.Cu 250  180340 -59690  180430 -59600)(net /BtoA)(type protect))
-    (wire (path B.Cu 250  233967 -59780  234860 -59780  235585 -59055)(net /BtoA)(type protect))
-    (wire (path F.Cu 250  238760 -55880  238760 -52070)(net /BtoA)(type protect))
-    (wire (path F.Cu 250  235585 -59055  238760 -55880)(net /BtoA)(type protect))
-    (wire (path F.Cu 250  238760 -49530  237597 -50693.2)(net /AtoB)(type protect))
-    (wire (path F.Cu 250  237597 -55773.2  234315 -59055)(net /AtoB)(type protect))
-    (wire (path F.Cu 250  237597 -50693.2  237597 -55773.2)(net /AtoB)(type protect))
-    (wire (path B.Cu 250  234315 -59055  193675 -59055  179705 -59055)(net /AtoB)(type protect))
-    (wire (path B.Cu 250  164880 -73880  143730 -73880)(net /AtoB)(type protect))
-    (wire (path B.Cu 250  179705 -59055  164880 -73880)(net /AtoB)(type protect))
-    (wire (path B.Cu 250  143730 -73880  137160 -67310  92710 -67310  84455 -59055
-            49530 -59055)(net /AtoB)(type protect))
-    (wire (path F.Cu 250  48895 -59690  49530 -59055)(net /AtoB)(type protect))
-    (wire (path F.Cu 250  48895 -77470  48895 -59690)(net /AtoB)(type protect))
+    (wire (path F.Cu 250  232410 -34290  234950 -36830  234950 -50800  233680 -52070)(net /Camera/SDA_PIN)(type protect))
+    (wire (path F.Cu 250  213360 -66040  213360 -62230  217805 -57785)(net /Camera/SDA_PIN)(type protect))
+    (wire (path B.Cu 250  217805 -57785  231140 -57785  232410 -56515)(net /Camera/SDA_PIN)(type protect))
+    (wire (path F.Cu 250  233680 -52070  233680 -55245  232410 -56515)(net /Camera/SDA_PIN)(type protect))
+    (wire (path B.Cu 250  246380 -52070  245110 -50800  245110 -38577.9  233640 -27107.9
+            233640 -22860)(net /Camera/LED_MATRIX_SCL_PIN)(type protect))
+    (wire (path B.Cu 250  246380 -49530  246380 -38534.8  236140 -28294.8  236140 -22860)(net /Camera/LED_MATRIX_CS_PIN)(type protect))
+    (wire (path B.Cu 250  243840 -52070  242570 -50800  242570 -40544.9  241253 -39227.9)(net /Camera/LED_MATRIX_SDI_PIN)(type protect))
+    (wire (path F.Cu 250  241253 -39227.9  238905 -36879.5  238905 -24424.9  238640 -24160.3
+            238640 -22860)(net /Camera/LED_MATRIX_SDI_PIN)(type protect))
+    (wire (path B.Cu 250  254000 -49530  256401 -47129.4  256401 -27800.6  252635 -24035.3
+            252635 -22860  251460 -22860)(net /Camera/COIN_SEGMENT_DIO_PIN)(type protect))
+    (wire (path B.Cu 250  251460 -52070  252832 -50697.6  254573 -50697.6  255270 -50000.2
+            255270 -49103.5  256873 -47500.7  256873 -25772.8  255135 -24035.3
+            255135 -22860  253960 -22860)(net /Camera/COIN_SEGMENT_CLK_PIN)(type protect))
+    (wire (path F.Cu 250  193040 -33020  193040 -22670  192960 -22590)(net /Camera/START_BTN_PIN)(type protect))
+    (wire (path B.Cu 250  193040 -33020  193040 -34245.3  193935 -34245.3  201745 -42054.6
+            204960 -42054.6  209824 -46917.9  233608 -46917.9  236220 -49530)(net /Camera/START_BTN_PIN)(type protect))
+    (wire (path F.Cu 250  104180 -22590  104180 -28615  106680 -31115  106680 -33020)(net /Camera/PAPER_SWITCH1_PIN)(type protect))
+    (wire (path B.Cu 250  106680 -33020  107905 -33020  107905 -32560.5  109144 -31321.9
+            166461 -31321.9  179849 -44710.3  193910 -44710.3  201270 -52070
+            220980 -52070)(net /Camera/PAPER_SWITCH1_PIN)(type protect))
+    (wire (path F.Cu 250  118110 -33020  118110 -30480  116800 -29170  116800 -22590)(net /Camera/PAPER_SWITCH2_PIN)(type protect))
+    (wire (path B.Cu 250  116800 -22590  117975 -22590  117975 -23471.5  124682 -30178.3
+            167596 -30178.3  173583 -36165.2  187787 -36165.2  201152 -49530
+            220980 -49530)(net /Camera/PAPER_SWITCH2_PIN)(type protect))
+    (wire (path F.Cu 250  132080 -33020  132080 -31870  129500 -29290  129500 -22590)(net /Camera/PAPER_SWITCH3_PIN)(type protect))
+    (wire (path B.Cu 250  132080 -33020  133305 -33020  133305 -32560.5  134071 -31794.6
+            157866 -31794.6  171956 -45884.3  193749 -45884.3  201110 -53245.1
+            222345 -53245.1  223520 -52070)(net /Camera/PAPER_SWITCH3_PIN)(type protect))
+    (wire (path F.Cu 250  143510 -33020  143510 -29845  142200 -28535  142200 -22590)(net /Camera/PAPER_SWITCH4_PIN)(type protect))
+    (wire (path B.Cu 250  142200 -22590  143375 -22590  143375 -23471.5  148591 -28686.9
+            182546 -28686.9  202044 -48185.5  222176 -48185.5  223520 -49530)(net /Camera/PAPER_SWITCH4_PIN)(type protect))
+    (wire (path F.Cu 250  163830 -33020  163830 -29210  165060 -27980  165060 -22590)(net /Camera/SCISSOR_ENDSTOP_PIN)(type protect))
+    (wire (path B.Cu 250  165060 -22590  169494 -27023.9  181991 -27023.9  202675 -47708
+            224238 -47708  226060 -49530)(net /Camera/SCISSOR_ENDSTOP_PIN)(type protect))
+    (wire (path F.Cu 250  153670 -33020  153670 -29845  154900 -28615  154900 -22590)(net /Camera/SHUTTER_ENDSTOP_PIN)(type protect))
+    (wire (path B.Cu 250  153670 -33020  154895 -33020  154895 -33479.5  170326 -48910
+            194316 -48910  199102 -53695.5  224434 -53695.5  226060 -52070)(net /Camera/SHUTTER_ENDSTOP_PIN)(type protect))
+    (wire (path F.Cu 250  199390 -90170  200515 -90170  200515 -90451.3  201858 -91794
+            220935 -91794  225124 -87604.6  233705 -87604.6  236220 -85090)(net /Camera/PAPER_PIN_DIR)(type protect))
+    (wire (path F.Cu 250  238760 -82550  237596 -83713.6  235923 -83713.6  234950 -84686.9
+            234950 -85481  233502 -86929.2  223808 -86929.2  219442 -91295.3
+            203899 -91295.3  203055 -90451.4  203055 -90170  201930 -90170)(net /Camera/PAPER_PIN_STP)(type protect))
+    (wire (path F.Cu 250  214630 -90170  215755 -90170  215755 -89965.5  219467 -86253.6
+            226545 -86253.6  227436 -85362.3  227436 -84591.1  228208 -83820
+            234950 -83820  236220 -82550)(net /Camera/PAPER_M0)(type protect))
+    (wire (path B.Cu 250  217170 -90170  218295 -90170  219421 -91295.3  229082 -91295.3
+            229870 -90507.1  229870 -89842.5  232718 -86995  238125 -86995
+            238760 -86360  238760 -85090)(net /Camera/PAPER_PIN_ENABLE)(type protect))
+    (wire (path F.Cu 250  228600 -82550  229815 -81334.9  241741 -81334.9  242570 -82164
+            242570 -85502.3  247238 -90170  252730 -90170)(net /Camera/SCISSOR_PIN_DIR)(type protect))
+    (wire (path B.Cu 250  228600 -85090  229870 -83820  229870 -82123.6  231084 -80909.4
+            241308 -80909.4  242570 -82171.1  242570 -82928.3  243568 -83926.4
+            244375 -83926.4  245110 -84661  245110 -85477.3  248677 -89044.7
+            253301 -89044.7  254145 -89888.6  254145 -90170  255270 -90170)(net /Camera/SCISSOR_PIN_STP)(type protect))
+    (wire (path B.Cu 250  226060 -85090  224864 -83894.2  224864 -82093.9  226963 -79995.2
+            255285 -79995.2  255300 -80010  261481 -80010  270510 -89038.6
+            270510 -90170)(net /Camera/SCISSOR_PIN_ENABLE)(type protect))
+    (wire (path B.Cu 250  231140 -85090  227185 -89044.7  227185 -90170  226060 -90170)(net /Camera/SHUTTER_PIN_DIR)(type protect))
+    (wire (path B.Cu 250  228600 -90170  228600 -89038.6  230644 -86995  231140 -86995
+            232303 -85831.8  232303 -83926.8  232842 -83388.2  233680 -82550)(net /Camera/SHUTTER_PIN_STP)(type protect))
+    (wire (path B.Cu 250  233680 -85090  234844 -83926.4  239267 -83926.4  239924 -84582.7
+            239924 -87668.3  241300 -89044.7  241300 -90170)(net /Camera/SHUTTER_M0)(type protect))
+    (wire (path B.Cu 250  231140 -82550  232304 -81386.5  239247 -81386.5  240030 -82169.2
+            240030 -82928.3  241028 -83926.4  241835 -83926.4  242570 -84661
+            242570 -87774.7  243840 -89044.7  243840 -90170)(net /Camera/SHUTTER_PIN_ENABLE)(type protect))
+    (wire (path B.Cu 250  183350 -112320  182252 -113418  180370 -113418  179694 -112742
+            179694 -109005  188791 -99908.3  188791 -98512.4  210405 -76898.2
+            219012 -76898.2  220980 -74930)(net /Camera/RADIO_SCK)(type protect))
+    (wire (path F.Cu 250  185890 -112320  184798 -111228  184798 -104927  192039 -97685.7)(net /Camera/RADIO_MISO)(type protect))
+    (wire (path B.Cu 250  192039 -97685.7  192039 -95910.3  210480 -77470  220980 -77470)(net /Camera/RADIO_MISO)(type protect))
+    (wire (path B.Cu 250  183350 -109780  184437 -108693  187578 -108693  201565 -94705
+            201643 -94705  202020 -94328  202020 -94250.3  205740 -90530.3
+            205740 -88265  209550 -84455  210820 -84455  213995 -81280  223962 -81280
+            224692 -80549.8  224692 -78642.5  223520 -77470)(net /Camera/RADIO_MOSI)(type protect))
+    (wire (path B.Cu 250  180810 -109780  189216 -101374  189799 -101374  200660 -90512.3
+            200660 -89049.8  210867 -78842.4  222352 -78842.4  223520 -80010)(net /Camera/RADIO_CSN)(type protect))
+    (wire (path B.Cu 250  180810 -112320  182080 -111050  182080 -109511  183348 -108243
+            185522 -108243  203345 -90420  203345 -88875  212210 -80010
+            220980 -80010)(net /Camera/RADIO_CE)(type protect))
+    (wire (path B.Cu 250  128270 -72390  129395 -72390  132408 -75402.5  167429 -75402.5
+            179332 -63500  193383 -63500)(net /Camera/AUX_PIN)(type protect))
+    (wire (path F.Cu 250  220980 -85090  218460 -85090  198322 -64952.6  194835 -64952.6
+            193383 -63500)(net /Camera/AUX_PIN)(type protect))
+    (wire (path F.Cu 250  223520 -82550  222250 -81280  216580 -81280  200875 -65575
+            200875 -63442.2  191781 -54349  173909 -54349  172874 -55384.5
+            172874 -62000.7  167747 -67127.7  165845 -67127.7  164553 -65836.4
+            164553 -58508.3  157480 -51435  153035 -51435  137795 -66675
+            118600 -66675  112885 -72390  111760 -72390)(net /Camera/FLASH_PIN)(type protect))
+    (wire (path F.Cu 250  165100 -83820  168910 -83820  177335 -92244.6  221269 -92244.6
+            225458 -88054.9  234913 -88054.9  237490 -85477.8  237490 -84702
+            238478 -83713.6  240136 -83713.6  241300 -82550)(net /Camera/BATT_PROBE)(type protect))
+    (wire (path F.Cu 250  212090 -75732.8  212490 -75332.8  215497 -75332.8  222250 -68580
+            222250 -60960  223202 -60007.5  231140 -52070)(net /Camera/LORA_M0)(type protect))
+    (wire (path B.Cu 250  212090 -75732.8  199597 -75732.8  191050 -84280)(net /Camera/LORA_M0)(type protect))
+    (wire (path F.Cu 250  228600 -52070  226603 -54067.3  215528 -54067.3  204022 -65573.9)(net /Camera/LORA_AUX)(type protect))
+    (wire (path B.Cu 250  204022 -65573.9  204022 -65761.4  199789 -69993.8  188574 -69993.8
+            180890 -77678  180890 -84280)(net /Camera/LORA_AUX)(type protect))
+    (wire (path F.Cu 250  228600 -49530  229782 -50712  229782 -52568.4  223910 -58440.9
+            221594 -58440.9  218440 -61595  218440 -66900.4  210840 -74500)(net /Camera/LORA_M1)(type protect))
+    (wire (path B.Cu 250  210840 -74500  198290 -74500  188510 -84280)(net /Camera/LORA_M1)(type protect))
+    (wire (path B.Cu 250  236220 -52070  234950 -50799.8  233251 -50799.8  232410 -49958.9
+            232410 -49063.1  231712 -48365.3  228055 -48365.3  227224 -49197
+            227224 -50098.7  226628 -50694.1  201679 -50694.1  194165 -43180
+            193040 -43180)(net /Camera/LED_START_BTN_PIN)(type protect))
+    (wire (path B.Cu 250  189865 -73660  236855 -73660  240665 -69850)(net /Camera/LORA_RXD)(type protect))
+    (wire (path F.Cu 250  241300 -52070  241300 -69215  240665 -69850)(net /Camera/LORA_RXD)(type protect))
+    (wire (path F.Cu 250  185970 -84280  185970 -83202.4  186690 -82482.4  186690 -76835
+            189865 -73660)(net /Camera/LORA_RXD)(type protect))
+    (wire (path B.Cu 250  185970 -84280  187350 -85660  187350 -88780)(net /Camera/LORA_RXD)(type protect))
+    (wire (path F.Cu 250  185890 -109780  199150 -96520  250572 -96520  256423 -90669.7
+            256423 -88420.5  255342 -87339.8  255342 -53268  256540 -52070)(net /Camera/RADIO_INTERRUPT)(type protect))
+    (wire (path F.Cu 250  241300 -49530  240030 -50800  240030 -67945  238760 -69215)(net /Camera/LORA_TXD)(type protect))
+    (wire (path B.Cu 250  238760 -69215  235585 -72390  187960 -72390)(net /Camera/LORA_TXD)(type protect))
+    (wire (path F.Cu 250  187960 -72390  183430 -76920  183430 -84280)(net /Camera/LORA_TXD)(type protect))
+    (wire (path B.Cu 250  183430 -84280  183430 -88230  182880 -88780)(net /Camera/LORA_TXD)(type protect))
+    (wire (path B.Cu 250  154305 -63500  159385 -63500  164306 -58579.3  231408 -58579.3
+            235335 -54651.9  245484 -54651.9  247650 -52486.3  247650 -50800
+            248920 -49530)(net /Camera/ENABLE_MARQUEE)(type protect))
+    (wire (path F.Cu 250  90170 -96520  91295.3 -96520  91295.3 -96238.6  92139.2 -95394.7
+            96724.8 -95394.7  122552 -69567.4  145698 -69567.4  151765 -63500
+            154305 -63500)(net /Camera/ENABLE_MARQUEE)(type protect))
+    (wire (path F.Cu 250  262255 -35560  271145 -35560)(net "Net-(CONN_COUNT1-Pad2)")(type protect))
+    (wire (path F.Cu 2000  74930 -101600  74930 -104600  77165 -106835  77315 -106835
+            81240 -110760  81240 -113760)(net "Net-(CONN_FAN1-Pad2)")(type protect))
+    (wire (path B.Cu 250  245110 -35560  250083 -40533.2  250083 -50906.8  249758 -51231.8
+            248920 -52070)(net /Camera/COUNT_PIN)(type protect))
+    (wire (path F.Cu 250  59055 -46990  59055 -63596.5  81280 -85821.5  81280 -105410)(net /Paper/FAN_PIN)(type protect))
+    (wire (path B.Cu 250  72390 -101600  72390 -102925  71120 -104195  71120 -105410)(net "Net-(Q_AUX2-Pad1)")(type protect))
+    (wire (path F.Cu 250  255270 -35560  256401 -35560  257671 -34290  260985 -34290)(net "Net-(Q_COUNT1-Pad2)")(type protect))
+    (wire (path F.Cu 250  208280 -43180  203200 -43180)(net "Net-(Q_START1-Pad2)")(type protect))
+    (wire (path B.Cu 250  235585 -59055  234860 -59780  233967 -59780  233787 -59600
+            180430 -59600  165100 -74930  144144 -74930  128034 -58820  52470 -58820
+            52070 -58420)(net /BtoA)(type protect))
+    (wire (path F.Cu 250  48895 -80010  50165 -78740  50165 -60325  52070 -58420)(net /BtoA)(type protect))
+    (wire (path F.Cu 250  235585 -59055  238760 -55880  238760 -52070)(net /BtoA)(type protect))
+    (wire (path B.Cu 250  234315 -59055  179705 -59055  164880 -73880  143730 -73880
+            127922 -58072  52795 -58072  52418 -57695  50890 -57695  49530 -59055)(net /AtoB)(type protect))
+    (wire (path F.Cu 250  238760 -49530  237597 -50693.2  237597 -55773.2  234315 -59055)(net /AtoB)(type protect))
+    (wire (path F.Cu 250  48895 -77470  48895 -59690  49530 -59055)(net /AtoB)(type protect))
+    (wire (path F.Cu 250  52803.8 -49906.9  52645.4 -49906.9  50271.4 -47532.9  50271.4 -44154.1
+            47654.4 -41537.1  47060.2 -41537.1)(net /Paper/D49)(type protect))
+    (wire (path B.Cu 250  41275 -38735  44258.1 -38735  47060.2 -41537.1)(net /Paper/D49)(type protect))
+    (wire (path B.Cu 250  66675 -49530  66298.1 -49906.9  52803.8 -49906.9)(net /Paper/D49)(type protect))
+    (wire (path F.Cu 250  38735 -38735  38735 -39910.3)(net /Paper/D48)(type protect))
+    (wire (path F.Cu 250  40189.2 -48231.3  40099.6 -48141.7  40099.6 -41274.9  38735 -39910.3)(net /Paper/D48)(type protect))
+    (wire (path B.Cu 250  50879.4 -49530  41487.9 -49530)(net /Paper/D48)(type protect))
+    (wire (path B.Cu 250  52070 -50720.6  50879.4 -49530)(net /Paper/D48)(type protect))
+    (wire (path B.Cu 250  68024.4 -50720.6  52070 -50720.6)(net /Paper/D48)(type protect))
+    (wire (path B.Cu 250  41487.9 -49530  40189.2 -48231.3)(net /Paper/D48)(type protect))
+    (wire (path B.Cu 250  69215 -49530  68024.4 -50720.6)(net /Paper/D48)(type protect))
+    (wire (path F.Cu 250  36195 -38735  37370.3 -38735)(net /Paper/D47)(type protect))
+    (wire (path F.Cu 250  56305.5 -27122.9  52982.2 -27122.9  48850.4 -31254.7  48850.4 -32867.9
+            44158.6 -37559.7  38178.2 -37559.7  37370.3 -38367.6  37370.3 -38735)(net /Paper/D47)(type protect))
+    (wire (path B.Cu 250  69215 -46990  68051.4 -45826.4  68051.4 -43191.4  64864.6 -40004.6
+            64864.6 -33919.6  58067.9 -27122.9  56305.5 -27122.9)(net /Paper/D47)(type protect))
+    (wire (path B.Cu 250  47625 -43625.9  43909.4 -39910.3)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  51252.2 -48630  48789.6 -48630  47625 -47465.4)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  43909.4 -39910.3  34830.3 -39910.3)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  62487.8 -48637.2  51259.4 -48637.2)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  47625 -47465.4  47625 -43625.9)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  51259.4 -48637.2  51252.2 -48630)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  34505 -39585  33655 -38735)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  34830.3 -39910.3  34505 -39585)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  64135 -46990  62487.8 -48637.2)(net /Paper/D43)(type protect))
+    (wire (path B.Cu 250  32290.3 -39036.3  32290.3 -38735)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  63679.2 -49093.2  51079 -49093.2)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  40739.6 -45613.6  40005 -44879)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  37700.8 -41757.7  35011.7 -41757.7)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  64135 -44450  65316 -45631)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  44198.2 -49080  42651.4 -47533.2)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  51065.8 -49080  44198.2 -49080)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  42651.4 -47533.2  42651.4 -46717.9)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  40005 -44061.9  37700.8 -41757.7)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  32290.3 -38735  31115 -38735)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  51079 -49093.2  51065.8 -49080)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  35011.7 -41757.7  32290.3 -39036.3)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  41547.1 -45613.6  40739.6 -45613.6)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  40005 -44879  40005 -44061.9)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  42651.4 -46717.9  41547.1 -45613.6)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  65316 -47456.4  63679.2 -49093.2)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  65316 -45631  65316 -47456.4)(net /Paper/D42)(type protect))
+    (wire (path B.Cu 250  61595 -46990  60405 -48180)(net /Paper/D41)(type protect))
+    (wire (path B.Cu 250  50271.4 -47495.4  50271.4 -43682)(net /Paper/D41)(type protect))
+    (wire (path B.Cu 250  29750.3 -37559.7  29425 -37885  28575 -38735)(net /Paper/D41)(type protect))
+    (wire (path B.Cu 250  44149.1 -37559.7  29750.3 -37559.7)(net /Paper/D41)(type protect))
+    (wire (path B.Cu 250  60405 -48180  50956 -48180  50271.4 -47495.4)(net /Paper/D41)(type protect))
+    (wire (path B.Cu 250  50271.4 -43682  44149.1 -37559.7)(net /Paper/D41)(type protect))
+    (wire (path B.Cu 250  58833.2 -30524.6  31117.8 -30524.6  26035 -35607.3)(net /Paper/D40)(type protect))
+    (wire (path B.Cu 250  61595 -44450  59010.4 -41865.4)(net /Paper/D40)(type protect))
+    (wire (path B.Cu 250  59010.4 -30701.8  58833.2 -30524.6)(net /Paper/D40)(type protect))
+    (wire (path B.Cu 250  26035 -35607.3  26035 -38735)(net /Paper/D40)(type protect))
+    (wire (path B.Cu 250  59010.4 -41865.4  59010.4 -30701.8)(net /Paper/D40)(type protect))
+    (wire (path B.Cu 250  59055 -44450  60218.6 -45613.6)(net /Paper/D38)(type protect))
+    (wire (path B.Cu 250  23495 -37532.9  23495 -38735)(net /Paper/D38)(type protect))
+    (wire (path B.Cu 250  62130.4 -45613.6  62824.7 -44919.3  62824.7 -32516.6)(net /Paper/D38)(type protect))
+    (wire (path B.Cu 250  23495 -37510.9  23495 -37532.9)(net /Paper/D38)(type protect))
+    (wire (path B.Cu 250  60218.6 -45613.6  62130.4 -45613.6)(net /Paper/D38)(type protect))
+    (wire (path B.Cu 250  30945.8 -30060.1  23495 -37510.9)(net /Paper/D38)(type protect))
+    (wire (path B.Cu 250  60368.2 -30060.1  30945.8 -30060.1)(net /Paper/D38)(type protect))
+    (wire (path B.Cu 250  62824.7 -32516.6  60368.2 -30060.1)(net /Paper/D38)(type protect))
+    (wire (path B.Cu 250  36195 -46990  34925 -45720  27940 -45720  20955 -38735)(net /Paper/A5)(type protect))
+    (wire (path B.Cu 250  18415 -38735  19590.3 -38735)(net /Paper/A4)(type protect))
+    (wire (path B.Cu 250  36195 -44450  31655.3 -39910.3  22999.8 -39910.3  22203.8 -39114.3
+            22203.8 -38308.2  21455.3 -37559.7  20398.2 -37559.7  19590.3 -38367.6
+            19590.3 -38735)(net /Paper/A4)(type protect))
+    (via "Via[0-1]_800:400_um"  248285 -46990 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  248285 -41910 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  85725 -53340 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  85090 -44450 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  138430 -43180 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  138430 -54610 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  177165 -60325 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  117475 -36830 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  111125 -33655 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  161290 -33020 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  177800 -45085 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  168910 -36195 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  165100 -41275 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  175260 -48260 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  193040 -47625 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  178435 -50165 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  198755 -55245 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  204470 -55245 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  191770 -66675 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  198755 -68580 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  187960 -65405 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  171450 -74295 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  211455 -82550 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  217805 -78105 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  193675 -95885 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  187960 -106680 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  201295 -93980 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  187325 -104775 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  198120 -94615 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  202565 -88265 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  210185 -80645 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  218440 -75565 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  205740 -77470 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  198755 -83185 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  191135 -88900 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  247015 -64770 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  227330 -64770 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  252095 -46990 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  254000 -34925 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  245110 -34290 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  252095 -39370 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  191770 -61595 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  16510 -118110 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  67310 -118745 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  97790 -118745 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  264160 -116840 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  271780 -108585 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  271780 -116840 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  219710 -88265 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  221615 -60325 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  218440 -69850 (net GND)(type protect))
     (via "Via[0-1]_800:400_um"  230505 -56515 (net GND)(type protect))
     (via "Via[0-1]_800:400_um"  218440 -56515 (net GND)(type protect))
     (via "Via[0-1]_800:400_um"  213360 -60325 (net GND)(type protect))
@@ -2310,25 +2518,50 @@
     (via "Via[0-1]_800:400_um"  219075 -27305 (net GND)(type protect))
     (via "Via[0-1]_800:400_um"  207645 -26670 (net GND)(type protect))
     (via "Via[0-1]_800:400_um"  233680 -44450 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  83185 -110490 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  53975 -32385 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  53975 -41275 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  60960 -34290 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  60325 -39370 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  44450 -32385 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  40005 -35560 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  30480 -35560 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  55880 -53340 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  61595 -53340 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  47625 -36830 (net GND)(type protect))
+    (via "Via[0-1]_800:400_um"  41910 -41910 (net GND)(type protect))
     (via "Via[0-1]_800:400_um"  202565 -66040 (net +5V)(type protect))
     (via "Via[0-1]_800:400_um"  257810 -93345 (net +5V)(type protect))
     (via "Via[0-1]_800:400_um"  231140 -94615 (net +5V)(type protect))
     (via "Via[0-1]_800:400_um"  223520 -38100 (net +5V)(type protect))
     (via "Via[0-1]_800:400_um"  154940 -50165 (net +5V)(type protect))
     (via "Via[0-1]_800:400_um"  106680 -88900 (net +5V)(type protect))
+    (via "Via[0-1]_800:400_um"  67945 -36195 (net TEMP_PIN)(type protect))
+    (via "Via[0-1]_800:400_um"  78740 -34925 (net TEMP_PIN)(type protect))
     (via "Via[0-1]_800:400_um"  229235 -34925 (net /Camera/SCL_PIN)(type protect))
     (via "Via[0-1]_800:400_um"  231140 -55245 (net /Camera/SCL_PIN)(type protect))
     (via "Via[0-1]_800:400_um"  218440 -55245 (net /Camera/SCL_PIN)(type protect))
     (via "Via[0-1]_800:400_um"  232410 -34290 (net /Camera/SDA_PIN)(type protect))
     (via "Via[0-1]_800:400_um"  217805 -57785 (net /Camera/SDA_PIN)(type protect))
     (via "Via[0-1]_800:400_um"  232410 -56515 (net /Camera/SDA_PIN)(type protect))
+    (via "Via[0-1]_800:400_um"  241253 -39227.9 (net /Camera/LED_MATRIX_SDI_PIN)(type protect))
+    (via "Via[0-1]_800:400_um"  192039 -97685.7 (net /Camera/RADIO_MISO)(type protect))
+    (via "Via[0-1]_800:400_um"  193383 -63500 (net /Camera/AUX_PIN)(type protect))
+    (via "Via[0-1]_800:400_um"  212090 -75732.8 (net /Camera/LORA_M0)(type protect))
+    (via "Via[0-1]_800:400_um"  204022 -65573.9 (net /Camera/LORA_AUX)(type protect))
+    (via "Via[0-1]_800:400_um"  210840 -74500 (net /Camera/LORA_M1)(type protect))
+    (via "Via[0-1]_800:400_um"  240665 -69850 (net /Camera/LORA_RXD)(type protect))
     (via "Via[0-1]_800:400_um"  189865 -73660 (net /Camera/LORA_RXD)(type protect))
-    (via "Via[0-1]_800:400_um"  240030 -69215 (net /Camera/LORA_RXD)(type protect))
     (via "Via[0-1]_800:400_um"  238760 -69215 (net /Camera/LORA_TXD)(type protect))
     (via "Via[0-1]_800:400_um"  187960 -72390 (net /Camera/LORA_TXD)(type protect))
-    (via "Via[0-1]_800:400_um"  50165 -60325 (net /BtoA)(type protect))
+    (via "Via[0-1]_800:400_um"  154305 -63500 (net /Camera/ENABLE_MARQUEE)(type protect))
+    (via "Via[0-1]_800:400_um"  52070 -58420 (net /BtoA)(type protect))
     (via "Via[0-1]_800:400_um"  235585 -59055 (net /BtoA)(type protect))
     (via "Via[0-1]_800:400_um"  234315 -59055 (net /AtoB)(type protect))
     (via "Via[0-1]_800:400_um"  49530 -59055 (net /AtoB)(type protect))
+    (via "Via[0-1]_800:400_um"  47060.2 -41537.1 (net /Paper/D49)(type protect))
+    (via "Via[0-1]_800:400_um"  52803.8 -49906.9 (net /Paper/D49)(type protect))
+    (via "Via[0-1]_800:400_um"  40189.2 -48231.3 (net /Paper/D48)(type protect))
+    (via "Via[0-1]_800:400_um"  56305.5 -27122.9 (net /Paper/D47)(type protect))
   )
 )

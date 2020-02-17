@@ -203,4 +203,8 @@ F 3 "~" H 1975 6575 50  0001 C CNN
 	1    1975 6575
 	1    0    0    -1  
 $EndComp
+Text Label 5550 3750 0    50   ~ 0
+AtoB
+Text Label 5550 3875 0    50   ~ 0
+BtoA
 $EndSCHEMATC
