@@ -97,6 +97,7 @@ void takeShot() {
       shutter.run();
     }
   }
+  clearLedMatrix();
   debug("takeShot", String("end"));
 }
 

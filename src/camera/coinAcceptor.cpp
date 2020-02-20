@@ -34,10 +34,9 @@ Output<LED_START_BTN_PIN> startLED;
 bool bCoinEnabled = false;
 bool bStartLedOn = false;
 unsigned long oldInterruptMillis;
-bool bRefreshSeg = false;
+bool bRefreshSeg = true;
 
 boolean manageCoinsAndStart(byte mode){
-  debug("manageCoinsAndStart-mode", mode);
   boolean bStart = false;
   refreshCoinSegment(mode);
   
@@ -104,13 +103,13 @@ void coinSegmentFull(){
 void refreshCoinSegment(byte mode){
   if(bRefreshSeg){
     if(mode == MODE_PAYING){
-        setCoinDigit(PRICE_CTS - cents);
-      } else if (mode == MODE_FREE_PRICE){
-        setCoinDigit(cents);
-      } else {
-        coinSegment.setSegments(SEG_FREE);
-      }
-      bRefreshSeg = false;
+      setCoinDigit(PRICE_CTS - cents);
+    } else if (mode == MODE_FREE_PRICE){
+      setCoinDigit(cents);
+    } else {
+      coinSegment.setSegments(SEG_FREE);
+    }
+    bRefreshSeg = false;
   }
 }
 
@@ -153,12 +152,12 @@ void enableCoinAcceptor(byte mode){
   if(mode != MODE_FREE){
     pinMode(COIN_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(COIN_PIN), coinInterrupt, FALLING);
-    bRefreshSeg = true;
-    refreshCoinSegment(mode);
     enableCoin.write(HIGH);
     bCoinEnabled = true;
     cents = 0;
   }
+  bRefreshSeg = true;
+  refreshCoinSegment(mode);
 }
 
 void startLedOn() {

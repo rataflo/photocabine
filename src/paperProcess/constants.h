@@ -9,17 +9,17 @@
 #define SPIDER_UPDOWN_PIN_ENDSTOP_UP 12
 #define SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM 4
 #define SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE 45
-#define SPIDER_UPDOWN_MAX_SPEED 95
-#define SPIDER_UPDOWN_LOW_SPEED 95
+#define SPIDER_UPDOWN_MAX_SPEED 255
+#define SPIDER_UPDOWN_LOW_SPEED 95 //TODO: check other speed for sound level.
 
 #define SPIDER_ROTATE_PIN_STP 23
 #define SPIDER_ROTATE_PIN_DIR 22
-#define SPIDER_ROTATE_NBSTEP 450 // Number of steps to mode to one tank
+#define SPIDER_ROTATE_NBSTEP 450 // Number of steps to move to one tank
 #define SPIDER_ROTATE_ENDSTOP1_PIN 47 // Endstop in front of paper exit. Pair
 #define SPIDER_ROTATE_ENDSTOP2_PIN 46 // Endstop 1/14 degrees right from endstop 1. Impair
 #define SPIDER_ROTATE_SPEED 500
 #define SPIDER_ROTATE_ACCEL 100
-#define SPIDER_ROTATE_PIN_ENABLE 25
+#define SPIDER_ROTATE_PIN_ENABLE 25 // TODO: check if rigth pin.
 
 
 #define SERVO_ARM 6
@@ -39,7 +39,7 @@
 #define LEDSTRIP_PIN 9 // TODO : Change pin.
 #define LEDSTRIP_NB 84
 #define TANK_TIME 18000 // Default time in each tank. Temperature between 32°C and 40°C.
-#define DELIVERY_TIME 8000 // Time to exit paper
+#define DELIVERY_TIME 5000 // Time to exit paper
 
 #define TEMP_PIN 8
 #define ORDER_INTERRUPT_PIN 2
@@ -54,7 +54,6 @@
 #define EEPROM_ADRESS 0 // Lot of update/read so change adress from time to time to avoid corrupted memory.
 struct storage {
   byte checkCode = 222;
-  bool isRunning = false; // Process was working before shutdown ?
   int tankTime = TANK_TIME;
   byte slots[14];
 };

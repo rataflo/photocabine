@@ -1,6 +1,6 @@
 #include "tests.h"
 
-void testMode(){
+void testMode(struct storage *params){
   Serial.println("testMode - begin");
   unsigned long lastMillis = 0;
   unsigned long currentMillis = 0;
@@ -40,16 +40,15 @@ void testMode(){
         testOrder = NO_ORDER;
         break;
       case ORDER_ROTATESPIDER: // Rotate spider.
-        byte fakeSlot[14];
-        rotateSpider(fakeSlot);
+        rotateSpider(params);
         testOrder = NO_ORDER;
         break;
       case ORDER_OPENARM: // Open arm
-        openArm();
+        openArm(params);
         testOrder = NO_ORDER;
         break;
       case ORDER_CLOSEARM: // Close arm
-        closeArm();
+        closeArm(params);
         testOrder = NO_ORDER;
         break;
       case ORDER_IDLEARM: // Put the arm on idle pos.
@@ -57,8 +56,7 @@ void testMode(){
         testOrder = NO_ORDER;
         break;
       case ORDER_DELIVERYRUN: // Run the delivery indefinitely.
-        byte slotDelivery[14];
-        runDelivery(slotDelivery);
+        runDelivery(params);
         testOrder = NO_ORDER;
         break;
       case ORDER_LEDSTRIP: // flash led strip.

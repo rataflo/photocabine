@@ -5,18 +5,14 @@ bool deliveryRunning = false;
 
 void setupDelivery(){
   pinMode(SPIDER_EXIT_PIN_ENABLE, OUTPUT);
-}
-
-void initDelivery(){
-  
   digitalWrite(SPIDER_EXIT_PIN_ENABLE, HIGH);
   stepperExit.setMaxSpeed(SPIDER_ROTATE_SPEED);
   stepperExit.setAcceleration(SPIDER_ROTATE_ACCEL);
 }
 
-void runDelivery(byte *slots){
+void runDelivery(struct storage *params){
   downToMiddleSpider();
-  blindRotate(slots);
+  blindRotate(params);
   unsigned long startMillis = millis();
   unsigned long currentMillis = startMillis;
   
@@ -36,6 +32,9 @@ void runDelivery(byte *slots){
   stepperExit.run();
   digitalWrite(SPIDER_EXIT_PIN_ENABLE, HIGH);
   deliveryRunning = false;
+
+  params->slots[13] = SLOT_OPEN;
+  EEPROM.writeBlock(EEPROM_ADRESS, *params);
 }
 
 bool isDeliveryRunning(){

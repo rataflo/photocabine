@@ -10,7 +10,7 @@
 #include "spider.h"
 #include "paperDelivery.h"
 
-void testMode();
+void testMode(struct storage *params);
 void sendAnswer(boolean answer);
 
 void debug(String functionName, String varValue);

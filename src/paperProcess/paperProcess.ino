@@ -9,8 +9,6 @@
  * Communicate with camera by Serial2 (cf orders.h)
  */
 #include <Arduino.h>
-#include <EEPROMex.h>
-#include <EEPROMVar.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include "constants.h"
@@ -20,14 +18,13 @@
 #include "tests.h"
 
 /*
- * GLOBAL VARIABLES
+ * WORK VARIABLES
  */ 
-storage parametres;
-byte slots[14]; // State of each arm (closed, open, open with paper);
+storage params;
 char order = NO_ORDER; // 0 = no order.
 bool bWait = true; // true if we freeze movement to allow operation like waiting for paper from camera or we have nothing to do.
-//bool bCloseArm = false; 
 float tempC = 0;
+unsigned long lastCallTemp = 0;
 
 // Temperature probe
 OneWire oneWire(TEMP_PIN); 
@@ -47,37 +44,51 @@ void setup() {
   tempProbe.begin();
   tempProbe.getAddress(tempProbAdress, 0);
   tempProbe.setResolution(tempProbAdress, 9);
-
-  initSlots();
-
-  // load params from eeprom
-  EEPROM.readBlock(EEPROM_ADRESS, parametres);
-  memcpy(slots, parametres.slots, sizeof(parametres.slots));
-
-  // Check verif code, if not correct init eeprom.
-  if(parametres.checkCode != 222){
-    parametres.checkCode = 222;
-    parametres.isRunning = false;
-    parametres.tankTime = TANK_TIME;
-    memcpy(parametres.slots, slots, sizeof(slots));
-    EEPROM.writeBlock(EEPROM_ADRESS, parametres);
-  }
+  getTemperature();
   
   setupSpider();
   setupDelivery();
-
-  // If previously running we enter test mode to avoid any problem.
-  if(parametres.isRunning){
-    testMode();
-    parametres.isRunning = false;
-    EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+  
+  // load params from eeprom
+  EEPROM.readBlock(EEPROM_ADRESS, params);
+  Serial.print("checkCode=");Serial.print("=");Serial.println(params.checkCode);
+  // Check verif code, if not correct init eeprom.
+  if(params.checkCode != 222){
+    params.checkCode = 222;
+    params.tankTime = TANK_TIME;
+    initSlots(&params);
   }
-
-  initSpider(slots);
+  debug("checkCode", params.checkCode);
+  debug("tankTime", String(params.tankTime));
+  for(int i = 0; i <14; i++){
+    debug("slot i", params.slots[i]);
+  }
+  
+  // if paper on slot or arm opened, finalize process.
+  /*for(int i = 0; i <14; i++){
+    if(params.slots[i] == SLOT_PAPER){
+      bWait = false;
+      upSpider(SPIDER_UPDOWN_LOW_SPEED);
+      while(!bWait){
+        process();
+      }
+    }
+    if(params.slots[13] == SLOT_OPEN){
+      rotateSpider(&params);
+      closeArm(&params);
+    }
+  }*/
+  initSlots(&params);
+  initSpider(&params);
 }
 
 void loop() {
-  getTemperature();
+  // Check bath temp every 10sec.
+  unsigned long currentMillis = millis();
+  if(currentMillis - lastCallTemp > 10000){
+    getTemperature();
+    lastCallTemp = currentMillis;
+  }
   checkOrder();
   process();
 }
@@ -91,7 +102,7 @@ void checkOrder(){
   
   switch(order){
     case ENTER_TEST:
-      testMode();
+      testMode(&params);
       order = NO_ORDER;
       break;
 
@@ -103,7 +114,7 @@ void checkOrder(){
     case ORDER_NB_FREE_SLOT:{ // Get number of freee slot.
       byte nbFreeSlot = 0;
       for(byte i = 0; i < 14; i++){
-        if(slots[i] == SLOT_CLOSED || slots[i] == SLOT_OPEN){
+        if(params.slots[i] == SLOT_CLOSED || params.slots[i] == SLOT_OPEN){
           nbFreeSlot++;
         }
       }
@@ -112,8 +123,8 @@ void checkOrder(){
       break;
     }
     case ORDER_SET_TANK_TIME:
-      parametres.tankTime = Serial2.parseInt();
-      EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+      params.tankTime = Serial2.parseInt();
+      EEPROM.updateBlock(EEPROM_ADRESS, params);
       order = NO_ORDER;
       break;
       
@@ -128,33 +139,50 @@ void checkOrder(){
     switch(order){
       case ORDER_NEW_SLOT:{ // Need a place for paper.
         // Arm ready on slot 0.
-        debug("slots[0]", String(slots[0]));
-        if(slots[0] == SLOT_OPEN){
+        debug("slots[0]", String(params.slots[0]));
+        if(params.slots[0] == SLOT_OPEN){
+          digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
+          respondToOrder(ORDER_NEW_SLOT_READY);
+          bWait = true;
+          order = NO_ORDER; 
+          
+        } else if(params.slots[0] == SLOT_CLOSED){ // Arm not opened
+          openArm(&params);
           digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
           respondToOrder(ORDER_NEW_SLOT_READY);
           bWait = true;
           
-        } else if(slots[0] == SLOT_CLOSED){ // Arm not opened
-          openArm();
-          slots[0] = SLOT_OPEN;
-          digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
-          respondToOrder(ORDER_NEW_SLOT_READY);
-          bWait = true;
-          
-        } else if(slots[0] == SLOT_NO_ARM){ // no arm
+        } else if(params.slots[0] == SLOT_NO_ARM){ // no arm
           bWait = false;
         }
-        order = NO_ORDER; 
         break;
       }
       case ORDER_PAPER_READY:{ // Paper delivered.
         digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
         respondToOrder(RESPONSE_OK);
-        slots[0] = SLOT_PAPER;
+        params.slots[0] = SLOT_PAPER;
+        EEPROM.updateBlock(EEPROM_ADRESS, params);
         bWait = false;
-        parametres.isRunning = true;
-        EEPROM.updateBlock(EEPROM_ADRESS, parametres);
-        // TODO: calculate tank time from temperature.
+        
+        // Calculate tank time from temperature.
+        if(params.tankTime == 0){// 0 = auto tank time.
+          if(tempC != 0 && tempC < 50){ //In cas temp probe not working
+            // Test: increment by 2sec/5°C
+            if(tempC <= 20){
+              params.tankTime = 24000;
+            } else if(tempC > 20 && tempC <= 25){
+              params.tankTime = 22000;
+            } else if(tempC > 25 && tempC <= 30){
+              params.tankTime = 20000;
+            } else if(tempC > 30 && tempC <= 35){
+              params.tankTime = 18000;
+            } else{
+              params.tankTime = 16000;
+            }
+          } else{
+            params.tankTime = TANK_TIME;
+          }
+        }
         order = NO_ORDER;
         break;
       }
@@ -169,66 +197,63 @@ void checkOrder(){
 
 void process(){
   if(!bWait){
+    debug("process", String("begin"));
     // Check if a slot contain paper to dip in tank.
     boolean bProcess = false;
     for(byte i = 0; i < 13; i++){
-      if(slots[i] == SLOT_PAPER){
+      if(params.slots[i] == SLOT_PAPER){
         bProcess = true;
         break;
       }
     }
-
+    debug("bProcess", bProcess);
     //If arm on slot 0 need to be closed.
-    if(slots[0] == SLOT_OPEN){
-      closeArm();
-    } else if(!bProcess && (slots[13] == SLOT_OPEN || slots[13] == SLOT_CLOSED)){ // Arm on exit and no other paper to process.
-      rotateSpider(slots);
+    if(params.slots[0] == SLOT_OPEN){
+      debug("closeArm", String("slot[0]"));
+      closeArm(&params);
+    } else if(!bProcess && (params.slots[13] == SLOT_OPEN || params.slots[13] == SLOT_CLOSED)){ // Arm on exit and no other paper to process.
+      debug("rotateSpider", String(params.slots[13]));
+      rotateSpider(&params);
     }
 
     if(bProcess){
-      //Calculate tank time.
-
       downSpider();
           
       // Agitate.
       unsigned long startMillis = millis();
       unsigned long currentMillis = startMillis;
-      while(currentMillis - startMillis < parametres.tankTime){
+      while(currentMillis - startMillis < params.tankTime){
+        // TODO: do this every 2 second.
         agitate();
         currentMillis = millis();
       }
       
-      upSpider();
-    }
-
-    //Last stage, delivery before rotate.
-    if(slots[12] == SLOT_PAPER){
-      runDelivery(slots);
-      slots[13] = SLOT_OPEN;
-    } else {
-      rotateSpider(slots);
-    }
-
-    // If nothing to do we stop.
-    bWait = true;
-    for(byte i = 0; i < 13; i++){
-      if(slots[i] == SLOT_PAPER || slots[i] == SLOT_OPEN){
-        bWait = false;
-        break;
-      }
-    }
-
-    if(!bWait){
-      parametres.isRunning = false;
-      EEPROM.updateBlock(EEPROM_ADRESS, parametres);
-    }
+      upSpider(SPIDER_UPDOWN_MAX_SPEED);
     
+
+      //Last stage, delivery before rotate.
+      if(params.slots[12] == SLOT_PAPER){
+        debug("runDelivery", "");
+        runDelivery(&params);
+      } else {
+        rotateSpider(&params);
+        debug("rotateSpider", "");
+      }
+  
+      // If nothing to do we stop the process.
+      bWait = true;
+      for(byte i = 0; i < 13; i++){
+        if(params.slots[i] == SLOT_PAPER){
+          bWait = false;
+          break;
+        }
+      } 
+    }
+    debug("bWait", bWait);
   }
 }
 
 void respondToOrder(char answer){
-  /* UNCOMMENT Serial1.print(answer);
-  Serial1.flush();*/
   Serial2.print(answer);
   Serial2.flush();
   order = NO_ORDER;
@@ -236,8 +261,6 @@ void respondToOrder(char answer){
 
 void respondToOrder(float answer){
   debug("respondToOrder", String(answer, 1));
-  /* UNCOMMENT Serial1.print(answer);
-  Serial1.flush();*/
   Serial2.println(answer, 1);
   Serial2.flush();
   order = NO_ORDER;
@@ -271,23 +294,5 @@ void getTemperature(){
 }
 
 void calcTankTime(){
-  parametres.tankTime = tempC;
-}
-
-void initSlots(){
-  // Init the slots
-  slots[0] = SLOT_CLOSED; 
-  slots[1] = SLOT_NO_ARM; 
-  slots[2] = SLOT_CLOSED; 
-  slots[3] = SLOT_NO_ARM; 
-  slots[4] = SLOT_CLOSED; 
-  slots[5] = SLOT_NO_ARM; 
-  slots[6] = SLOT_CLOSED; 
-  slots[7] = SLOT_NO_ARM; 
-  slots[8] = SLOT_CLOSED; 
-  slots[9] = SLOT_NO_ARM; 
-  slots[10] = SLOT_CLOSED; 
-  slots[11] = SLOT_NO_ARM; 
-  slots[12] = SLOT_CLOSED;
-  slots[13] = SLOT_NO_ARM;
+  params.tankTime = tempC;
 }

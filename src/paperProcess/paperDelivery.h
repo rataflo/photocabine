@@ -8,7 +8,7 @@
 #include "spider.h"
 
 void setupDelivery();
-void runDelivery(byte *slots);
+void runDelivery(struct storage *params);
 bool isDeliveryRunning();
 
 #endif

@@ -77,7 +77,6 @@ struct storage {
   byte checkCode = 0;
   int totStrip = 0;
   byte mode = 0;// O = paying, 1 = Free price, 2 = Free
-  bool isRunning = false; // Camera was working before shutdown ?
   float totMoney = 0;
   int price_cts = 200;
   int free_price_cts = 100;

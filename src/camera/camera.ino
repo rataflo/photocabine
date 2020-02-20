@@ -27,11 +27,12 @@ int freeSlot = 7;
 storage parametres;
 RF24 radio(RADIO_CE, RADIO_CSN); // CE, CSN
 volatile char order = NO_ORDER;
-float bathTemp = 10;
+float bathTemp = 0;
 float lux = 0;
 int tankTime = 18000;
 bool ceilingOn = false; // Ceiling ligth switched on or not.
 unsigned long lastCallTemp = 0;
+unsigned long lastCallLux = 0;
 char statusSpider = ' ';
 
 Output<ORDER_INTERRUPT_PIN> orderPause;
@@ -75,7 +76,7 @@ void setup() {
   radio.setRetries(250, 2);
   radio.maskIRQ(1,1,0);
   radio.startListening();
-  
+
   EEPROM.readBlock(EEPROM_ADRESS, parametres);
   
   // Check verif code, if not correct init eeprom.
@@ -83,22 +84,13 @@ void setup() {
     parametres.checkCode = 123;
     parametres.totMoney = 0;
     parametres.totStrip = 0;
-    parametres.isRunning = false;
     parametres.mode = MODE_PAYING;
     parametres.price_cts = 200;
     parametres.free_price_cts = 100;
     EEPROM.writeBlock(EEPROM_ADRESS, parametres);
   }
+  debug("parametres.mode", parametres.mode);
   parametres.mode = MODE_FREE; // TODO: remove after tests
-
-  // If dev part was previously running we start in test mode to force pause and avoid any problem.
-  sendOrderAndWait(ORDER_GET_STATUS);
-  bool bTest = (parametres.isRunning || statusSpider == RESPONSE_STATUS_TEST) ? true : false;
-  if(bTest){
-    testMode(radio);
-    parametres.isRunning = false;
-    EEPROM.updateBlock(EEPROM_ADRESS, parametres);
-  }
   
   attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), radioInterrupt, LOW);
   
@@ -106,11 +98,18 @@ void setup() {
 }
 
 void loop() {
-  checkLuminosity();
-  debug("loop", order);
+  unsigned long currentMillis = millis();
+
+  // Check luminosity every 10sec
+  if(currentMillis - lastCallLux > 10000){
+    lastCallLux = currentMillis;
+    checkLuminosity();
+  }
+  
   if(order == ENTER_TEST){
     detachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT));
     testMode(radio);
+    statusSpider = RESPONSE_STATUS_RUNNING;
     order = NO_ORDER;
     attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), radioInterrupt, LOW);
   } 
@@ -118,7 +117,6 @@ void loop() {
   // If coin acceptor OK and clic start button.
   if(stepTakeShot == 0 && manageCoinsAndStart(parametres.mode)) {
     parametres.totStrip += 1;
-    parametres.isRunning = true;
     EEPROM.updateBlock(EEPROM_ADRESS, parametres);
     stepTakeShot = 1;
   }
@@ -127,7 +125,6 @@ void loop() {
     manageStepsTakeShot(); 
   } else{
     // When nothing to do ask for dev parameters every 10 sec.
-    unsigned long currentMillis = millis();
     if(currentMillis - lastCallTemp > 10000){
       lastCallTemp = currentMillis;
       sendOrderAndWait(ORDER_TEMP);
@@ -174,7 +171,7 @@ void manageStepsTakeShot(){
       break;
       
     case 10: // cut paper and zou!
-      //closeScissor(); TODO: remove me!
+      closeScissor();
       sendOrderAndWait(ORDER_PAPER_READY);
       break;
       
@@ -182,8 +179,6 @@ void manageStepsTakeShot(){
       movePaperFirstShot();
       break;
     case 13: // check for free slot.
-      parametres.isRunning = false;
-      EEPROM.updateBlock(EEPROM_ADRESS, parametres);
       sendOrderAndWait(ORDER_NB_FREE_SLOT);
       if(freeSlot == 0){
         coinSegmentFull();
@@ -208,6 +203,7 @@ boolean sendOrderAndWait(char sendOrder){
     currentMillis = millis();
     // Send order to dev part and if no response for 10 second we send it again.
     if(lastMillis == 0 || currentMillis - lastMillis > 10000){
+      debug("re order:", sendOrder);
       Serial2.print(sendOrder);
       Serial2.flush();
       lastMillis = currentMillis;
@@ -231,12 +227,10 @@ boolean sendOrderAndWait(char sendOrder){
         }
         case ORDER_SPIDER_READY:{ // Spider is ready ?
           char response = Serial2.read();
-          bOK = response == RESPONSE_OK;
+          bOK = response == RESPONSE_OK || response == RESPONSE_STATUS_TEST;
           // In case spider is in test mode camera will follow into test
-          if(response == RESPONSE_STATUS_TEST){
-            order = ENTER_TEST;
-          }
-          debug("spider_ready:", response);
+          order = response == RESPONSE_STATUS_TEST ? ENTER_TEST : NO_ORDER;
+          debug("spider_ready", response);
           break;
         }
         case ORDER_TEMP:{ // Bath temp?
@@ -358,6 +352,7 @@ void radioInterrupt(){
                 byte state = RESPONSE_STATUS_PAUSE;
                 radio.stopListening();
                 radio.write(&state, sizeof(state));
+                radio.flush_rx();
                 radio.startListening();
                 order = ORDER_PAUSE;
                 
@@ -375,6 +370,7 @@ void radioInterrupt(){
         case ORDER_TOTCENT:
           radio.stopListening();
           radio.write(&parametres.totMoney, sizeof(parametres.totMoney));
+          radio.flush_rx();
           radio.startListening();
           order = NO_ORDER;
           break;
@@ -382,21 +378,24 @@ void radioInterrupt(){
         case ORDER_NBSTRIP:
           radio.stopListening();
           radio.write(&parametres.totStrip, sizeof(parametres.totStrip));
+          radio.flush_rx();
           radio.startListening();
           order = NO_ORDER;
           break;
 
         case ORDER_TEMP:
-          debug("bathTemp:", bathTemp);
           radio.stopListening();
           radio.write(&bathTemp, sizeof(bathTemp));
+          radio.flush_rx();
           radio.startListening();
+          debug("bathTemp", bathTemp);
           order = NO_ORDER;
           break;
 
         case ORDER_MODE:
           radio.stopListening();
           radio.write(&parametres.mode, sizeof(parametres.mode));
+          radio.flush_rx();
           radio.startListening();
           order = NO_ORDER;
           break;
@@ -405,6 +404,7 @@ void radioInterrupt(){
           byte state = statusSpider == RESPONSE_STATUS_TEST ? RESPONSE_STATUS_TEST : RESPONSE_STATUS_RUNNING;
           radio.stopListening();
           radio.write(&state, sizeof(state));
+          radio.flush_rx();
           radio.startListening();
           order = state == RESPONSE_STATUS_TEST ? ENTER_TEST : NO_ORDER;
           break;
@@ -422,6 +422,7 @@ void radioInterrupt(){
         case ORDER_GET_PRICE:
           radio.stopListening();
           radio.write(&parametres.price_cts, sizeof(parametres.price_cts));
+          radio.flush_rx();
           radio.startListening();
           order = NO_ORDER;
           break;
@@ -438,6 +439,7 @@ void radioInterrupt(){
         case ORDER_GET_FREE_PRICE:
           radio.stopListening();
           radio.write(&parametres.free_price_cts, sizeof(parametres.free_price_cts));
+          radio.flush_rx();
           radio.startListening();
           order = NO_ORDER;
           break;
@@ -454,6 +456,7 @@ void radioInterrupt(){
         case ORDER_GET_TANK_TIME:
           radio.stopListening();
           radio.write(&parametres.tank_time, sizeof(parametres.tank_time));
+          radio.flush_rx();
           radio.startListening();
           order = NO_ORDER;
           break;

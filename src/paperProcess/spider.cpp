@@ -18,22 +18,21 @@ void setupSpider(){
 
   pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM, INPUT_PULLUP);
   pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_UP, INPUT_PULLUP);
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 }
 
-void initSpider(byte *slots){
-  // TODO: Check slots state maybre?
-  
+void initSpider(struct storage *params){
   ledstrip.begin(); 
-  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   for(int i=0;i<LEDSTRIP_NB;i++){
     ledstrip.setPixelColor(i, 0, 0, 0); 
   }
   ledstrip.show();
   
   //initSpiderBottom();
+  // TODO: descendre un petit peu avant de bouger le servo.
   initServoArm();
   initSpiderUp();
-  initRotate(slots);
+  initRotate(params);
 }
 
 void downSpider(){
@@ -55,7 +54,7 @@ void downSpider(){
   // and slow down after 4 seconds.
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
-    if(currentMillis - startMoove > 4000){
+    if(currentMillis - startMoove > 4200){
       currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed); // mid speed
     }
@@ -86,15 +85,15 @@ void downABitSpider(){
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 }
 
-void upSpider(){
+void upSpider(byte speedPwm){
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   // we start fast.
   unsigned long startMoove = millis();
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, HIGH);
-    for(int i = SPIDER_UPDOWN_LOW_SPEED; i <= SPIDER_UPDOWN_MAX_SPEED; i++){
-      analogWrite(SPIDER_UPDOWN_PIN_PWM, i); //max speed.
+    for(int i = SPIDER_UPDOWN_LOW_SPEED; i <= speedPwm; i++){
+      analogWrite(SPIDER_UPDOWN_PIN_PWM, i);
       currentSpeed = i;
       delay(5);
     }
@@ -102,7 +101,7 @@ void upSpider(){
   // and slow down after 4 seconds.
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
-    if(currentMillis - startMoove > 4000){
+    if(currentMillis - startMoove > 4200){
       currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
     }
@@ -145,14 +144,14 @@ void downToMiddleSpider(){
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 }
 
-void rotateSpider(byte *slots){
+void rotateSpider(struct storage *params){
   Serial.println("rotateSpider-begin");
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   spiderRotate.setCurrentPosition(0);
   spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
   spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
   int delta = SPIDER_ROTATE_NBSTEP;
-  delta += 20;
+  delta += 200;
   spiderRotate.moveTo(delta);
 
   boolean bEndStop = false;
@@ -166,13 +165,13 @@ void rotateSpider(byte *slots){
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   bImpair = !bImpair;
 
-  switchSlots(slots);
+  switchSlots(params);
 
   Serial.println("rotateSpider-end");
 }
 
 
-void blindRotate(byte *slots){
+void blindRotate(struct storage *params){
   Serial.println("blindRotate-begin");
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   spiderRotate.setCurrentPosition(0);
@@ -189,20 +188,22 @@ void blindRotate(byte *slots){
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   bImpair = !bImpair;
 
-  switchSlots(slots);
+  switchSlots(params);
   
   Serial.println("blindRotate-end");
 }
 
-void switchSlots(byte *slots){
+void switchSlots(struct storage *params){
+  debug("switchSolts", String("begin"));
   // switch slots states.
-  byte slot13 = slots[13];
+  byte slot13 = params->slots[13];
   for(byte i = 13; i > 0; i--){
-    slots[i] = slots[i - 1];
+    params->slots[i] = params->slots[i - 1];
   }
-  slots[0] = slot13;
-
-  lightStrip(slots);
+  params->slots[0] = slot13;
+  debug("slots[0]",params->slots[0]);
+  EEPROM.writeBlock(EEPROM_ADRESS, *params);
+  lightStrip(params);
 }
 
 void agitate(){
@@ -212,11 +213,13 @@ void agitate(){
   analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   unsigned long startMoove = millis();
   unsigned long currentMillis = startMoove;
+  //UP
   while(currentMillis - startMoove < 800){
     // do nothing
     currentMillis = millis();
   }
 
+  //DOWN
   digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   while(!bEndStop){
@@ -238,13 +241,13 @@ void setServoArmWaitPos() {
   Serial.println("setServoArmWaitPos-end");
 }
 
-void openArm() {
-  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch rotation stepper activated to avoid rotation during operation.
+void openArm(struct storage *params) {
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Activate rotation stepper to avoid rotation during operation.
   downABitSpider();
   servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_OPEN_POS_BEGIN); 
   delay(2000);
-  upSpider();
+  upSpider(SPIDER_UPDOWN_LOW_SPEED);
   for(int i = SERVO_ARM_OPEN_POS_BEGIN; i < SERVO_ARM_OPEN_POS_END; i++){
     servoArm.write(i);
     delay(40);
@@ -252,15 +255,17 @@ void openArm() {
   servoArm.detach();// To save power.
   setServoArmWaitPos();
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
+  params->slots[0] = SLOT_OPEN;
+  EEPROM.writeBlock(EEPROM_ADRESS, *params);
 }
 
-void closeArm() {
+void closeArm(struct storage *params) {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch rotation stepper activated to avoid rotation during operation.
   downABitSpider();
   servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_CLOSE_POS_BEGIN); 
   delay(1000);
-  upSpider();
+  upSpider(SPIDER_UPDOWN_LOW_SPEED);
   for(int i = SERVO_ARM_CLOSE_POS_BEGIN; i > SERVO_ARM_CLOSE_POS_END; i--){
     servoArm.write(i);
     delay(40);
@@ -268,6 +273,8 @@ void closeArm() {
   servoArm.detach();// To save power.
   setServoArmWaitPos();
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
+  params->slots[0] = SLOT_CLOSED;
+  EEPROM.writeBlock(EEPROM_ADRESS, *params);
 }
 
 
@@ -315,7 +322,7 @@ void initSpiderUp() {
   Serial.println("initSpiderUp-end");
 }
 
-void initRotate(byte *slots) {
+void initRotate(struct storage *params) {
   Serial.println("initRotate-begin"); 
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   spiderRotate.setCurrentPosition(0);
@@ -334,8 +341,7 @@ void initRotate(byte *slots) {
   bImpair = true;
   spiderRotate.setCurrentPosition(0);
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
-
-  lightStrip(slots);
+  lightStrip(params);
   Serial.println("initRotate-end"); 
 }
 
@@ -343,11 +349,11 @@ boolean isSpiderUp(){
   return !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
 }
 
-void lightStrip(byte *slots){
+void lightStrip(struct storage *params){
   // light open slots
   for(byte i = 0; i < 14; i++){
     for(byte j = i * 5; j < (i * 5) + 5; j++){
-      ledstrip.setPixelColor(j, slots[i] == SLOT_OPEN || slots[i] == SLOT_PAPER ? 255 : 0, 0, 0); 
+      ledstrip.setPixelColor(j, params->slots[i] == SLOT_OPEN || params->slots[i] == SLOT_PAPER ? 255 : 0, 0, 0); 
     }
   }
   ledstrip.show();
@@ -367,4 +373,25 @@ void lightFullStrip(){
 
  boolean bSpiderImpair(){
   return bImpair;
+}
+
+
+void initSlots(struct storage *params){
+  // Init the slots
+  params->slots[0] = SLOT_CLOSED; 
+  params->slots[1] = SLOT_NO_ARM; 
+  params->slots[2] = SLOT_CLOSED; 
+  params->slots[3] = SLOT_NO_ARM; 
+  params->slots[4] = SLOT_CLOSED; 
+  params->slots[5] = SLOT_NO_ARM; 
+  params->slots[6] = SLOT_CLOSED; 
+  params->slots[7] = SLOT_NO_ARM; 
+  params->slots[8] = SLOT_CLOSED; 
+  params->slots[9] = SLOT_NO_ARM; 
+  params->slots[10] = SLOT_CLOSED; 
+  params->slots[11] = SLOT_NO_ARM; 
+  params->slots[12] = SLOT_CLOSED;
+  params->slots[13] = SLOT_NO_ARM;
+
+  EEPROM.writeBlock(EEPROM_ADRESS, *params);
 }

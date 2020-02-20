@@ -141,8 +141,8 @@ void movePaperOut() {
   debug("movePaperOut", String("begin"));
   enablePaper.write(LOW);
   paper.setCurrentPosition(0);
-  paper.setMaxSpeed(200);
-  paper.setAcceleration(50);
+  paper.setMaxSpeed(PAPER_SPEED);
+  paper.setAcceleration(PAPER_ACCEL);
 
   int delta = NB_STEP_PAPER_OUT;
   paper.moveTo(delta); 
