@@ -202,7 +202,7 @@ boolean sendOrderAndWait(char sendOrder){
   while(!bOK){
     currentMillis = millis();
     // Send order to dev part and if no response for 10 second we send it again.
-    if(lastMillis == 0 || currentMillis - lastMillis > 10000){
+    if(currentMillis - lastMillis > 10000){
       debug("re order:", sendOrder);
       Serial2.print(sendOrder);
       Serial2.flush();
@@ -276,7 +276,7 @@ void checkLuminosity(){
   lux = luxMeter.getLuminosity(TSL2591_VISIBLE);;
   debug("lux:", lux);
   // The sun is down
-  if(!ceilingOn && lux < 4){
+  /*if(!ceilingOn && lux < 4){
     ceilingOn = true;
     // Ligth the ceiling
     for(int i=0;i<CEILING_NBPIXEL;i++){
@@ -290,7 +290,13 @@ void checkLuminosity(){
       ceilingPixels.setPixelColor(i, 0, 0, 0); // Dark
     }
     ceilingPixels.show();
+  }*/
+
+  // Ligth the ceiling
+  for(int i=0;i<CEILING_NBPIXEL;i++){
+    ceilingPixels.setPixelColor(i, 255,255,255); // white as hell
   }
+  ceilingPixels.show();
 }
 
 /***************************

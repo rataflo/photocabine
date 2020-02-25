@@ -1054,7 +1054,7 @@ F 1 "680uF" H 9768 5505 50  0000 L CNN
 F 2 "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm" H 9688 5400 50  0001 C CNN
 F 3 "~" H 9650 5550 50  0001 C CNN
 	1    9650 5550
-	-1   0    0    1   
+	1    0    0    -1  
 $EndComp
 $Comp
 L 1nofilterbooth:GND-power #PWR?

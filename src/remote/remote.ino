@@ -36,7 +36,7 @@ int tank_time = 18000;
 void setup() {
   Serial.begin(9600);
 
-  lcd.init();
+  lcd.begin();
   lcd.backlight();
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -75,7 +75,7 @@ void checkMenu() {
       nextMenu();
     } else if (!bMainScreen && digitalRead(MENU_BTN2_PIN)) {
       doMenu();
-    } else if(bMainScreen && currentMillis - previousMainMenuMillis > 5000){ // Refresh main screen periodically
+    } else if(bMainScreen && currentMillis - previousMainMenuMillis > 10000){ // Refresh main screen periodically
       showMainScreen();
       previousMainMenuMillis = currentMillis;
     }
@@ -102,7 +102,7 @@ void showMainScreen() {
   bTests = state == RESPONSE_STATUS_TEST ? true : false;
 
   if (!bPause && !bTests) {
-    int temp = sendOrderAndWaitForInt(ORDER_TEMP);
+    float temp = sendOrderAndWaitForFloat(ORDER_TEMP);
     lcd.setCursor(0, 2);
     lcd.print("Temp:");
     lcd.print(temp);

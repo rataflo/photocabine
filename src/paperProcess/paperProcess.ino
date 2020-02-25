@@ -135,7 +135,7 @@ void checkOrder(){
   }
   
   // Order we process only when spider at the top
-  if(isSpiderUp()){
+  if(isSpiderUp()){ // TODO: no need, do this when spider is up in any case.
     switch(order){
       case ORDER_NEW_SLOT:{ // Need a place for paper.
         // Arm ready on slot 0.
@@ -166,7 +166,7 @@ void checkOrder(){
         
         // Calculate tank time from temperature.
         if(params.tankTime == 0){// 0 = auto tank time.
-          if(tempC != 0 && tempC < 50){ //In cas temp probe not working
+          if(tempC != 0 && tempC < 50){ //In case temp probe not working
             // Test: increment by 2sec/5°C
             if(tempC <= 20){
               params.tankTime = 24000;
@@ -183,6 +183,7 @@ void checkOrder(){
             params.tankTime = TANK_TIME;
           }
         }
+        // TODO: tell camera number of slots empty.
         order = NO_ORDER;
         break;
       }
@@ -222,7 +223,14 @@ void process(){
       // Agitate.
       unsigned long startMillis = millis();
       unsigned long currentMillis = startMillis;
-      while(currentMillis - startMillis < params.tankTime){
+
+      // special case dev tank: TODO un truc plus élégant.
+      int duration = params.tankTime;
+      if(params.slots[0] == SLOT_PAPER || params.slots[1] == SLOT_PAPER){
+          duration = 30000;
+      }
+      
+      while(currentMillis - startMillis < duration){
         // TODO: do this every 2 second.
         agitate();
         currentMillis = millis();

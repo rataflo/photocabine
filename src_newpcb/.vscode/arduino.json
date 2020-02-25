@@ -1,0 +1,5 @@
+{
+    "sketch": "spider\\spider.ino",
+    "board": "arduino:avr:diecimila",
+    "configuration": "cpu=atmega328"
+}

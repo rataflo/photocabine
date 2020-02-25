@@ -118,7 +118,7 @@ void asyncSpiderUp() {
   if(!bEndStop){
     digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
     digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
-    currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
+    currentSpeed = 70; // TODO: constant?
     analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   } else {
     analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);

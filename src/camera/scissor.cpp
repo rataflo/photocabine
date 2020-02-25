@@ -56,13 +56,16 @@ void closeScissor() {
     enableScissor.write(LOW);
     scissor.setMaxSpeed(SCISSOR_SPEED);
     scissor.setAcceleration(SCISSOR_ACCEL);
-    scissor.moveTo(0);
+    scissor.moveTo(-50); // TODO enable more steps.
     while(!bCloseScissor){
       scissor.run();
       if(scissor.currentPosition() < 10) {
         bCloseScissor = !endstopScissor.read();
       }
     }
+    scissor.stop();
+    scissor.setCurrentPosition(0);
+    scissor.run();
     enableScissor.write(HIGH);
     bCloseScissor = true;
     bOpenScissor = false;
