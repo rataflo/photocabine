@@ -64,7 +64,7 @@ void setup() {
     debug("slot i", params.slots[i]);
   }
   
-  // if paper on slot or arm opened, finalize process.
+  // if paper on slot, finalize process.
   /*for(int i = 0; i <14; i++){
     if(params.slots[i] == SLOT_PAPER){
       bWait = false;
@@ -73,11 +73,16 @@ void setup() {
         process();
       }
     }
-    if(params.slots[13] == SLOT_OPEN){
-      rotateSpider(&params);
-      closeArm(&params);
-    }
   }*/
+  // if final slot opened.
+  /*if(params.slots[13] == SLOT_OPEN){
+    upSpider(SPIDER_UPDOWN_LOW_SPEED);
+    downToMiddleSpider();
+    blindRotate(&params);
+    upSpider(SPIDER_UPDOWN_LOW_SPEED);
+    closeArm(&params);
+  }*/
+  
   initSlots(&params);
   initSpider(&params);
 }
@@ -166,7 +171,7 @@ void checkOrder(){
         
         // Calculate tank time from temperature.
         if(params.tankTime == 0){// 0 = auto tank time.
-          if(tempC != 0 && tempC < 50){ //In case temp probe not working
+          if(tempC > 0 && tempC < 50){ //In case temp probe not working
             // Test: increment by 2sec/5°C
             if(tempC <= 20){
               params.tankTime = 24000;
@@ -212,7 +217,11 @@ void process(){
     if(params.slots[0] == SLOT_OPEN){
       debug("closeArm", String("slot[0]"));
       closeArm(&params);
-    } else if(!bProcess && (params.slots[13] == SLOT_OPEN || params.slots[13] == SLOT_CLOSED)){ // Arm on exit and no other paper to process.
+    } else if(!bProcess && params.slots[13] == SLOT_OPEN){ // Arm opened on exit and no other paper to process.
+      downToMiddleSpider();
+      blindRotate(&params);
+      upSpider(SPIDER_UPDOWN_LOW_SPEED);
+    }else if(!bProcess && params.slots[13] == SLOT_CLOSED){ // Arm closed on exit and no other paper to process.
       debug("rotateSpider", String(params.slots[13]));
       rotateSpider(&params);
     }
@@ -225,9 +234,9 @@ void process(){
       unsigned long currentMillis = startMillis;
 
       // special case dev tank: TODO un truc plus élégant.
-      int duration = params.tankTime;
+      unsigned int duration = 20000;
       if(params.slots[0] == SLOT_PAPER || params.slots[1] == SLOT_PAPER){
-          duration = 30000;
+          duration = 60000;
       }
       
       while(currentMillis - startMillis < duration){

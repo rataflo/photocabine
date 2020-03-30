@@ -75,7 +75,7 @@ void checkMenu() {
       nextMenu();
     } else if (!bMainScreen && digitalRead(MENU_BTN2_PIN)) {
       doMenu();
-    } else if(bMainScreen && currentMillis - previousMainMenuMillis > 10000){ // Refresh main screen periodically
+    } else if(bMainScreen && currentMillis - previousMainMenuMillis > 20000){ // Refresh main screen periodically
       showMainScreen();
       previousMainMenuMillis = currentMillis;
     }
@@ -90,7 +90,7 @@ void showMainScreen() {
   bMainScreen = true;
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("   -- NO-MATON --   ");
+  lcd.print("  NO-FILTER BOOTH   ");
 
   // Ask & display infos
   char state = sendOrderAndWaitForChar(ORDER_GET_STATUS);
@@ -212,7 +212,9 @@ void doMenu() {
       printMsgToLCD(bPause ? "Resume" : "Pause", true);
       break;
     case 3: // Take shot
-      sendOrder(ORDER_TAKE_SHOT);
+      currentMenu = MENUS[line].id;
+      currentLineInMenu = 0;
+      showMenu();
       break;
     case 4: // Setup
       currentMenu = MENUS[line].id;
@@ -238,7 +240,6 @@ void doMenu() {
       showMenu();
       break;
     case 7: // Menu test steppers
-    case 8: // Menu test microswitchs
     case 9: // Menu test LED
     case 10: // Simul
       currentMenu = MENUS[line].id;
@@ -280,63 +281,22 @@ void doMenu() {
     case 21: // Servo arm idle pos
       sendOrder(ORDER_IDLEARM);
       break;
-    case 22: // Return menu switch
-      currentMenu = 5;
+    case 22: // Return main menu
+      currentMenu = 0;
       currentLineInMenu = 0;
       showMenu();
       break;
-    case 23: // Test switch shutter
-      currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWSHUTTER, MENUS[line].id);
+    case 23: // Normal shot
+      sendOrder(ORDER_EXPOSURE_MODE);
+      sendOrder(0);
       break;
-    case 24: // Test switch scissor
-    currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWSCISSOR, MENUS[line].id);
+    case 24: // Souble exposure
+      sendOrder(ORDER_EXPOSURE_MODE);
+      sendOrder(1);
       break;
-    case 25: // Test switch paper 1
-    currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWPAPER1, MENUS[line].id);
-      break;
-    case 26: // Test switch paper 2
-    currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWPAPER2, MENUS[line].id);
-      break;
-    case 27: // Test switch paper 3
-    currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWPAPER3, MENUS[line].id);
-      break;
-    case 28: // Test switch paper 4
-    currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWPAPER4, MENUS[line].id);
-      break;
-    case 29: // Test switch start btn
-    currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWSTART, MENUS[line].id);
-      break;
-    case 30: // Test switch spider up
-      testSwitch(ORDER_SWUP, MENUS[line].id);
-      break;  
-    case 31: // Test switch spider bottom
-      currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWDOWN, MENUS[line].id);
-      break;  
-    case 32: // Test rotate pair
-      currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWROTPAIR, MENUS[line].id);
-      break;
-    case 33: // Test rotate impair
-      currentMenu = MENUS[line].parentMenu;
-      currentLineInMenu = 0;
-      testSwitch(ORDER_SWROTIMPAIR, MENUS[line].id);
+    case 25: // ligth painting
+      sendOrder(ORDER_EXPOSURE_MODE);
+      sendOrder(2);
       break;
     case 34: // Return menu flash
       currentMenu = 5;
@@ -478,30 +438,6 @@ void nextMenu() {
       lcd.print(sel);
     }
   }
-}
-
-void testSwitch(char order, byte idTest) {
-  Serial.println("testSwitch - begin");
-  sendOrder(order);
-
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  char label[20];
-  strcpy_P(label, (PGM_P)pgm_read_word(&(LABELS[idTest - 1])));
-  lcd.print("Switch:");
-  lcd.print(label);
-  delay(MENU_SPEED);
-  while (!digitalRead(MENU_BTN2_PIN)) {
-    if (radio.available()) {
-      char state = '?';
-      radio.read(&state, sizeof(state));
-      lcd.setCursor(0, 1);
-      lcd.print(state == ORDER_TRUE ? "True " : "False");
-      Serial.print("state=");Serial.println(state);
-    }
-  }
-  showMenu();
-  Serial.println("testSwitch - end");
 }
 
 void sendOrder(char order) {

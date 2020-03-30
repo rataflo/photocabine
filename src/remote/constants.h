@@ -27,7 +27,7 @@ const menuItem MENUS[TAILLE_MENU]  = {
   {5, 0}, // Start tests
   {6, 5}, // MENU_RETOUR
   {7, 5}, // Motors
-  {8, 5}, // Switchs
+  {8, 5}, // Empty
   {9, 5}, // LEDs
   {10, 5},// Simul
   {11, 7},// MENU_RETOUR
@@ -41,18 +41,18 @@ const menuItem MENUS[TAILLE_MENU]  = {
   {19, 7},// Open arm
   {20, 7},// Close arm
   {21, 7},// Idle arm
-  {22, 8},// MENU_RETOUR
-  {23, 8},// Shutter
-  {24, 8},// Scissor
-  {25, 8},// Paper 1
-  {26, 8},// Paper 2
-  {27, 8},// Paper 3
-  {28, 8},// Paper 4
-  {29, 8},// Start btn
-  {30, 8},// Spider up
-  {31, 8},// Spider down
-  {32, 8},// Rotate pair
-  {33, 8},// Rotate impair
+  {22, 3},// MENU_RETOUR
+  {23, 3},// Normal
+  {24, 3},// Double exposure
+  {25, 3},// Light painting
+  {26, 3},// EMPTY
+  {27, 3},// EMPTY
+  {28, 3},// EMPTY
+  {29, 3},// EMPTY
+  {30, 3},// EMPTY
+  {31, 3},// EMPTY
+  {32, 3},// EMPTY
+  {33, 3},// EMPTY
   {34, 9},// MENU_RETOUR
   {35, 9},// Flash
   {36, 9},// Start
@@ -73,7 +73,7 @@ const char menu4[] PROGMEM =  "Setup";              // 4
 const char menu5[] PROGMEM =  "Start tests";        // 5
 const char menu6[] PROGMEM =  "^ Tests";            // 6
 const char menu7[] PROGMEM =  "Motors";             // 7
-const char menu8[] PROGMEM =  "Switchs";            // 8
+const char menu8[] PROGMEM =  "";                   // 8
 const char menu9[] PROGMEM =  "LEDs";               // 9
 const char menu10[] PROGMEM =  "Simulations";       // 10
 const char menu11[] PROGMEM =  "^ Tests motors";    // 11
@@ -87,18 +87,18 @@ const char menu18[] PROGMEM =  "Paper exit";        // 18
 const char menu19[] PROGMEM =  "Open arm";          // 19
 const char menu20[] PROGMEM =  "Close arm";         // 20
 const char menu21[] PROGMEM =  "Idle arm";          // 21
-const char menu22[] PROGMEM =  "^ Tests switchs";   // 22
-const char menu23[] PROGMEM =  "Shutter";           // 23
-const char menu24[] PROGMEM =  "Scissor";           // 24
-const char menu25[] PROGMEM =  "Paper 1";           // 25
-const char menu26[] PROGMEM =  "Paper 2";           // 26
-const char menu27[] PROGMEM =  "Paper 3";           // 27
-const char menu28[] PROGMEM =  "Paper 4";           // 28
-const char menu29[] PROGMEM =  "Start btn";         // 29
-const char menu30[] PROGMEM =  "Spider up";         // 30
-const char menu31[] PROGMEM =  "Spider down";       // 31
-const char menu32[] PROGMEM =  "Rotate pair";       // 32
-const char menu33[] PROGMEM =  "Rotate impair";     // 33
+const char menu22[] PROGMEM =  "^ Take shot";       // 22
+const char menu23[] PROGMEM =  "Normal";            // 23
+const char menu24[] PROGMEM =  "Double exposure";   // 24
+const char menu25[] PROGMEM =  "Light painting";    // 25
+const char menu26[] PROGMEM =  "";                  // 26
+const char menu27[] PROGMEM =  "";                  // 27
+const char menu28[] PROGMEM =  "";                  // 28
+const char menu29[] PROGMEM =  "";                  // 29
+const char menu30[] PROGMEM =  "";                  // 30
+const char menu31[] PROGMEM =  "";                  // 31
+const char menu32[] PROGMEM =  "";                  // 32
+const char menu33[] PROGMEM =  "";                  // 33
 const char menu34[] PROGMEM =  "^ Tests LEDs";      // 34
 const char menu35[] PROGMEM =  "Flash";             // 35
 const char menu36[] PROGMEM =  "Start btn";         // 36
@@ -141,7 +141,7 @@ PGM_P const LABELS[] PROGMEM = {
   menu27, 
   menu28, 
   menu29, 
-  menu30,
+  menu30, 
   menu31, 
   menu32, 
   menu33, 

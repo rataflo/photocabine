@@ -5,7 +5,7 @@ AccelStepper spiderRotate(1, SPIDER_ROTATE_PIN_STP, SPIDER_ROTATE_PIN_DIR);
 Servo servoArm;
 Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(84, LEDSTRIP_PIN, NEO_RGB + NEO_KHZ800);
 
-bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
+bool bImpair = true; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
 volatile byte currentSpeed = 0; // use to reset speed after a pause.
 
 void setupSpider(){
@@ -29,7 +29,11 @@ void initSpider(struct storage *params){
   ledstrip.show();
   
   //initSpiderBottom();
-  // TODO: descendre un petit peu avant de bouger le servo.
+  //If spider on top, move a bit to safely position servo.
+  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
+  if(!digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP)){
+    downABitSpider();
+  }
   initServoArm();
   initSpiderUp();
   initRotate(params);
@@ -177,9 +181,9 @@ void blindRotate(struct storage *params){
   spiderRotate.setCurrentPosition(0);
   spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
   spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
-  spiderRotate.moveTo(SPIDER_ROTATE_NBSTEP);
+  spiderRotate.moveTo(400);
 
-  while (spiderRotate.currentPosition() < SPIDER_ROTATE_NBSTEP) { 
+  while (spiderRotate.currentPosition() < 400) { 
     spiderRotate.run();
   }
   spiderRotate.stop();
@@ -371,7 +375,7 @@ void lightFullStrip(){
   ledstrip.show();
 }
 
- boolean bSpiderImpair(){
+boolean bSpiderImpair(){
   return bImpair;
 }
 

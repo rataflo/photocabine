@@ -1,123 +1,82 @@
-/*
- * Manage power usage if on battery. Shut power on system on shortage from battery and switch to a power bank.
- * Light billoard and ceiling at night (RTC).
- * RTC DS3231 (3.3v, SDA, SCL, empty, GND). Adress: 0x68
- * Arduino nano
- * SDA->A4
- * SCL->45
- * RTC Library: https://github.com/Makuna/Rtc/wiki
- */
-#include <Wire.h> // must be included here so that Arduino library object file references work
-#include <RtcDS3231.h>
-RtcDS3231<TwoWire> Rtc(Wire);
+// NeoPixel Ring simple sketch (c) 2013 Shae Erisson
+// released under the GPLv3 license to match the rest of the AdaFruit NeoPixel library
 
-// Define time to switch on & off billboard + ceiling light.
-#define HOUR_ON 21
-#define MINUTES_ON 45
-#define HOUR_OFF 6
-#define MINUTES_OFF 0
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+  #include <avr/power.h>
+#endif
 
-#define MARQUEE_PIXEL_PIN 5
-#define CEILING_PIXEL_PIN 5
-void setup () 
-{
-    Serial.begin(57600);
+// Which pin on the Arduino is connected to the NeoPixels?
+// On a Trinket or Gemma we suggest changing this to 1
+#define PIN            6
 
-    Serial.print("compiled: ");
-    Serial.print(__DATE__);
-    Serial.println(__TIME__);
+// How many NeoPixels are attached to the Arduino?
+#define NUMPIXELS      54
 
-    //--------RTC SETUP ------------
-    // if you are using ESP-01 then uncomment the line below to reset the pins to
-    // the available pins for SDA, SCL
-    // Wire.begin(0, 2); // due to limited pins, use pin 0 and 2 for SDA, SCL
-    
-    Rtc.Begin();
+// When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
+// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
+// example for more information on possible values.
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
-    RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
+int delayval = 500; // delay for half a second
 
-    if (!Rtc.IsDateTimeValid()) 
-    {
-        if (Rtc.LastError() != 0)
-        {
-            // we have a communications error
-            // see https://www.arduino.cc/en/Reference/WireEndTransmission for 
-            // what the number means
-            Serial.print("RTC communications error = ");
-            Serial.println(Rtc.LastError());
-        }
-        else
-        {
-            // Common Causes:
-            //    1) first time you ran and the device wasn't running yet
-            //    2) the battery on the device is low or even missing
+void setup() {
+  // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
+#if defined (__AVR_ATtiny85__)
+  if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
+#endif
+  // End of trinket special code
 
-            Serial.println("RTC lost confidence in the DateTime!");
-
-            // following line sets the RTC to the date & time this sketch was compiled
-            // it will also reset the valid flag internally unless the Rtc device is
-            // having an issue
-
-            Rtc.SetDateTime(compiled);
-        }
-    }
-
-    if (!Rtc.GetIsRunning())
-    {
-        Serial.println("RTC was not actively running, starting now");
-        Rtc.SetIsRunning(true);
-    }
-
-    RtcDateTime now = Rtc.GetDateTime();
-    if (now < compiled) 
-    {
-        Serial.println("RTC is older than compile time!  (Updating DateTime)");
-        Rtc.SetDateTime(compiled);
-    }
-    else if (now > compiled) 
-    {
-        Serial.println("RTC is newer than compile time. (this is expected)");
-    }
-    else if (now == compiled) 
-    {
-        Serial.println("RTC is the same as compile time! (not expected but all is fine)");
-    }
-
-    // never assume the Rtc was last configured by you, so
-    // just clear them to your needed state
-    Rtc.Enable32kHzPin(false);
-    Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeNone); 
+  pixels.begin(); // This initializes the NeoPixel library.
 }
 
-void loop () 
-{
-  if (!Rtc.IsDateTimeValid()) 
-  {
-      if (Rtc.LastError() != 0)
-      {
-          // we have a communications error
-          // see https://www.arduino.cc/en/Reference/WireEndTransmission for 
-          // what the number means
-          Serial.print("RTC communications error = ");
-          Serial.println(Rtc.LastError());
-      }
-      else
-      {
-          // Common Causes:
-          //    1) the battery on the device is low or even missing and the power line was disconnected
-          Serial.println("RTC lost confidence in the DateTime!");
-      }
-  }
+void loop() {
 
-  RtcDateTime now = Rtc.GetDateTime();
-  
-  //Switch/Turn off lights when time as come.
-  if(now.Hour() == HOUR_ON && now.Minute() == MINUTES_ON){
-    //switch on.
-    Serial.print("on");
-  }else if(now.Hour() == HOUR_OFF && now.Minute() == MINUTES_OFF){
-    //switch off.
-    Serial.print("off");
+  // For a set of NeoPixels the first NeoPixel is 0, second is 1, all the way up to the count of pixels minus one.
+  /*for(int r=10;r<255;r++){
+    for(int i=0;i<NUMPIXELS;i++){
+      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+      pixels.setPixelColor(i, pixels.Color(r,0,0)); // Moderately bright green color.
+    }
+    delay(10);
+    pixels.show();
   }
-  delay(10000); // ten seconds
+  for(int r=255;r>10;r--){
+    for(int i=0;i<NUMPIXELS;i++){
+      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+      pixels.setPixelColor(i, pixels.Color(r,0,0)); // Moderately bright green color.
+    }
+    delay(10);
+    pixels.show();
+  }*/
+
+
+  /*for (int j=0; j<10; j++) {  //do 10 cycles of chasing
+    for (int q=0; q < 3; q++) {
+      for (int i=0; i < NUMPIXELS; i=i+3) {
+        pixels.setPixelColor(i+q, 255, 0, 0);    //turn every third pixel on
+      }
+      pixels.show();
+     
+      delay(50);
+     
+      for (int i=0; i < NUMPIXELS; i=i+3) {
+        pixels.setPixelColor(i+q, 0,0,0);        //turn every third pixel off
+      }
+    }
+  }*/
+
+    for(int i=0;i<NUMPIXELS;i++){
+      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+      pixels.setPixelColor(i, pixels.Color(255,0,0)); // Moderately bright green color.
+    }
+    pixels.show();
+    delay(1);
+    for(int i=0;i<NUMPIXELS;i++){
+      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+      pixels.setPixelColor(i, pixels.Color(0,0,0)); // Moderately bright green color.
+    }
+    pixels.show();
+    delay(3);
+
 }
