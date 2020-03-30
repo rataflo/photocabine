@@ -23,6 +23,9 @@
 #include "rtc.h"
 #include "tests.h"
 
+#include <Adafruit_NeoPixel.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_TSL2591.h>
 
 // Work variables
 byte stepTakeShot = 0;
@@ -33,11 +36,15 @@ volatile char order = NO_ORDER;
 float bathTemp = 0;
 float lux = 0;
 int tankTime = 18000;
+bool ceilingOn = false; // Ceiling ligth switched on or not.
 unsigned long lastCallTemp = 0;
-unsigned long lastCallSensor = 0;
+unsigned long lastCallLux = 0;
 char statusSpider = ' ';
+byte exposureMode = 0; // 3 modes (0 = normal, 1 = double exposure, 2 = light painting).
+bool bFirstShot = true; // for double exposure.
 
 Output<ORDER_INTERRUPT_PIN> orderPause;
+Adafruit_NeoPixel ceilingPixels = Adafruit_NeoPixel(CEILING_NBPIXEL, CEILING_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_TSL2591 luxMeter = Adafruit_TSL2591(2591);
 
 void setup() {
@@ -50,15 +57,18 @@ void setup() {
   // Pin to create pause on paper process
   orderPause.write(HIGH);
 
+  ceilingPixels.begin(); 
+
   /* Lux sensor */
-  /*if(!luxMeter.begin()){
+  if(!luxMeter.begin()){
     debug("setup", "No TSL2591!");
-  }*/ // TODO: uncomment
+  }
 
   //Gain config
   luxMeter.setGain(TSL2591_GAIN_MED);
   //Timing config
   luxMeter.setTiming(TSL2591_INTEGRATIONTIME_400MS);
+  checkLuminosity();
   
   //tests
   pinMode(LED_BUILTIN, OUTPUT);
@@ -95,7 +105,7 @@ void setup() {
   
   attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), radioInterrupt, LOW);
   
-  //initPhotomaton();
+  initPhotomaton();
 }
 
 void loop() {
@@ -109,7 +119,7 @@ void loop() {
     if(stepTakeShot == 0){
       //sendOrderAndWait(ORDER_TEMP); TODO uncomment
       //sendOrderAndWait(ORDER_GET_TANK_TIME);  TODO uncomment 
-    }
+  }
   }
   
   if(order == ENTER_TEST){
@@ -129,13 +139,22 @@ void loop() {
 
   if(stepTakeShot > 0) {
     manageStepsTakeShot(); 
+  } else{
+    // When nothing to do ask for dev parameters every 10 sec.
+    if(currentMillis - lastCallTemp > 10000){
+      lastCallTemp = currentMillis;
+      sendOrderAndWait(ORDER_TEMP);
+      sendOrderAndWait(ORDER_GET_TANK_TIME);  
+    }
   }
+
 }
 
 void manageStepsTakeShot(){
   debug("manageStepsTakeShot-begin:", stepTakeShot);
   switch (stepTakeShot) {
     case 1: // First countdown
+      startLedOff();
       showCountdown();
       while(getCountDown() > 0){
         refreshCountdown();
@@ -145,11 +164,10 @@ void manageStepsTakeShot(){
     case 2: // Take photo.
     case 4:
     case 6:
-      takeShot();
-      break;
     case 8:
       takeShot();
       startLedOff();
+      takeShot(exposureMode);
       break;
       
     case 3: // move paper for next shot + countdown
@@ -177,6 +195,7 @@ void manageStepsTakeShot(){
       movePaperFirstShot();
       break;
     case 13: // check for free slot.
+      exposureMode = 0; // reinit mode to normal.
       sendOrderAndWait(ORDER_NB_FREE_SLOT);
       if(freeSlot == 0){
         coinSegmentFull();
@@ -187,7 +206,30 @@ void manageStepsTakeShot(){
       enableCoinAcceptor(parametres.mode);
       break;
   }
-  stepTakeShot = stepTakeShot >= 13 ? 0 : stepTakeShot + 1;
+
+  bool bNextStep = true;
+  if(exposureMode == 1){ // double exposure
+    if((stepTakeShot == 2 || stepTakeShot == 4 || stepTakeShot == 6 || stepTakeShot == 8)){
+      // wait for clic on start button to take next shot.
+      if(stepTakeShot != 8 || bFirstShot == true) { // no need to push button after all shot taken.
+        waitForStart();
+      }
+      if(bFirstShot){
+        bFirstShot = false;
+        bNextStep = false;
+        showCountdown();
+        while(getCountDown() > 0){
+          refreshCountdown();
+        }
+      } else {
+        bFirstShot = true;
+      }
+    }
+  }
+
+  if(bNextStep){
+    stepTakeShot = stepTakeShot >= 13 ? 0 : stepTakeShot + 1;
+  }
 }
 
 boolean sendOrderAndWait(char sendOrder){
@@ -261,14 +303,40 @@ boolean sendOrderAndWait(char sendOrder){
   return bOK;
 }
 
-
+/***************************
+ *  LUMINOSITY & LIGHTS
+ **************************/
 /*
  * Retrieve luminosity from the lux sensor 2591.
+ * On low ligth, light up ceiling and billboard.
  * Ligth up flash or not during shot.
+ * TODO: switch to a RTC.
  */
 void checkLuminosity(){
   lux = luxMeter.getLuminosity(TSL2591_VISIBLE);;
-  debug("lux", lux);
+  debug("lux:", lux);
+  // The sun is down
+  /*if(!ceilingOn && lux < 4){
+    ceilingOn = true;
+    // Ligth the ceiling
+    for(int i=0;i<CEILING_NBPIXEL;i++){
+      ceilingPixels.setPixelColor(i, 255,255,255); // white as hell
+    }
+    ceilingPixels.show();
+  } else if(ceilingOn && lux > 30){
+    ceilingOn = false;
+    // switch off the ceiling
+    for(int i=0;i<CEILING_NBPIXEL;i++){
+      ceilingPixels.setPixelColor(i, 0, 0, 0); // Dark
+    }
+    ceilingPixels.show();
+  }*/
+
+  // Ligth the ceiling
+  for(int i=0;i<CEILING_NBPIXEL;i++){
+    ceilingPixels.setPixelColor(i, 255,0,0); // white as hell
+  }
+  ceilingPixels.show();
 }
 
 /***************************
@@ -446,6 +514,21 @@ void radioInterrupt(){
             parametres.tank_time = tankTime;
             EEPROM.updateBlock(EEPROM_ADRESS, parametres);
           }
+          break;
+        case ORDER_EXPOSURE_MODE:
+          delay(250);
+          if (radio.available()) {
+            byte newExpoMode = 0;
+            radio.read(&newExpoMode, sizeof(newExpoMode));
+            exposureMode = newExpoMode;
+          }
+          // if the camera is not running start process.
+          if(stepTakeShot == 0){
+            parametres.totStrip += 1;
+            EEPROM.updateBlock(EEPROM_ADRESS, parametres);
+            stepTakeShot = 1;
+          }
+          order = NO_ORDER;
           break;
       }
     }

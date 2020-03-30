@@ -33,7 +33,7 @@ void testMode(RF24 radio){
         testOrder = NO_ORDER;
         break;
       case ORDER_SHUTTER:
-        takeShot();
+        takeShot(0);
         testOrder = NO_ORDER;
         break;
       case ORDER_SCISSOR:{

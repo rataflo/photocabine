@@ -22,4 +22,5 @@ boolean isCoinEnabled();
 boolean isStartLedOn();
 bool readSWStart();
 
+void waitForStart();
 #endif

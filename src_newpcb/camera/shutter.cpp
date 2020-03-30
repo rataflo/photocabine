@@ -62,7 +62,7 @@ void initShutter() {
   bCloseShutter = true;
 }
 
-void takeShot() {
+void takeShot(byte mode) {
   debug("takeShot", String("begin"));
   // TODO calculate duration of the shot.
   enableShutter.write(LOW);
@@ -70,8 +70,12 @@ void takeShot() {
   shutter.setAcceleration(400);
   shutter.moveTo(200);
   bCloseShutter = false;
-  
+
+  unsigned long currentMillis = 0;
+  unsigned long startFlash = 0;
+  unsigned long flashTime = mode == 1 ? 100 : 200;
   while(!bCloseShutter){
+    currentMillis = millis();
     boolean bEndStop = false;
     int currentShutterNbStep = shutter.currentPosition();
     if(currentShutterNbStep > 195){ // Digital read at the last time.
@@ -79,10 +83,11 @@ void takeShot() {
       debug("bEndStop", bEndStop);
     }
 
-    // Flash during rotation.
-    if(currentShutterNbStep == 50){
+    // Time to flash.
+    if(currentShutterNbStep == 100){
+      startFlash = currentMillis;
       flashOn();
-    } else if(currentShutterNbStep == 150 ){
+    } else if(currentShutterNbStep >= 100 && currentMillis - startFlash > flashTime){
       flashOff();
     }
     

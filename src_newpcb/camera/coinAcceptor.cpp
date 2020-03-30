@@ -181,3 +181,9 @@ boolean isStartLedOn(){
 bool readSWStart(){
   return startBtn.read();
 }
+
+void waitForStart(){
+  while(startBtn.read()){
+    // do nothing.
+  }
+}
