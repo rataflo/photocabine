@@ -10,5 +10,5 @@
 void setupDelivery();
 void runDelivery(struct storage *params);
 bool isDeliveryRunning();
-
+void runStepper();//TODO: remove after tests
 #endif

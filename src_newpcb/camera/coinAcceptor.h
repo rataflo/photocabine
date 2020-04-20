@@ -6,7 +6,9 @@
 #include "TM1637Display.h"
 #include "constants.h"
 #include "shutter.h"
+#include "rtc.h"
 #include "tests.h"
+
 
 boolean manageCoinsAndStart(byte mode);
 void setCoinDigit(int number);
@@ -21,6 +23,6 @@ void startLedOff();
 boolean isCoinEnabled();
 boolean isStartLedOn();
 bool readSWStart();
-
 void waitForStart();
+void incrementCounter();
 #endif

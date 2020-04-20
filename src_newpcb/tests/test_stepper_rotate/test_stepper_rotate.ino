@@ -1,142 +1,66 @@
 #include <AccelStepper.h>
 #include <MultiStepper.h>
-#include <DirectIO.h>
 
-#define SPIDER_ROTATE_PIN_DIR 26
-#define SPIDER_ROTATE_PIN_STP 27
+/* Calculate number of step do go from one tank to another */
+#define SPIDER_ROTATE_PIN_STP 9
+#define SPIDER_ROTATE_PIN_DIR 8
+#define SPIDER_ROTATE_NBSTEP 400 // Number of steps to move to one tank
+#define SPIDER_ROTATE_SPEED 600
+#define SPIDER_ROTATE_ACCEL 100
+#define SPIDER_ROTATE_PIN_ENABLE 7
+#define SPIDER_ROTATE_PIN_M0 6
 
-
-AccelStepper paper(1, SPIDER_ROTATE_PIN_STP, SPIDER_ROTATE_PIN_DIR);
-
-Input<48> opto1(true);// Activate pullup
-Input<49> opto2(true);
+AccelStepper spiderRotate(1, SPIDER_ROTATE_PIN_STP, SPIDER_ROTATE_PIN_DIR);
 
 void setup() {
   Serial.begin(9600);
   // spider rotation
-  /*stepper.setMaxSpeed(1000);
-  stepper.setAcceleration(400);
-  stepper.moveTo(1000);//406 step for 1 tank move*/
+  pinMode(SPIDER_ROTATE_PIN_M0, OUTPUT);
+  digitalWrite(SPIDER_ROTATE_PIN_M0, HIGH);// Half step
+  pinMode(SPIDER_ROTATE_PIN_ENABLE, OUTPUT);
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 
-  //shutter
-  //stepper.setMaxSpeed(500);
-  /*stepper.moveTo(200);
-  stepper.setMaxSpeed(220);//max speed shutter 200, paper 500
-  stepper.setSpeed(220);  */
-  initPaper();
-  delay(2000);
-  movePaperNextShot();
-  delay(2000);
-  movePaperNextShot();
-  delay(2000);
-  movePaperNextShot();
-  delay(2000);
-  movePaperOut();
-  delay(2000);
-  movePaperFirstShot();
+  initRotate();
+
+  // put your main code here, to run repeatedly:
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
+  spiderRotate.setCurrentPosition(0);
+  spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
+  spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
+  int delta = SPIDER_ROTATE_NBSTEP;
+  spiderRotate.moveTo(delta);
+
+  while (spiderRotate.currentPosition() != delta){
+    spiderRotate.run();
+  }
+  spiderRotate.stop();
+  spiderRotate.setCurrentPosition(0);
+  spiderRotate.run();
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  
-  
-
+  Serial.println("loop");
 }
 
-void initPaper() {
-  Serial.println("init paper");
-  paper.setCurrentPosition(0);
-  paper.setMaxSpeed(500);
-  paper.setAcceleration(500);
-  
+void initRotate() {
+  Serial.println("initRotate-begin"); 
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
+  spiderRotate.setCurrentPosition(0);
+  spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
+  spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
 
-  int homing = 0;
-  boolean bOpto1 = opto1.read();
-  // case no paper
-  if(!bOpto1){
-    Serial.println(bOpto1);
-    while (!bOpto1) { 
-      paper.moveTo(homing); 
-      paper.run();
-      homing++;
-      delay(5);
-      bOpto1 = opto1.read();
-    }
-
-    paper.setCurrentPosition(0);
-  
-    // marche arriére
-    int delta = -80;
-    paper.moveTo(delta); 
-    paper.setMaxSpeed(500);
-    paper.setAcceleration(500);
-    while(paper.currentPosition() != delta){
-      paper.run();
-    }
-  } else{
-    movePaperFirstShot();
-  }
-  
-  
-  
-  Serial.println("fin init paper");
-}
-
-
-
-void movePaperFirstShot() {
-  Serial.println("movePaperFirstShot");
-  paper.setCurrentPosition(0);
-  paper.setMaxSpeed(500);
-  paper.setAcceleration(500);
-  
-  boolean bOpto1 = opto1.read();
-  Serial.println(bOpto1);
-  int homing = 0;
-  while (bOpto1) { 
-    paper.moveTo(homing); 
-    paper.run();
-    homing--;
+  boolean bEndStop = !digitalRead(SPIDER_ROTATE_ENDSTOP2_PIN);
+  int homing = 1;
+  while (!bEndStop) { 
+    spiderRotate.moveTo(homing); 
+    spiderRotate.run();
+    homing++;
     delay(5);
-    bOpto1 = opto1.read();
+    bEndStop = !digitalRead(SPIDER_ROTATE_ENDSTOP2_PIN);
   }
-  paper.setCurrentPosition(0);
-  
-  // marche arriére
-  int delta = -80+15;
-  paper.moveTo(delta); 
-  paper.setMaxSpeed(500);
-  paper.setAcceleration(500);
-  while(paper.currentPosition() != delta){
-    paper.run();
-  }
+  bImpair = true;
+  spiderRotate.setCurrentPosition(0);
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
 }
-
-void movePaperNextShot() {
-  Serial.println("movePaperNextShot");
-  paper.setCurrentPosition(0);
-  paper.setMaxSpeed(500);
-  paper.setAcceleration(500);
   
-  paper.moveTo(730); 
-
-  while(paper.currentPosition()!= 730){
-    paper.run();
-  }
-  paper.setCurrentPosition(0);
-}
-
-void movePaperOut() {
-  
-  paper.setCurrentPosition(0);
-  paper.setMaxSpeed(500);
-  paper.setAcceleration(500);
-  
-  paper.moveTo(3230); 
-
-  while(paper.currentPosition()!= 3230){
-    paper.run();
-  }
-  paper.setCurrentPosition(0);
-}
-

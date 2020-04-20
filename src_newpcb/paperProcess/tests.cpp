@@ -5,30 +5,30 @@ void testMode(struct storage *params){
   unsigned long lastMillis = 0;
   unsigned long currentMillis = 0;
   char testOrder = NO_ORDER;
-  //Serial2.println(order);
+  //Serial3.println(order);
   while (testOrder != EXIT_TEST){
     currentMillis = millis();
     
-    if(Serial2.available() > 0){
-      testOrder = Serial2.read();
+    if(Serial3.available() > 0){
+      testOrder = Serial3.read();
       Serial.println(testOrder);
-      serial2Clear();
+      Serial3Clear();
     }
     
     switch(testOrder){
       case EXIT_TEST:
-        Serial2.print(RESPONSE_OK);
-        Serial2.flush();
+        Serial3.print(RESPONSE_OK);
+        Serial3.flush();
         testOrder = EXIT_TEST;
         break;
       case ORDER_GET_STATUS: // get status.
-        Serial2.print(RESPONSE_STATUS_TEST);
-        Serial2.flush();
+        Serial3.print(RESPONSE_STATUS_TEST);
+        Serial3.flush();
         testOrder = NO_ORDER;
         break;
       case ORDER_SPIDER_READY: // get status.
-        Serial2.print(RESPONSE_STATUS_TEST);
-        Serial2.flush();
+        Serial3.print(RESPONSE_STATUS_TEST);
+        Serial3.flush();
         testOrder = NO_ORDER;
         break;
       case ORDER_UPSPIDER: // Go spider to the top
@@ -71,8 +71,8 @@ void testMode(struct storage *params){
 void sendAnswer(boolean answer){
   char transco = answer ? ORDER_TRUE : ORDER_FALSE;
   Serial.println(answer);
-  Serial2.print(transco);
-  Serial2.flush();
+  Serial3.print(transco);
+  Serial3.flush();
 }
 
 void debug(String functionName, String varValue){
@@ -93,8 +93,8 @@ void debug(String functionName, byte varValue){
   #endif
 }
 
-void serial2Clear(){
-  while(Serial2.available() > 0) { 
-    char t = Serial2.read(); 
+void Serial3Clear(){
+  while(Serial3.available() > 0) { 
+    char t = Serial3.read(); 
   }
 } 

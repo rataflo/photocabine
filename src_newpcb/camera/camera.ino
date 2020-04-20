@@ -22,8 +22,6 @@
 #include "paper.h"
 #include "rtc.h"
 #include "tests.h"
-
-#include <Adafruit_NeoPixel.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_TSL2591.h>
 
@@ -37,14 +35,12 @@ float bathTemp = 0;
 float lux = 0;
 int tankTime = 18000;
 bool ceilingOn = false; // Ceiling ligth switched on or not.
-unsigned long lastCallTemp = 0;
-unsigned long lastCallLux = 0;
+unsigned long lastCallSensor = 0;
 char statusSpider = ' ';
 byte exposureMode = 0; // 3 modes (0 = normal, 1 = double exposure, 2 = light painting).
 bool bFirstShot = true; // for double exposure.
 
 Output<ORDER_INTERRUPT_PIN> orderPause;
-Adafruit_NeoPixel ceilingPixels = Adafruit_NeoPixel(CEILING_NBPIXEL, CEILING_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_TSL2591 luxMeter = Adafruit_TSL2591(2591);
 
 void setup() {
@@ -57,8 +53,6 @@ void setup() {
   // Pin to create pause on paper process
   orderPause.write(HIGH);
 
-  ceilingPixels.begin(); 
-
   /* Lux sensor */
   if(!luxMeter.begin()){
     debug("setup", "No TSL2591!");
@@ -68,11 +62,15 @@ void setup() {
   luxMeter.setGain(TSL2591_GAIN_MED);
   //Timing config
   luxMeter.setTiming(TSL2591_INTEGRATIONTIME_400MS);
-  checkLuminosity();
   
   //tests
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
+
+  // Mechanical counter
+  pinMode(COUNT_PIN, OUTPUT);
+  digitalWrite(COUNT_PIN, LOW);
+  
 
   // Activate radio.
   radio.begin();
@@ -104,24 +102,26 @@ void setup() {
   parametres.mode = MODE_FREE; // TODO: remove after tests
   
   attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), radioInterrupt, LOW);
-  
+  showInitProgress(1);
   initPhotomaton();
+
+  //TESTS: TODO: DELETE
 }
 
 void loop() {
   unsigned long currentMillis = millis();
-
+showInitProgress(11);
   // Check every 10sec
   if(currentMillis - lastCallSensor > 10000){
     lastCallSensor = currentMillis;
     checkLuminosity();
     checkRTC();
     if(stepTakeShot == 0){
-      //sendOrderAndWait(ORDER_TEMP); TODO uncomment
-      //sendOrderAndWait(ORDER_GET_TANK_TIME);  TODO uncomment 
+      sendOrderAndWait(ORDER_TEMP);
+      sendOrderAndWait(ORDER_GET_TANK_TIME);
+    }
   }
-  }
-  
+  showInitProgress(12);
   if(order == ENTER_TEST){
     detachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT));
     testMode(radio);
@@ -129,7 +129,7 @@ void loop() {
     order = NO_ORDER;
     attachInterrupt(digitalPinToInterrupt(RADIO_INTERRUPT), radioInterrupt, LOW);
   } 
-
+showInitProgress(13);
   // If coin acceptor OK and clic start button.
   if(stepTakeShot == 0 && manageCoinsAndStart(parametres.mode)) {
     parametres.totStrip += 1;
@@ -139,15 +139,8 @@ void loop() {
 
   if(stepTakeShot > 0) {
     manageStepsTakeShot(); 
-  } else{
-    // When nothing to do ask for dev parameters every 10 sec.
-    if(currentMillis - lastCallTemp > 10000){
-      lastCallTemp = currentMillis;
-      sendOrderAndWait(ORDER_TEMP);
-      sendOrderAndWait(ORDER_GET_TANK_TIME);  
-    }
-  }
-
+  } 
+  showInitProgress(14);
 }
 
 void manageStepsTakeShot(){
@@ -165,8 +158,6 @@ void manageStepsTakeShot(){
     case 4:
     case 6:
     case 8:
-      takeShot();
-      startLedOff();
       takeShot(exposureMode);
       break;
       
@@ -181,6 +172,8 @@ void manageStepsTakeShot(){
       break;
       
     case 9:// last paper move, need to wait for spider to be at the correct position and scissor opened.  
+      auxOff();
+      checkRTC();// disable or not ceiling.
       sendOrderAndWait(ORDER_NEW_SLOT);
       openScissor();
       movePaperOut();
@@ -315,28 +308,6 @@ boolean sendOrderAndWait(char sendOrder){
 void checkLuminosity(){
   lux = luxMeter.getLuminosity(TSL2591_VISIBLE);;
   debug("lux:", lux);
-  // The sun is down
-  /*if(!ceilingOn && lux < 4){
-    ceilingOn = true;
-    // Ligth the ceiling
-    for(int i=0;i<CEILING_NBPIXEL;i++){
-      ceilingPixels.setPixelColor(i, 255,255,255); // white as hell
-    }
-    ceilingPixels.show();
-  } else if(ceilingOn && lux > 30){
-    ceilingOn = false;
-    // switch off the ceiling
-    for(int i=0;i<CEILING_NBPIXEL;i++){
-      ceilingPixels.setPixelColor(i, 0, 0, 0); // Dark
-    }
-    ceilingPixels.show();
-  }*/
-
-  // Ligth the ceiling
-  for(int i=0;i<CEILING_NBPIXEL;i++){
-    ceilingPixels.setPixelColor(i, 255,0,0); // white as hell
-  }
-  ceilingPixels.show();
 }
 
 /***************************
@@ -347,29 +318,30 @@ void initPhotomaton(){
     
   // Coin acceptor off 
   disableCoinAcceptor();
-  
+  showInitProgress(2);
   // flash off
   flashOff();
-  
+  showInitProgress(3);
   // Start button off
   startLedOff();
-  
+  showInitProgress(4);
   // 4 * 7 segment display for coin
   initCoinSegment();
-  
+  showInitProgress(5);
   // Init steppers position.
   initScissor();
-  
+  showInitProgress(6);
   // Shutter
   initShutter();
-  
+  showInitProgress(7);
   // Paper
   initPaper();
-    
+   showInitProgress(8); 
   //Wait for paper process.
   sendOrderAndWait(ORDER_SPIDER_READY);
-    
+  showInitProgress(9);  
   enableCoinAcceptor(parametres.mode);
+  showInitProgress(10);
   debug("initPhotomaton-", String("end"));
 }
 

@@ -8,6 +8,7 @@ Input<PAPER_SWITCH2_PIN> opto2(true);
 Input<PAPER_SWITCH3_PIN> opto3(true);
 Input<PAPER_SWITCH4_PIN> opto4(true);
 Output<PAPER_PIN_ENABLE> enablePaper;
+Output<PAPER_M0> m0Paper;
 
 void movePaperFirstShot() {
   debug("movePaperFirstShot", String("begin"));
@@ -42,6 +43,7 @@ void movePaperFirstShot() {
 
 void initPaper() {
   debug("initPaper", String("begin"));
+  m0Paper.write(LOW);
   enablePaper.write(LOW);
   paper.setCurrentPosition(0);
   paper.setMaxSpeed(PAPER_SPEED);

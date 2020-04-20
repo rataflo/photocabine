@@ -8,11 +8,13 @@ bool bCloseScissor = false; // True if scissor is closed.
 bool bOpenScissor = true; // true if scissor wide open
 Input<SCISSOR_ENDSTOP_PIN> endstopScissor(true);
 Output<SCISSOR_PIN_ENABLE> enableScissor;
+Output<SCISSOR_M0> m0Scissor;
 
 void initScissor() {
   int homing = 0;
   
   // stepper scissor
+  m0Scissor.write(LOW);
   enableScissor.write(LOW);
   scissor.setCurrentPosition(0);
   scissor.setMaxSpeed(SCISSOR_SPEED);

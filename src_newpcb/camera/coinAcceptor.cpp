@@ -65,6 +65,9 @@ boolean manageCoinsAndStart(byte mode){
     startLedOff();
     disableCoinAcceptor();
     coinSegment.setSegments(SEG_BUSY);
+    ceilingWhite();
+    auxOn();
+    incrementCounter();
   }
 
   return bStart;
@@ -161,11 +164,13 @@ void enableCoinAcceptor(byte mode){
 }
 
 void startLedOn() {
+  debug("startLedOn", "begin");
   startLED.write(HIGH);
   bStartLedOn = true;
 }
 
 void startLedOff() {
+  debug("startLedOff", "begin");
   startLED.write(LOW);
   bStartLedOn = false;
 }
@@ -186,4 +191,10 @@ void waitForStart(){
   while(startBtn.read()){
     // do nothing.
   }
+}
+
+void incrementCounter(){
+  digitalWrite(COUNT_PIN, HIGH);
+  delay(50);
+  digitalWrite(COUNT_PIN, LOW);
 }

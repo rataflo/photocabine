@@ -3,7 +3,7 @@
 // Spider rotate
 AccelStepper spiderRotate(1, SPIDER_ROTATE_PIN_STP, SPIDER_ROTATE_PIN_DIR);
 Servo servoArm;
-Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(84, LEDSTRIP_PIN, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(LIGHT_PROCESS_NB, LIGHT_PROCESS_PIN, NEO_RGB + NEO_KHZ800);
 
 bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
 volatile byte currentSpeed = 0; // use to reset speed after a pause.
@@ -11,25 +11,31 @@ volatile byte currentSpeed = 0; // use to reset speed after a pause.
 void setupSpider(){
   pinMode(SPIDER_UPDOWN_PIN_PWM, OUTPUT);
   pinMode(SPIDER_UPDOWN_PIN_DIR, OUTPUT);
-  
+
+  pinMode(SPIDER_ROTATE_PIN_M0, OUTPUT);
+  digitalWrite(SPIDER_ROTATE_PIN_M0, HIGH);// Half step
   pinMode(SPIDER_ROTATE_PIN_ENABLE, OUTPUT);
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
+  
   pinMode(SPIDER_ROTATE_ENDSTOP1_PIN, INPUT_PULLUP);
   pinMode(SPIDER_ROTATE_ENDSTOP2_PIN, INPUT_PULLUP);
-
   pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM, INPUT_PULLUP);
   pinMode(SPIDER_UPDOWN_PIN_ENDSTOP_UP, INPUT_PULLUP);
-  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
+  
 }
 
 void initSpider(struct storage *params){
   ledstrip.begin(); 
-  for(int i=0;i<LEDSTRIP_NB;i++){
+  for(int i=0;i<LIGHT_PROCESS_NB;i++){
     ledstrip.setPixelColor(i, 0, 0, 0); 
   }
   ledstrip.show();
   
-  //initSpiderBottom();
-  // TODO: descendre un petit peu avant de bouger le servo.
+  //If spider on top, move a bit to safely position servo.
+  boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
+  if(!digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP)){
+    downABitSpider();
+  }
   initServoArm();
   initSpiderUp();
   initRotate(params);
@@ -45,16 +51,13 @@ void downSpider(){
   // we start fast.
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
-    for(int i = SPIDER_UPDOWN_LOW_SPEED; i <= SPIDER_UPDOWN_MAX_SPEED; i++){
-      currentSpeed = i;
-      analogWrite(SPIDER_UPDOWN_PIN_PWM, i); //max speed.
-      delay(5);
-    }
+    currentSpeed = SPIDER_UPDOWN_MAX_SPEED;
+    analogWrite(SPIDER_UPDOWN_PIN_PWM, SPIDER_UPDOWN_MAX_SPEED); //max speed.
   }
-  // and slow down after 4 seconds.
+  // and slow down after 1 seconds.
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
-    if(currentMillis - startMoove > 4200){
+    if(currentMillis - startMoove > 1100){
       currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed); // mid speed
     }
@@ -76,7 +79,7 @@ void downABitSpider(){
   currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
   analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed); //mid speed.
   
-  while(currentMillis - startMoove < 1000){
+  while(currentMillis - startMoove < 500){
     // do nothing
     currentMillis = millis();
   }
@@ -92,16 +95,12 @@ void upSpider(byte speedPwm){
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_UP);
   if(!bEndStop){
     digitalWrite(SPIDER_UPDOWN_PIN_DIR, HIGH);
-    for(int i = SPIDER_UPDOWN_LOW_SPEED; i <= speedPwm; i++){
-      analogWrite(SPIDER_UPDOWN_PIN_PWM, i);
-      currentSpeed = i;
-      delay(5);
-    }
+    analogWrite(SPIDER_UPDOWN_PIN_PWM, speedPwm);
   }
-  // and slow down after 4 seconds.
+  // and slow down after 1 seconds.
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
-    if(currentMillis - startMoove > 4200){
+    if(currentMillis - startMoove > 1100){
       currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
     }
@@ -118,7 +117,7 @@ void asyncSpiderUp() {
   if(!bEndStop){
     digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
     digitalWrite(SPIDER_UPDOWN_PIN_DIR,HIGH);
-    currentSpeed = 70; // TODO: constant?
+    currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
     analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   } else {
     analogWrite(SPIDER_UPDOWN_PIN_PWM, 0);
@@ -133,9 +132,9 @@ void downToMiddleSpider(){
   
   digitalWrite(SPIDER_UPDOWN_PIN_DIR,LOW);
   currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
-  analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed); //mid speed.
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   
-  while(currentMillis - startMoove < 1500){
+  while(currentMillis - startMoove < 600){
     // do nothing
     currentMillis = millis();
   }
@@ -151,7 +150,7 @@ void rotateSpider(struct storage *params){
   spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
   spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
   int delta = SPIDER_ROTATE_NBSTEP;
-  delta += 200;
+  delta += 50;
   spiderRotate.moveTo(delta);
 
   boolean bEndStop = false;
@@ -242,17 +241,17 @@ void setServoArmWaitPos() {
 }
 
 void openArm(struct storage *params) {
-  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Activate rotation stepper to avoid rotation during operation.
   downABitSpider();
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_OPEN_POS_BEGIN); 
   delay(2000);
   upSpider(SPIDER_UPDOWN_LOW_SPEED);
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   for(int i = SERVO_ARM_OPEN_POS_BEGIN; i < SERVO_ARM_OPEN_POS_END; i++){
     servoArm.write(i);
     delay(40);
   }
-  servoArm.detach();// To save power.
   setServoArmWaitPos();
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   params->slots[0] = SLOT_OPEN;
@@ -260,12 +259,13 @@ void openArm(struct storage *params) {
 }
 
 void closeArm(struct storage *params) {
-  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Switch rotation stepper activated to avoid rotation during operation.
   downABitSpider();
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);// Activate rotation stepper to avoid rotation during operation.
   servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_CLOSE_POS_BEGIN); 
   delay(1000);
   upSpider(SPIDER_UPDOWN_LOW_SPEED);
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   for(int i = SERVO_ARM_CLOSE_POS_BEGIN; i > SERVO_ARM_CLOSE_POS_END; i--){
     servoArm.write(i);
     delay(40);
@@ -330,7 +330,7 @@ void initRotate(struct storage *params) {
   spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
 
   boolean bEndStop = !digitalRead(SPIDER_ROTATE_ENDSTOP2_PIN);
-  int homing = 0;
+  int homing = 1;
   while (!bEndStop) { 
     spiderRotate.moveTo(homing); 
     spiderRotate.run();

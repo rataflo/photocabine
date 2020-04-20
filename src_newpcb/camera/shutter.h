@@ -83,6 +83,8 @@ const int IMAGES_LEN = sizeof(IMAGES)/8;
 
 void flashOn();
 void flashOff();
+void auxOn();
+void auxOff();
 void initShutter();
 void takeShot(byte mode);
 void initLedMatrix();

@@ -6,7 +6,7 @@
  * Libraries used:
  * 
  * Do all the processing of paper, dip in tank and exit.
- * Communicate with camera by Serial2 (cf orders.h)
+ * Communicate with camera by Serial3 (cf orders.h)
  */
 #include <Arduino.h>
 #include <OneWire.h>
@@ -35,7 +35,7 @@ void setup() {
   #ifdef DEBUG_MODE
     Serial.begin(9600);
   #endif
-  Serial2.begin(9600);
+  Serial3.begin(9600);
   
   // Interrupt for incoming order
   attachInterrupt(digitalPinToInterrupt(ORDER_INTERRUPT_PIN), emergencyStop, FALLING);
@@ -78,8 +78,11 @@ void setup() {
       closeArm(&params);
     }
   }*/
+  //setupDelivery();
+  //runStepper();
   initSlots(&params);
   initSpider(&params);
+  //openArm(&params);
 }
 
 void loop() {
@@ -94,9 +97,9 @@ void loop() {
 }
 
 void checkOrder(){
-  if (Serial2.available()) {
-    order = Serial2.read();
-    serial2Clear();
+  if (Serial3.available()) {
+    order = Serial3.read();
+    Serial3Clear();
     debug("checkOrder - begin", String(order));
   }
   
@@ -123,7 +126,7 @@ void checkOrder(){
       break;
     }
     case ORDER_SET_TANK_TIME:
-      params.tankTime = Serial2.parseInt();
+      params.tankTime = Serial3.parseInt();
       EEPROM.updateBlock(EEPROM_ADRESS, params);
       order = NO_ORDER;
       break;
@@ -225,19 +228,17 @@ void process(){
       unsigned long currentMillis = startMillis;
 
       // special case dev tank: TODO un truc plus élégant.
-      int duration = params.tankTime;
+      unsigned int duration = params.tankTime;
       if(params.slots[0] == SLOT_PAPER || params.slots[1] == SLOT_PAPER){
           duration = 30000;
       }
-      
+
       while(currentMillis - startMillis < duration){
-        // TODO: do this every 2 second.
         agitate();
         currentMillis = millis();
       }
       
       upSpider(SPIDER_UPDOWN_MAX_SPEED);
-    
 
       //Last stage, delivery before rotate.
       if(params.slots[12] == SLOT_PAPER){
@@ -262,22 +263,22 @@ void process(){
 }
 
 void respondToOrder(char answer){
-  Serial2.print(answer);
-  Serial2.flush();
+  Serial3.print(answer);
+  Serial3.flush();
   order = NO_ORDER;
 }
 
 void respondToOrder(float answer){
   debug("respondToOrder", String(answer, 1));
-  Serial2.println(answer, 1);
-  Serial2.flush();
+  Serial3.println(answer, 1);
+  Serial3.flush();
   order = NO_ORDER;
 }
 
 void respondToOrder(byte answer){
   debug("respondToOrder", answer);
-  Serial2.print(answer);
-  Serial2.flush();
+  Serial3.print(answer);
+  Serial3.flush();
   order = NO_ORDER;
 }
 

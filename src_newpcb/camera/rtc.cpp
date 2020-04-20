@@ -8,7 +8,7 @@ void setupRTC(){
 
   ceilingPixels.begin(); 
   for(int i=0;i<CEILING_NBPIXEL;i++){
-    ceilingPixels.setPixelColor(i, 0, 0, 0); // Dark
+    ceilingPixels.setPixelColor(i, 255, 0, 0); // Dark
   }
   ceilingPixels.show();
     
@@ -124,3 +124,23 @@ void printDateTime(const RtcDateTime& dt)
             dt.Second() );
     debug("date/time", String(datestring));
 }
+
+void showInitProgress(byte step){
+
+  /*for(int i=0;i<CEILING_NBPIXEL;i++){
+      ceilingPixels.setPixelColor(i, 0, 0, 0); // Dark
+    }
+  for(int i=24;i<24+step;i++){
+      ceilingPixels.setPixelColor(i+step, 255, 0, 0); // Dark
+    }
+    ceilingPixels.show();*/
+}
+
+void ceilingWhite(){
+
+  for(int i=0;i<CEILING_NBPIXEL;i++){
+    ceilingPixels.setPixelColor(i, 255, 255, 255); // white
+  }
+  ceilingPixels.show();
+}
+

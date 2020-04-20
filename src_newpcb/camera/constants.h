@@ -7,9 +7,10 @@
 #define DEBUG_MODE
 
 #define SHUTTER_PIN_STP 37
-#define SHUTTER_PIN_DIR 41
+#define SHUTTER_PIN_DIR 38
 #define SHUTTER_ENDSTOP_PIN 26
 #define SHUTTER_PIN_ENABLE 39
+#define SHUTTER_M0 36
 
 #define LED_MATRIX_SDI_PIN 12 // SDI = DIN
 #define LED_MATRIX_CS_PIN 11 // CS
@@ -22,9 +23,11 @@
 #define SCISSOR_ACCEL 200
 #define SCISSOR_STEP_OPENED 350 // Number of step to fully open the scissor.
 #define SCISSOR_PIN_ENABLE 42
+#define SCISSOR_M0 43
+
 
 #define PAPER_PIN_STP 33
-#define PAPER_PIN_DIR 38
+#define PAPER_PIN_DIR 34
 #define NB_STEP_PAPER_ONE_SHOT 730 // Number of step to move to another shot.
 #define NB_STEP_PAPER_OUT 3330 // Number of step to move out paper. //3230
 #define PAPER_SPEED 500
@@ -35,6 +38,7 @@
 #define PAPER_SWITCH3_PIN 28
 #define PAPER_SWITCH4_PIN 29
 #define PAPER_PIN_ENABLE 32
+#define PAPER_M0 35
 
 #define FLASH_PIN 45
 #define AUX_PIN 46
@@ -45,6 +49,8 @@
 #define ENABLE_COIN_PIN 4 // If High coin acceptor is enable. LOW coin acceptor reject coins.
 #define COIN_SEGMENT_CLK_PIN 6
 #define COIN_SEGMENT_DIO_PIN 5
+
+#define COUNT_PIN 8 //Mechanical counter
 
 const byte RADIO_ADRESS_EMITTER[6] = "00002";
 const byte RADIO_ADRESS_RECEIVER[6] = "00001";

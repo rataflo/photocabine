@@ -10,5 +10,6 @@
 void setupRTC();
 void checkRTC();
 void printDateTime(const RtcDateTime& dt);
-
+void showInitProgress(byte step);
+void ceilingWhite();
 #endif

@@ -4,11 +4,15 @@
 // Flash
 Output<FLASH_PIN> flash;
 
+//Aux light
+Output<AUX_PIN> aux;
+
 // Shutter
 AccelStepper shutter(1, SHUTTER_PIN_STP, SHUTTER_PIN_DIR);
 bool bCloseShutter = false; // Shutter is closed?
 Input<SHUTTER_ENDSTOP_PIN> endstopShutter(true);
 Output<SHUTTER_PIN_ENABLE> enableShutter;
+Output<SHUTTER_M0> m0Shutter;
 
 // LED Matrix
 LedControl ledMatrix = LedControl(LED_MATRIX_SDI_PIN, LED_MATRIX_SCL_PIN, LED_MATRIX_CS_PIN, 1); 
@@ -26,10 +30,19 @@ void flashOff() {
   bFlashOn = false;
 }
 
+void auxOn() {
+  aux.write(HIGH);
+}
+
+void auxOff() {
+  aux.write(LOW);
+}
+
 void initShutter() {
   initLedMatrix();
   
   // stepper shutter
+  m0Shutter.write(LOW);
   enableShutter.write(LOW);
   shutter.setMaxSpeed(1000);
   shutter.setAcceleration(400);

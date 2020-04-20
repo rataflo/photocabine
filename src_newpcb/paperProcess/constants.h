@@ -5,22 +5,22 @@
 #define DEBUG_MODE
 
 #define SPIDER_UPDOWN_PIN_DIR 5
-#define SPIDER_UPDOWN_PIN_PWM 4 // TODO: check if work on 4 and not 3 (previous not that DirectIO disable pwm)
+#define SPIDER_UPDOWN_PIN_PWM 4
 #define SPIDER_UPDOWN_PIN_ENDSTOP_UP 34
 #define SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM 36 
 //#define SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE 36 TODO: not necessary.
 #define SPIDER_UPDOWN_MAX_SPEED 255
-#define SPIDER_UPDOWN_LOW_SPEED 95 //TODO: check other speed for sound level.
+#define SPIDER_UPDOWN_LOW_SPEED 70
 
 #define SPIDER_ROTATE_PIN_STP 9
 #define SPIDER_ROTATE_PIN_DIR 8
-#define SPIDER_ROTATE_NBSTEP 450 // Number of steps to move to one tank
+#define SPIDER_ROTATE_NBSTEP 400 // Number of steps to move to one tank
 #define SPIDER_ROTATE_ENDSTOP1_PIN 32 // Endstop in front of paper exit. Pair
 #define SPIDER_ROTATE_ENDSTOP2_PIN 33 // Endstop 1/14 degrees right from endstop 1. Impair
-#define SPIDER_ROTATE_SPEED 500
+#define SPIDER_ROTATE_SPEED 600
 #define SPIDER_ROTATE_ACCEL 100
-#define SPIDER_ROTATE_PIN_ENABLE 11 // TODO: check if rigth pin.
-
+#define SPIDER_ROTATE_PIN_ENABLE 7
+#define SPIDER_ROTATE_PIN_M0 6
 
 #define SERVO_ARM 45
 #define SERVO_ARM_IDLE_POS 35
@@ -34,10 +34,11 @@
 #define SPIDER_EXIT_PIN_ENABLE 11
 #define SPIDER_EXIT_SPEED 500
 #define SPIDER_EXIT_ACCEL 50
-//#define SPIDER_EXIT_PIN_SWITCH not connected for now
+#define SPIDER_EXIT_PIN_M0 10
 
-#define LEDSTRIP_PIN 44 // TODO : Change pin.
-#define LEDSTRIP_NB 84
+#define LIGHT_PROCESS_PIN 44
+#define LIGHT_PROCESS_NB 84
+
 #define TANK_TIME 18000 // Default time in each tank. Temperature between 32°C and 40°C.
 #define DELIVERY_TIME 5000 // Time to exit paper
 
