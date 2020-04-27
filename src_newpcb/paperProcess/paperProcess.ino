@@ -37,8 +37,8 @@ void setup() {
   #endif
   Serial3.begin(9600);
   
-  // Interrupt for incoming order
-  attachInterrupt(digitalPinToInterrupt(ORDER_INTERRUPT_PIN), emergencyStop, FALLING);
+  // Interrupt for incoming order TODO: test without
+  //attachInterrupt(digitalPinToInterrupt(ORDER_INTERRUPT_PIN), emergencyStop, FALLING);
   
   // Temperature
   tempProbe.begin();
@@ -83,6 +83,7 @@ void setup() {
   initSlots(&params);
   initSpider(&params);
   //openArm(&params);
+  //runDelivery(&params);
 }
 
 void loop() {
@@ -167,20 +168,20 @@ void checkOrder(){
         EEPROM.updateBlock(EEPROM_ADRESS, params);
         bWait = false;
         
-        // Calculate tank time from temperature.
+        // Calculate tank time from temperature + chemical expiration.
         if(params.tankTime == 0){// 0 = auto tank time.
           if(tempC != 0 && tempC < 50){ //In case temp probe not working
             // Test: increment by 2sec/5°C
             if(tempC <= 20){
-              params.tankTime = 24000;
+              params.tankTime = 30000;
             } else if(tempC > 20 && tempC <= 25){
-              params.tankTime = 22000;
+              params.tankTime = 28000;
             } else if(tempC > 25 && tempC <= 30){
-              params.tankTime = 20000;
+              params.tankTime = 26000;
             } else if(tempC > 30 && tempC <= 35){
-              params.tankTime = 18000;
+              params.tankTime = 24000;
             } else{
-              params.tankTime = 16000;
+              params.tankTime = 22000;
             }
           } else{
             params.tankTime = TANK_TIME;
@@ -215,9 +216,14 @@ void process(){
     if(params.slots[0] == SLOT_OPEN){
       debug("closeArm", String("slot[0]"));
       closeArm(&params);
-    } else if(!bProcess && (params.slots[13] == SLOT_OPEN || params.slots[13] == SLOT_CLOSED)){ // Arm on exit and no other paper to process.
+    } else if(!bProcess && params.slots[13] == SLOT_CLOSED){ // Arm on exit and no other paper to process.
       debug("rotateSpider", String(params.slots[13]));
       rotateSpider(&params);
+    }else if(!bProcess && params.slots[13] == SLOT_OPEN){ // Arm open on exit and no other paper to process.
+      debug("rotateSpider", String(params.slots[13]));
+      downToMiddleSpider();
+      blindRotate(&params);
+      upSpider(SPIDER_UPDOWN_LOW_SPEED);
     }
 
     if(bProcess){
@@ -228,11 +234,14 @@ void process(){
       unsigned long currentMillis = startMillis;
 
       // special case dev tank: TODO un truc plus élégant.
-      unsigned int duration = params.tankTime;
-      if(params.slots[0] == SLOT_PAPER || params.slots[1] == SLOT_PAPER){
+      unsigned long duration = params.tankTime;
+      /*if(params.slots[0] == SLOT_PAPER || params.slots[1] == SLOT_PAPER){
           duration = 30000;
-      }
-
+      }*/
+      /*if(params.slots[10] == SLOT_PAPER){//TODO: Reducer dead
+          duration = 120000;
+      }*/
+      
       while(currentMillis - startMillis < duration){
         agitate();
         currentMillis = millis();
@@ -244,6 +253,7 @@ void process(){
       if(params.slots[12] == SLOT_PAPER){
         debug("runDelivery", "");
         runDelivery(&params);
+        
       } else {
         rotateSpider(&params);
         debug("rotateSpider", "");

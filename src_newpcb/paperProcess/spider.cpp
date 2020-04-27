@@ -79,7 +79,7 @@ void downABitSpider(){
   currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
   analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed); //mid speed.
   
-  while(currentMillis - startMoove < 500){
+  while(currentMillis - startMoove < 550){
     // do nothing
     currentMillis = millis();
   }
@@ -160,6 +160,14 @@ void rotateSpider(struct storage *params){
   }
   spiderRotate.stop();
   spiderRotate.setCurrentPosition(0);
+
+  //More step to the center the arm.
+  spiderRotate.moveTo(SPIDER_ROTATE_CENTER_STEP); 
+  while (spiderRotate.currentPosition() != SPIDER_ROTATE_CENTER_STEP) { 
+    spiderRotate.run();
+  }
+  spiderRotate.stop();
+  spiderRotate.setCurrentPosition(0);
   spiderRotate.run();
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   bImpair = !bImpair;
@@ -178,7 +186,7 @@ void blindRotate(struct storage *params){
   spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
   spiderRotate.moveTo(SPIDER_ROTATE_NBSTEP);
 
-  while (spiderRotate.currentPosition() < SPIDER_ROTATE_NBSTEP) { 
+  while (spiderRotate.currentPosition() != SPIDER_ROTATE_NBSTEP) { 
     spiderRotate.run();
   }
   spiderRotate.stop();
@@ -339,7 +347,17 @@ void initRotate(struct storage *params) {
     bEndStop = !digitalRead(SPIDER_ROTATE_ENDSTOP2_PIN);
   }
   bImpair = true;
+  spiderRotate.stop();
   spiderRotate.setCurrentPosition(0);
+
+  //More step to the center the arm.
+  spiderRotate.moveTo(SPIDER_ROTATE_CENTER_STEP); 
+  while (spiderRotate.currentPosition() != SPIDER_ROTATE_CENTER_STEP) { 
+    spiderRotate.run();
+  }
+  spiderRotate.stop();
+  spiderRotate.setCurrentPosition(0);
+  
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   lightStrip(params);
   Serial.println("initRotate-end"); 

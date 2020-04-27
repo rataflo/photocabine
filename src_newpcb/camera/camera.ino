@@ -181,10 +181,12 @@ void manageStepsTakeShot(){
       
     case 10: // cut paper and zou!
       closeScissor();
+      openScissor();
       sendOrderAndWait(ORDER_PAPER_READY);
       break;
       
     case 12: // move paper back for first shot.
+      closeScissor();
       movePaperFirstShot();
       break;
     case 13: // check for free slot.
