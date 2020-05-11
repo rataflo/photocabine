@@ -11,11 +11,12 @@
 //#define SPIDER_UPDOWN_PIN_ENDSTOP_MIDDLE 36 TODO: not necessary.
 #define SPIDER_UPDOWN_MAX_SPEED 255
 #define SPIDER_UPDOWN_LOW_SPEED 70
+#define SPIDER_UPDOWN_AGITATE_SPEED 100
 
 #define SPIDER_ROTATE_PIN_STP 9
 #define SPIDER_ROTATE_PIN_DIR 8
-#define SPIDER_ROTATE_NBSTEP 305 // Number of steps to move to one tank (really helpful to position arm on exit slot)
-#define SPIDER_ROTATE_CENTER_STEP 5 // Number of steps to do after opto switch reached to put the arm centered.
+#define SPIDER_ROTATE_NBSTEP 340 // Number of steps to move to one tank (really helpful to position arm on exit slot)
+#define SPIDER_ROTATE_CENTER_STEP 10 // Number of steps to do after opto switch reached to put the arm perfectly centered.
 #define SPIDER_ROTATE_ENDSTOP1_PIN 32 // Endstop in front of paper exit. Pair
 #define SPIDER_ROTATE_ENDSTOP2_PIN 33 // Endstop 1/14 degrees right from endstop 1. Impair
 #define SPIDER_ROTATE_SPEED 600
@@ -56,7 +57,7 @@
 #define EEPROM_ADRESS 0 // Lot of update/read so change adress from time to time to avoid corrupted memory.
 struct storage {
   byte checkCode = 222;
-  int tankTime = TANK_TIME;
+  unsigned int tankTime = TANK_TIME;
   byte slots[14];
 };
 

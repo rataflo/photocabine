@@ -4,7 +4,7 @@
 /* Calculate number of step do go from one tank to another */
 #define SPIDER_ROTATE_PIN_STP 9
 #define SPIDER_ROTATE_PIN_DIR 8
-#define SPIDER_ROTATE_NBSTEP 305 // Number of steps to move to one tank
+#define SPIDER_ROTATE_NBSTEP 350 // Number of steps to move to one tank
 #define SPIDER_ROTATE_SPEED 600
 #define SPIDER_ROTATE_ACCEL 100
 #define SPIDER_ROTATE_PIN_ENABLE 7

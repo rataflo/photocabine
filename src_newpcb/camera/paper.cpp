@@ -123,8 +123,7 @@ void movePaperNextShot(byte numShot) {
     }
     // move forward
     paper.setCurrentPosition(0);
-    
-    // marche arriére
+
     int delta = DELTA_FIRST_SHOT + 15;
     paper.moveTo(delta); 
     paper.setMaxSpeed(PAPER_SPEED);

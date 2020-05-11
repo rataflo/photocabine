@@ -169,24 +169,24 @@ void checkOrder(){
         bWait = false;
         
         // Calculate tank time from temperature + chemical expiration.
-        if(params.tankTime == 0){// 0 = auto tank time.
+        //if(params.tankTime == 0){// 0 = auto tank time.
           if(tempC != 0 && tempC < 50){ //In case temp probe not working
             // Test: increment by 2sec/5°C
             if(tempC <= 20){
-              params.tankTime = 30000;
+              params.tankTime = 60000;
             } else if(tempC > 20 && tempC <= 25){
-              params.tankTime = 28000;
+              params.tankTime = 40000;
             } else if(tempC > 25 && tempC <= 30){
-              params.tankTime = 26000;
+              params.tankTime = 30000;
             } else if(tempC > 30 && tempC <= 35){
-              params.tankTime = 24000;
+              params.tankTime = 26000;
             } else{
-              params.tankTime = 22000;
+              params.tankTime = 24000;
             }
           } else{
             params.tankTime = TANK_TIME;
           }
-        }
+        //}
         // TODO: tell camera number of slots empty.
         order = NO_ORDER;
         break;
@@ -205,7 +205,7 @@ void process(){
     debug("process", String("begin"));
     // Check if a slot contain paper to dip in tank.
     boolean bProcess = false;
-    for(byte i = 0; i < 13; i++){
+    for(byte i = 0; i < 14; i++){
       if(params.slots[i] == SLOT_PAPER){
         bProcess = true;
         break;
@@ -254,15 +254,20 @@ void process(){
         debug("runDelivery", "");
         runDelivery(&params);
         
+      } else if(params.slots[13] == SLOT_OPEN){
+        downToMiddleSpider();
+        blindRotate(&params);
+        upSpider(SPIDER_UPDOWN_LOW_SPEED);
+        
       } else {
         rotateSpider(&params);
         debug("rotateSpider", "");
       }
-  
+
       // If nothing to do we stop the process.
       bWait = true;
-      for(byte i = 0; i < 13; i++){
-        if(params.slots[i] == SLOT_PAPER){
+      for(byte i = 0; i < 14; i++){
+        if(params.slots[i] == SLOT_PAPER || params.slots[i] == SLOT_OPEN){
           bWait = false;
           break;
         }

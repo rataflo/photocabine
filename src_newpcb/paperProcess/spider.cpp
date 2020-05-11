@@ -161,7 +161,7 @@ void rotateSpider(struct storage *params){
   spiderRotate.stop();
   spiderRotate.setCurrentPosition(0);
 
-  //More step to the center the arm.
+  //More step to center perfectly the arm.
   spiderRotate.moveTo(SPIDER_ROTATE_CENTER_STEP); 
   while (spiderRotate.currentPosition() != SPIDER_ROTATE_CENTER_STEP) { 
     spiderRotate.run();
@@ -216,7 +216,7 @@ void switchSlots(struct storage *params){
 void agitate(){
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   digitalWrite(SPIDER_UPDOWN_PIN_DIR, HIGH);
-  currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
+  currentSpeed = SPIDER_UPDOWN_AGITATE_SPEED;
   analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   unsigned long startMoove = millis();
   unsigned long currentMillis = startMoove;
@@ -227,6 +227,8 @@ void agitate(){
   }
 
   //DOWN
+  currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
+  analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
   digitalWrite(SPIDER_UPDOWN_PIN_DIR, LOW);
   boolean bEndStop = !digitalRead(SPIDER_UPDOWN_PIN_ENDSTOP_BOTTOM);
   while(!bEndStop){
