@@ -57,7 +57,7 @@ void downSpider(){
   // and slow down after 1 seconds.
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
-    if(currentMillis - startMoove > 1100){
+    if(currentMillis - startMoove > 900){
       currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed); // mid speed
     }
@@ -100,7 +100,7 @@ void upSpider(byte speedPwm){
   // and slow down after 1 seconds.
   unsigned long currentMillis = startMoove;
   while (!bEndStop) { 
-    if(currentMillis - startMoove > 1100){
+    if(currentMillis - startMoove > 1000){
       currentSpeed = SPIDER_UPDOWN_LOW_SPEED;
       analogWrite(SPIDER_UPDOWN_PIN_PWM, currentSpeed);
     }
@@ -221,7 +221,7 @@ void agitate(){
   unsigned long startMoove = millis();
   unsigned long currentMillis = startMoove;
   //UP
-  while(currentMillis - startMoove < 800){
+  while(currentMillis - startMoove < 600){
     // do nothing
     currentMillis = millis();
   }
@@ -371,12 +371,19 @@ boolean isSpiderUp(){
 
 void lightStrip(struct storage *params){
   // light open slots
-  for(byte i = 0; i < 14; i++){
+  // TODO: code to use when ring for led is made.
+  /*for(byte i = 0; i < 14; i++){
     for(byte j = i * 5; j < (i * 5) + 5; j++){
       ledstrip.setPixelColor(j, params->slots[i] == SLOT_OPEN || params->slots[i] == SLOT_PAPER ? 255 : 0, 0, 0); 
     }
   }
+  ledstrip.show();*/
+
+  for(byte i = 0; i < 87; i++){
+    ledstrip.setPixelColor(i, 255, 0, 0); 
+  }
   ledstrip.show();
+  
 }
 
 byte getSpiderCurrentSpeed(){

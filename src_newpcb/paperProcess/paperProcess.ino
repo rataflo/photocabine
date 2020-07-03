@@ -179,9 +179,9 @@ void checkOrder(){
             } else if(tempC > 25 && tempC <= 30){
               params.tankTime = 30000;
             } else if(tempC > 30 && tempC <= 35){
-              params.tankTime = 26000;
+              params.tankTime = 28000;
             } else{
-              params.tankTime = 24000;
+              params.tankTime = 26000;
             }
           } else{
             params.tankTime = TANK_TIME;
@@ -224,6 +224,7 @@ void process(){
       downToMiddleSpider();
       blindRotate(&params);
       upSpider(SPIDER_UPDOWN_LOW_SPEED);
+      initRotate(&params);
     }
 
     if(bProcess){
@@ -249,6 +250,8 @@ void process(){
       
       upSpider(SPIDER_UPDOWN_MAX_SPEED);
 
+      delay(2000); //for dripping.
+      
       //Last stage, delivery before rotate.
       if(params.slots[12] == SLOT_PAPER){
         debug("runDelivery", "");

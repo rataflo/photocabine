@@ -102,7 +102,7 @@ void checkRTC(){
   }else if(now.Hour() >= HOUR_OFF || now.Hour() < HOUR_ON){
     // switch off the ceiling
     for(int i=0;i<CEILING_NBPIXEL;i++){
-      ceilingPixels.setPixelColor(i, 0, 0, 0); // Dark
+      ceilingPixels.setPixelColor(i, 255, 0, 0); // Dark
     }
     debug("lights", String("off"));
   }
