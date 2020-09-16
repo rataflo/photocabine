@@ -27,7 +27,7 @@ void setupSpider(){
 void initSpider(struct storage *params){
   ledstrip.begin(); 
   for(int i=0;i<LIGHT_PROCESS_NB;i++){
-    ledstrip.setPixelColor(i, 0, 0, 0); 
+    ledstrip.setPixelColor(i, 255, 0, 0); 
   }
   ledstrip.show();
   

@@ -244,7 +244,7 @@ void process(){
       }*/
       
       while(currentMillis - startMillis < duration){
-        agitate();
+        //agitate();
         currentMillis = millis();
       }
       

@@ -93,7 +93,7 @@ void checkRTC(){
   printDateTime(now);
   
   //Switch/Turn off lights when time as come.
-  if(now.Hour() >= HOUR_ON || now.Hour() < HOUR_OFF){
+  /*if(now.Hour() >= HOUR_ON || now.Hour() < HOUR_OFF){
     // Ligth the ceiling
     for(int i=0;i<CEILING_NBPIXEL;i++){
       ceilingPixels.setPixelColor(i, 255,255,255); // white as hell
@@ -106,7 +106,7 @@ void checkRTC(){
     }
     debug("lights", String("off"));
   }
-  ceilingPixels.show();
+  ceilingPixels.show();*/
 }
 #define countof(a) (sizeof(a) / sizeof(a[0]))
 void printDateTime(const RtcDateTime& dt)
@@ -144,3 +144,10 @@ void ceilingWhite(){
   ceilingPixels.show();
 }
 
+void ceilingRed(){
+
+  for(int i=0;i<CEILING_NBPIXEL;i++){
+    ceilingPixels.setPixelColor(i, 255, 0, 0); // red
+  }
+  ceilingPixels.show();
+}

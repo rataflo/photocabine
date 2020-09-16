@@ -174,6 +174,7 @@ void manageStepsTakeShot(){
     case 9:// last paper move, need to wait for spider to be at the correct position and scissor opened.  
       auxOff();
       checkRTC();// disable or not ceiling.
+      ceilingRed();
       sendOrderAndWait(ORDER_NEW_SLOT);
       openScissor();
       movePaperOut();
