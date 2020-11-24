@@ -1,0 +1,21 @@
+<!-- ARC is A xrad yrad xrotation-degrees largearc sweep end_x end_y -->
+
+<svg enable-background='new -0.0000 -0.0000 4.6310 5.7578' height='5.7578in' width='4.6310in' version='1.1' viewBox='-0.0000 -0.0000 4.6310 5.7578' x='-0.0000in' y='-0.0000in' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:shaper='http://www.shapertools.com/namespaces/shaper' shaper:sketchupaddin='2.2.1' >
+<title >Photocabine cut profile
+</title>
+<desc >Shaper cut profile from Sketchup model Photocabine
+</desc>
+<path d='M 4.6310 5.7578 L -0.0000 5.7578  L 0.0000 0.0000  L 4.6310 -0.0000  L 4.6310 5.7578Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='exterior' shaper:cutDepth='0.0000' fill='rgb(0,0,0)' />
+<path d='M 3.3670 3.9849 L 3.1386 3.9849  L 3.1386 4.4739  L 3.3670 4.4739  L 3.3670 3.9849Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 3.5442 4.4764 L 3.7726 4.4764  L 3.7726 3.9874  L 3.5442 3.9874  L 3.5442 4.4764Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 2.9938 4.4739 L 2.9937 3.9849  L 2.7654 3.9850  L 2.7655 4.4739  L 2.9938 4.4739Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 2.3460 4.8769 L 2.3460 5.2667  L 2.4601 5.2667  L 2.5743 5.2667  L 2.5743 4.8769  L 2.3460 4.8769Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 3.3725 5.2675 L 3.3723 4.8778  L 3.1440 4.8778  L 3.1442 5.2676  L 3.3725 5.2675Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 2.9743 5.2667 L 2.9742 4.8769  L 2.7459 4.8770  L 2.7460 5.2667  L 2.8601 5.2667  L 2.9743 5.2667Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 3.7726 4.8777 L 3.5442 4.8777  L 3.5442 5.2675  L 3.7726 5.2675  L 3.7726 4.8777Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 2.1743 4.9726 L 1.9460 4.9726  L 1.9460 5.2667  L 2.0601 5.2667  L 2.1743 5.2667  L 2.1743 4.9726Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 1.7743 5.2667 L 1.7742 4.9726  L 1.5459 4.9726  L 1.5460 5.2667  L 1.6601 5.2667  L 1.7743 5.2667Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 0.8785 0.3207 A 0.0984 0.0984 315.3450 0 0 0.6884 0.2698 A 0.0984 0.0984 315.3450 0 0 0.8785 0.3207Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 4.2708 4.7839 A 0.0669 0.0669 135.3543 0 0 4.2038 4.6680 A 0.0669 0.0669 135.3543 0 0 4.2708 4.7839Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+<path d='M 1.2165 4.7598 A 0.0669 0.0669 314.2215 0 0 1.1006 4.6929 A 0.0669 0.0669 314.2215 0 0 1.2165 4.7598Z ' transform='matrix(1,0,0,-1,0.0,5.7578)' shaper:pathType='interior' shaper:cutDepth='0.0000' fill='rgb(255,255,255)' stroke='rgb(0,0,0)' stroke-width='2' vector-effect='non-scaling-stroke' />
+</svg>
