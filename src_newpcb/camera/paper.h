@@ -11,6 +11,7 @@
 
 void movePaperFirstShot();
 void initPaper();
+void initPaperAutomatic();
 void movePaperNextShot(byte numShot);
 void movePaperOut();
 

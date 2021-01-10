@@ -6,6 +6,7 @@
 // uncomment to activate debug and serial output.
 #define DEBUG_MODE
 
+//PINS
 #define SHUTTER_PIN_STP 37
 #define SHUTTER_PIN_DIR 38
 #define SHUTTER_ENDSTOP_PIN 26
@@ -19,20 +20,13 @@
 #define SCISSOR_PIN_STP 40
 #define SCISSOR_PIN_DIR 41
 #define SCISSOR_ENDSTOP_PIN 27
-#define SCISSOR_SPEED 200
-#define SCISSOR_ACCEL 200
-#define SCISSOR_STEP_OPENED 350 // Number of step to fully open the scissor.
+
 #define SCISSOR_PIN_ENABLE 42
 #define SCISSOR_M0 43
 
-
 #define PAPER_PIN_STP 33
 #define PAPER_PIN_DIR 34
-#define NB_STEP_PAPER_ONE_SHOT 730 // Number of step to move to another shot.
-#define NB_STEP_PAPER_OUT 3330 // Number of step to move out paper. //3230
-#define PAPER_SPEED 500
-#define PAPER_ACCEL 500
-#define DELTA_FIRST_SHOT -80 //Delta in step to do after paper reach opto 1.
+
 #define PAPER_SWITCH1_PIN 30
 #define PAPER_SWITCH2_PIN 31
 #define PAPER_SWITCH3_PIN 28
@@ -52,9 +46,6 @@
 
 #define COUNT_PIN 8 //Mechanical counter
 
-const byte RADIO_ADRESS_EMITTER[6] = "00002";
-const byte RADIO_ADRESS_RECEIVER[6] = "00001";
-
 #define RADIO_CSN 49
 #define RADIO_CE 48
 #define RADIO_SCK 52 // Fixed SPI pin on arduino mega
@@ -62,7 +53,28 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 #define RADIO_MISO 50 // Fixed SPI pin on arduino mega
 #define RADIO_INTERRUPT 2
 
+#define CEILING_PIXEL_PIN 13
+#define CEILING_NBPIXEL 40
+
 #define ORDER_INTERRUPT_PIN 23
+
+// CONSTANTS
+
+const byte RADIO_ADRESS_EMITTER[6] = "00002";
+const byte RADIO_ADRESS_RECEIVER[6] = "00001";
+
+#define SHUTTER_SPEED 850
+#define SHUTTER_ACCEL 100
+
+#define SCISSOR_SPEED 200
+#define SCISSOR_ACCEL 200
+#define SCISSOR_STEP_OPENED 350 // Number of step to fully open the scissor.
+
+#define NB_STEP_PAPER_ONE_SHOT 310 // Number of step to move to another shot.
+#define NB_STEP_PAPER_OUT 1285 // Number of step to move out paper.
+#define PAPER_SPEED 200
+#define PAPER_ACCEL 50
+#define DELTA_FIRST_SHOT -25 //Delta in step to do after paper reach opto 1. Previous: -80
 
 #define WAIT_BETWEEN_SHOT 5000 // Wait between shot in ms.
 
@@ -72,10 +84,6 @@ const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 #define MODE_PAYING 0
 #define MODE_FREE_PRICE 1
 #define MODE_FREE 2
-
-// ceiling lamp
-#define CEILING_PIXEL_PIN 13
-#define CEILING_NBPIXEL 40
 
 // Define time to switch on & off billboard + ceiling light.
 #define HOUR_ON 21

@@ -3,7 +3,7 @@
 // Spider rotate
 AccelStepper spiderRotate(1, SPIDER_ROTATE_PIN_STP, SPIDER_ROTATE_PIN_DIR);
 Servo servoArm;
-Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(LIGHT_PROCESS_NB, LIGHT_PROCESS_PIN, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel ledstrip = Adafruit_NeoPixel(LIGHT_PROCESS_NB, LIGHT_PROCESS_PIN, NEO_GRB + NEO_KHZ800);
 
 bool bImpair = false; // if true arm is on tank 1, 3, 5, 7, 9, 11, 13
 volatile byte currentSpeed = 0; // use to reset speed after a pause.

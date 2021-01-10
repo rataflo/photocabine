@@ -82,7 +82,9 @@ void setup() {
   //runStepper();
   initSlots(&params);
   initSpider(&params);
-  //openArm(&params);
+  /*openArm(&params);
+  delay(1000);
+  closeArm(&params);*/
   //runDelivery(&params);
 }
 

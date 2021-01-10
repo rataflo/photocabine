@@ -44,8 +44,8 @@ void initShutter() {
   // stepper shutter
   m0Shutter.write(LOW);
   enableShutter.write(LOW);
-  shutter.setMaxSpeed(1000);
-  shutter.setAcceleration(400);
+  shutter.setMaxSpeed(SHUTTER_SPEED);
+  shutter.setAcceleration(SHUTTER_ACCEL);
   shutter.setCurrentPosition(0);
   int homing = 0;
   boolean bEndStop = !endstopShutter.read();
@@ -75,13 +75,29 @@ void initShutter() {
   bCloseShutter = true;
 }
 
+void testShutter() {
+  debug("takeShot", String("begin"));
+  // TODO calculate duration of the shot.
+  enableShutter.write(LOW);
+  shutter.setMaxSpeed(SHUTTER_SPEED);
+  shutter.setAcceleration(SHUTTER_ACCEL);
+  shutter.moveTo(100);
+  
+  while(shutter.currentPosition() != 100){
+    
+      shutter.run();
+  }
+  enableShutter.write(HIGH);
+  debug("takeShot", String("end"));
+}
+
 void takeShot(byte mode) {
   debug("takeShot", String("begin"));
   // TODO calculate duration of the shot.
   enableShutter.write(LOW);
-  shutter.setMaxSpeed(1000);
-  shutter.setAcceleration(400);
-  shutter.moveTo(200);
+  shutter.setMaxSpeed(SHUTTER_SPEED);
+  shutter.setAcceleration(SHUTTER_ACCEL);
+  shutter.moveTo(100);
   bCloseShutter = false;
 
   unsigned long currentMillis = 0;
@@ -91,16 +107,15 @@ void takeShot(byte mode) {
     currentMillis = millis();
     boolean bEndStop = false;
     int currentShutterNbStep = shutter.currentPosition();
-    if(currentShutterNbStep > 195){ // Digital read at the last time.
+    if(currentShutterNbStep > 90){ // Digital read at the last time.
       bEndStop = !endstopShutter.read();
-      debug("bEndStop", bEndStop);
     }
-
+    
     // Time to flash.
-    if(currentShutterNbStep == 100){
+    if(currentShutterNbStep == 50){
       startFlash = currentMillis;
       flashOn();
-    } else if(currentShutterNbStep >= 100 && currentMillis - startFlash > flashTime){
+    } else if(currentShutterNbStep >= 50 && currentMillis - startFlash > flashTime){
       flashOff();
     }
     
@@ -112,6 +127,9 @@ void takeShot(byte mode) {
       bCloseShutter = true;
       
     } else {
+      if(currentShutterNbStep >= 100){// Cas shutter get stuck.
+        shutter.moveTo(currentShutterNbStep + 1);
+      }
       shutter.run();
     }
   }

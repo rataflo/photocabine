@@ -110,7 +110,7 @@ void setup() {
 
 void loop() {
   unsigned long currentMillis = millis();
-showInitProgress(11);
+  showInitProgress(11);
   // Check every 10sec
   if(currentMillis - lastCallSensor > 10000){
     lastCallSensor = currentMillis;
@@ -336,15 +336,17 @@ void initPhotomaton(){
   showInitProgress(6);
   // Shutter
   initShutter();
+  //testShutter();
   showInitProgress(7);
   // Paper
   initPaper();
-   showInitProgress(8); 
+  showInitProgress(8); 
   //Wait for paper process.
   sendOrderAndWait(ORDER_SPIDER_READY);
   showInitProgress(9);  
   enableCoinAcceptor(parametres.mode);
   showInitProgress(10);
+  
   debug("initPhotomaton-", String("end"));
 }
 

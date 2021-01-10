@@ -29,7 +29,7 @@ void movePaperFirstShot() {
   paper.setCurrentPosition(0);
   
   // marche arriére
-  int delta = DELTA_FIRST_SHOT + 15;
+  int delta = DELTA_FIRST_SHOT;
   paper.moveTo(delta); 
   paper.setMaxSpeed(PAPER_SPEED);
   paper.setAcceleration(PAPER_ACCEL);
@@ -38,8 +38,6 @@ void movePaperFirstShot() {
   }
   enablePaper.write(HIGH);
 }
-
-
 
 void initPaper() {
   debug("initPaper", String("begin"));
@@ -51,30 +49,25 @@ void initPaper() {
   
   int homing = 0;
   boolean bOpto1 = opto1.read();
-  // case no paper
+  // case no paper detected, move a little bit then stop to allow to insert new roll of paper manually.
+  paper.moveTo(100);
+  while (!bOpto1 && paper.currentPosition() != 100) { 
+    paper.run();
+    bOpto1 = opto1.read();
+  }
+
+  // Manually mode if paper not detected.
   if(!bOpto1){
-    while (!bOpto1) { 
-      paper.moveTo(homing); 
-      paper.run();
-      homing++;
-      delay(5);
+    enablePaper.write(HIGH);
+    while (!bOpto1){
       bOpto1 = opto1.read();
     }
-
-    paper.setCurrentPosition(0);
-  
-    // marche arriére
-    int delta = DELTA_FIRST_SHOT;
-    paper.moveTo(delta); 
-    paper.setMaxSpeed(PAPER_SPEED);
-    paper.setAcceleration(PAPER_ACCEL);
-    while(paper.currentPosition() != delta){
-      paper.run();
-    }
-  } else{
-    movePaperFirstShot();
   }
+
+  paper.setCurrentPosition(0);
   enablePaper.write(HIGH);
+  
+  movePaperFirstShot();
 }
 
 void movePaperNextShot(byte numShot) {
@@ -121,21 +114,11 @@ void movePaperNextShot(byte numShot) {
         bOpto = opto4.read();
       }
     }
-    // move forward
-    paper.setCurrentPosition(0);
-
-    int delta = DELTA_FIRST_SHOT + 15;
-    paper.moveTo(delta); 
-    paper.setMaxSpeed(PAPER_SPEED);
-    paper.setAcceleration(PAPER_ACCEL);
-    while(paper.currentPosition() != delta){
-      paper.run();
-    }
   }
   while(getCountDown() > 0){
     refreshCountdown();
   }
-  enablePaper.write(HIGH);
+  //enablePaper.write(HIGH);
 }
 
 void movePaperOut() {
