@@ -15,8 +15,8 @@
 
 #define SPIDER_ROTATE_PIN_STP 9
 #define SPIDER_ROTATE_PIN_DIR 8
-#define SPIDER_ROTATE_NBSTEP 320 // Number of steps to move to one tank (really helpful to position arm on exit slot)
-#define SPIDER_ROTATE_CENTER_STEP 10 // Number of steps to do after opto switch reached to put the arm perfectly centered.
+#define SPIDER_ROTATE_NBSTEP 320 // Number of steps to move to one tank (helpful to position arm on exit slot)
+#define SPIDER_ROTATE_CENTER_STEP 30 // Number of steps to do after opto switch reached to put the arm perfectly centered (helpful for paper receiver).
 #define SPIDER_ROTATE_ENDSTOP1_PIN 32 // Endstop in front of paper exit. Pair
 #define SPIDER_ROTATE_ENDSTOP2_PIN 33 // Endstop 1/14 degrees right from endstop 1. Impair
 #define SPIDER_ROTATE_SPEED 600

@@ -42,10 +42,9 @@ void initShutter() {
   initLedMatrix();
   
   // stepper shutter
-  m0Shutter.write(LOW);
+  m0Shutter.write(HIGH);// half step.
   enableShutter.write(LOW);
-  shutter.setMaxSpeed(SHUTTER_SPEED);
-  shutter.setAcceleration(SHUTTER_ACCEL);
+  shutter.setAcceleration(200);
   shutter.setCurrentPosition(0);
   int homing = 0;
   boolean bEndStop = !endstopShutter.read();
@@ -97,7 +96,7 @@ void takeShot(byte mode) {
   enableShutter.write(LOW);
   shutter.setMaxSpeed(SHUTTER_SPEED);
   shutter.setAcceleration(SHUTTER_ACCEL);
-  shutter.moveTo(100);
+  shutter.moveTo(SHUTTER_STEP_REVOL);
   bCloseShutter = false;
 
   unsigned long currentMillis = 0;
@@ -107,15 +106,15 @@ void takeShot(byte mode) {
     currentMillis = millis();
     boolean bEndStop = false;
     int currentShutterNbStep = shutter.currentPosition();
-    if(currentShutterNbStep > 90){ // Digital read at the last time.
+    if(currentShutterNbStep > SHUTTER_STEP_REVOL - 10){ // Digital read at the last time.
       bEndStop = !endstopShutter.read();
     }
     
     // Time to flash.
-    if(currentShutterNbStep == 50){
+    if(currentShutterNbStep == (SHUTTER_STEP_REVOL / 2)){
       startFlash = currentMillis;
       flashOn();
-    } else if(currentShutterNbStep >= 50 && currentMillis - startFlash > flashTime){
+    } else if(currentShutterNbStep >= (+SHUTTER_STEP_REVOL / 2) && currentMillis - startFlash > flashTime){
       flashOff();
     }
     
@@ -127,7 +126,7 @@ void takeShot(byte mode) {
       bCloseShutter = true;
       
     } else {
-      if(currentShutterNbStep >= 100){// Cas shutter get stuck.
+      if(currentShutterNbStep >= SHUTTER_STEP_REVOL){// Cas shutter get stuck.
         shutter.moveTo(currentShutterNbStep + 1);
       }
       shutter.run();
