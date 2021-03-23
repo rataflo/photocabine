@@ -255,12 +255,12 @@ void openArm(struct storage *params) {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   servoArm.attach(SERVO_ARM);
   servoArm.write(SERVO_ARM_OPEN_POS_BEGIN); 
-  delay(2000);
+  delay(1000);
   upSpider(SPIDER_UPDOWN_LOW_SPEED);
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
   for(int i = SERVO_ARM_OPEN_POS_BEGIN; i < SERVO_ARM_OPEN_POS_END; i++){
     servoArm.write(i);
-    delay(40);
+    delay(20);
   }
   setServoArmWaitPos();
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
@@ -285,6 +285,8 @@ void closeArm(struct storage *params) {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   params->slots[0] = SLOT_CLOSED;
   EEPROM.writeBlock(EEPROM_ADRESS, *params);
+
+  //checkCameraPosition();
 }
 
 
@@ -363,6 +365,39 @@ void initRotate(struct storage *params) {
   digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
   lightStrip(params);
   Serial.println("initRotate-end"); 
+}
+
+void checkCameraPosition() {
+  Serial.println("checkPosition-begin"); 
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, LOW);
+  spiderRotate.setCurrentPosition(0);
+  spiderRotate.setMaxSpeed(SPIDER_ROTATE_SPEED);
+  spiderRotate.setAcceleration(SPIDER_ROTATE_ACCEL);
+
+  boolean bEndStop = !digitalRead(SPIDER_ROTATE_ENDSTOP2_PIN);
+  int homing = 1;
+  while (!bEndStop) { 
+    spiderRotate.moveTo(homing); 
+    spiderRotate.run();
+    homing++;
+    delay(5);
+    bEndStop = !digitalRead(SPIDER_ROTATE_ENDSTOP2_PIN);
+  }
+  bImpair = true;
+  spiderRotate.stop();
+  spiderRotate.setCurrentPosition(0);
+
+  //More step to the center the arm.
+  spiderRotate.moveTo(SPIDER_ROTATE_CENTER_STEP); 
+  while (spiderRotate.currentPosition() != SPIDER_ROTATE_CENTER_STEP) { 
+    spiderRotate.run();
+  }
+  spiderRotate.stop();
+  spiderRotate.setCurrentPosition(0);
+  
+  digitalWrite(SPIDER_ROTATE_PIN_ENABLE, HIGH);
+  //lightStrip(params);
+  Serial.println("checkPosition-end"); 
 }
 
 boolean isSpiderUp(){

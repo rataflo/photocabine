@@ -237,7 +237,7 @@ void process(){
       unsigned long currentMillis = startMillis;
 
       // special case dev tank: TODO un truc plus élégant.
-      unsigned long duration = params.tankTime;
+      unsigned long duration = 5000; //params.tankTime;
       /*if(params.slots[0] == SLOT_PAPER || params.slots[1] == SLOT_PAPER){
           duration = 30000;
       }*/
@@ -246,7 +246,7 @@ void process(){
       }*/
       
       while(currentMillis - startMillis < duration){
-        //agitate();
+        agitate();
         currentMillis = millis();
       }
       

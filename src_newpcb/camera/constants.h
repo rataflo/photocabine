@@ -64,7 +64,7 @@ const byte RADIO_ADRESS_EMITTER[6] = "00002";
 const byte RADIO_ADRESS_RECEIVER[6] = "00001";
 
 #define SHUTTER_SPEED 1000
-#define SHUTTER_ACCEL 5500 // 1450 => 1s, 5500 => 1/2s, 22000 => 1/4s, 30000 => max, 191ms less than 1/8s
+#define SHUTTER_ACCEL 1450 // 1450 => 1s, 5500 => 1/2s, 22000 => 1/4s, 30000 => max, 191ms less than 1/8s
 #define SHUTTER_STEP_REVOL 200 // Number of step for a full rotation of the shutter
 
 #define SCISSOR_SPEED 200

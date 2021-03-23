@@ -36,4 +36,5 @@ void closeArm(struct storage *params);
 void lightFullStrip();
 boolean bSpiderImpair();
 void initSlots(struct storage *params);
+void checkCameraPosition();
 #endif

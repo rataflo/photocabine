@@ -15,7 +15,7 @@
 
 #define SPIDER_ROTATE_PIN_STP 9
 #define SPIDER_ROTATE_PIN_DIR 8
-#define SPIDER_ROTATE_NBSTEP 320 // Number of steps to move to one tank (helpful to position arm on exit slot)
+#define SPIDER_ROTATE_NBSTEP 290 // Number of steps to move to one tank (helpful to position arm on exit slot)
 #define SPIDER_ROTATE_CENTER_STEP 30 // Number of steps to do after opto switch reached to put the arm perfectly centered (helpful for paper receiver).
 #define SPIDER_ROTATE_ENDSTOP1_PIN 32 // Endstop in front of paper exit. Pair
 #define SPIDER_ROTATE_ENDSTOP2_PIN 33 // Endstop 1/14 degrees right from endstop 1. Impair
@@ -27,21 +27,21 @@
 #define SERVO_ARM 45
 #define SERVO_ARM_IDLE_POS 48
 #define SERVO_ARM_OPEN_POS_BEGIN 0 
-#define SERVO_ARM_OPEN_POS_END 150
+#define SERVO_ARM_OPEN_POS_END 160
 #define SERVO_ARM_CLOSE_POS_BEGIN 190
 #define SERVO_ARM_CLOSE_POS_END 45
 
 #define SPIDER_EXIT_PIN_STP 13
 #define SPIDER_EXIT_PIN_DIR 12
 #define SPIDER_EXIT_PIN_ENABLE 11
-#define SPIDER_EXIT_SPEED 500
+#define SPIDER_EXIT_SPEED 300
 #define SPIDER_EXIT_ACCEL 50
 #define SPIDER_EXIT_PIN_M0 10
 
 #define LIGHT_PROCESS_PIN 44
 #define LIGHT_PROCESS_NB 84
 
-#define TANK_TIME 20000 // Default time in each tank. Temperature between 32°C and 40°C.
+#define TANK_TIME 5000 // Default ms time in each tank (previous 20000). Temperature between 32°C and 40°C.
 #define DELIVERY_TIME 5000 // Time to exit paper
 
 #define TEMP_PIN 37
